@@ -6,7 +6,7 @@ const baseUrl = require("url");
 
 // console.log(baseUrl);
 const upload = async (req, res) => {
-  console.log("req.file---->", req);
+  
 
   try {
     await uploadFile(req, res);

@@ -16,14 +16,13 @@ var upload = function upload(req, res) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
-          console.log("req.file---->", req);
-          _context.prev = 1;
-          _context.next = 4;
+          _context.prev = 0;
+          _context.next = 3;
           return regeneratorRuntime.awrap(uploadFile(req, res));
 
-        case 4:
+        case 3:
           if (!(req.file == undefined)) {
-            _context.next = 6;
+            _context.next = 5;
             break;
           }
 
@@ -31,26 +30,26 @@ var upload = function upload(req, res) {
             message: "Please upload a file!"
           }));
 
-        case 6:
+        case 5:
           res.status(200).send({
             message: "Uploaded the file successfully: " + req.file.originalname
           });
-          _context.next = 12;
+          _context.next = 11;
           break;
 
-        case 9:
-          _context.prev = 9;
-          _context.t0 = _context["catch"](1);
+        case 8:
+          _context.prev = 8;
+          _context.t0 = _context["catch"](0);
           res.status(500).send({
             message: "Could not upload the file: ".concat(req.file.originalname, ". ").concat(_context.t0)
           });
 
-        case 12:
+        case 11:
         case "end":
           return _context.stop();
       }
     }
-  }, null, null, [[1, 9]]);
+  }, null, null, [[0, 8]]);
 };
 
 var getListFiles = function getListFiles(req, res) {
