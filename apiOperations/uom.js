@@ -2,7 +2,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-14 10:29:23
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-14 11:27:45
+ * @Last Modified time: 2022-02-21 18:28:03
  */
 
 var config = require("../dbconfig");
@@ -20,7 +20,7 @@ async function getUom() {
     return result.recordsets[0];
   } catch (error) {
     console.log(error);
-    pool.close();
+   // pool.close();
   }
 }
 
@@ -78,7 +78,7 @@ async function deleteUom(UomId) {
     }
   } catch (error) {
     console.log(error);
-    pool.close();
+   // pool.close();
   }
 }
 

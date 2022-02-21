@@ -29,7 +29,7 @@ async function getAdminLogin(AdminEmail, AdminPass) {
     // return result.recordsets[0];
   } catch (error) {
     console.log(error);
-    pool.close();
+   // pool.close();
   }
 }
 

@@ -53,7 +53,6 @@ var upload = function upload(req, res) {
 };
 
 var getListFiles = function getListFiles(req, res) {
-  console.log("__basedir", __basedir);
   var directoryPath = __basedir + "/resources/static/assets/uploads/"; // const directoryPath =
   // ("https://bposervicestemp.tranquildevelopers.com/tempfold/");
 

@@ -20,7 +20,7 @@ async function getCompanies() {
     return result.recordsets[0];
   } catch (error) {
     console.log(error);
-    pool.close();
+   // pool.close();
   }
 }
 
@@ -108,7 +108,7 @@ async function deleteCompany(Compid) {
     }
   } catch (error) {
     console.log(error);
-    pool.close();
+   // pool.close();
   }
 }
 

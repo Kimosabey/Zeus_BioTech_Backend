@@ -18,7 +18,7 @@ async function getCustomersCat() {
     return result.recordsets[0];
   } catch (error) {
     console.log(error);
-    pool.close();
+   // pool.close();
   }
 }
 
@@ -76,7 +76,7 @@ async function deleteCustomersCat(custId) {
     }
   } catch (error) {
     console.log(error);
-    pool.close();
+   // pool.close();
   }
 }
 

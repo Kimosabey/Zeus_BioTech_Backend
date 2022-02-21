@@ -4,15 +4,14 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-07 17:55:30
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-21 16:31:29
+ * @Last Modified time: 2022-02-21 18:27:39
  */
 var config = require("../dbconfig");
 
 var sql = require("mssql");
 
 function getAreas() {
-  var _pool, result;
-
+  var pool, result;
   return regeneratorRuntime.async(function getAreas$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
@@ -22,24 +21,21 @@ function getAreas() {
           return regeneratorRuntime.awrap(sql.connect(config));
 
         case 3:
-          _pool = _context.sent;
+          pool = _context.sent;
           _context.next = 6;
-          return regeneratorRuntime.awrap(_pool.request().query("SELECT * FROM [AREA_MASTER] JOIN CITY_MASTER ON CITY_PKID=AREA_CITY_FKID JOIN COUNTRY_MASTER ON COUNTRY_PKID=CITY_COUNTRY_FKID JOIN STATE_MASTER ON STATE_PKID=CITY_STATE_FKID"));
+          return regeneratorRuntime.awrap(pool.request().query("SELECT * FROM [AREA_MASTER] JOIN CITY_MASTER ON CITY_PKID=AREA_CITY_FKID JOIN COUNTRY_MASTER ON COUNTRY_PKID=CITY_COUNTRY_FKID JOIN STATE_MASTER ON STATE_PKID=CITY_STATE_FKID"));
 
         case 6:
           result = _context.sent;
-
-          _pool.close();
-
+          pool.close();
           return _context.abrupt("return", result.recordsets[0]);
 
         case 11:
           _context.prev = 11;
           _context.t0 = _context["catch"](0);
-          console.log(_context.t0);
-          pool.close();
+          console.log(_context.t0); // pool.close();
 
-        case 15:
+        case 14:
         case "end":
           return _context.stop();
       }
@@ -48,8 +44,7 @@ function getAreas() {
 }
 
 function getAreasByCityId(cityId) {
-  var _pool2, result;
-
+  var pool, result;
   return regeneratorRuntime.async(function getAreasByCityId$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
@@ -59,24 +54,21 @@ function getAreasByCityId(cityId) {
           return regeneratorRuntime.awrap(sql.connect(config));
 
         case 3:
-          _pool2 = _context2.sent;
+          pool = _context2.sent;
           _context2.next = 6;
-          return regeneratorRuntime.awrap(_pool2.request().input("input_parameter", cityId).query("SELECT * FROM [AREA_MASTER] WHERE AREA_CITY_FKID=@input_parameter"));
+          return regeneratorRuntime.awrap(pool.request().input("input_parameter", cityId).query("SELECT * FROM [AREA_MASTER] WHERE AREA_CITY_FKID=@input_parameter"));
 
         case 6:
           result = _context2.sent;
-
-          _pool2.close();
-
+          pool.close();
           return _context2.abrupt("return", result.recordsets[0]);
 
         case 11:
           _context2.prev = 11;
           _context2.t0 = _context2["catch"](0);
-          console.log(_context2.t0);
-          pool.close();
+          console.log(_context2.t0); // pool.close();
 
-        case 15:
+        case 14:
         case "end":
           return _context2.stop();
       }
@@ -85,8 +77,7 @@ function getAreasByCityId(cityId) {
 }
 
 function getAreasByHq(hqId) {
-  var _pool3, result;
-
+  var pool, result;
   return regeneratorRuntime.async(function getAreasByHq$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
@@ -96,25 +87,22 @@ function getAreasByHq(hqId) {
           return regeneratorRuntime.awrap(sql.connect(config));
 
         case 3:
-          _pool3 = _context3.sent;
+          pool = _context3.sent;
           _context3.next = 6;
-          return regeneratorRuntime.awrap(_pool3.request().input("input_parameter", hqId).query("SELECT * FROM AREA_MASTER JOIN HQ ON HQ_CITY_FKID=AREA_CITY_FKID WHERE HQ_PKID=@input_parameter"));
+          return regeneratorRuntime.awrap(pool.request().input("input_parameter", hqId).query("SELECT * FROM AREA_MASTER JOIN HQ ON HQ_CITY_FKID=AREA_CITY_FKID WHERE HQ_PKID=@input_parameter"));
 
         case 6:
           result = _context3.sent;
-
-          _pool3.close(); // console.log(result.recordsets);
-
+          pool.close(); // console.log(result.recordsets);
 
           return _context3.abrupt("return", result.recordsets[0]);
 
         case 11:
           _context3.prev = 11;
           _context3.t0 = _context3["catch"](0);
-          console.log(_context3.t0);
-          pool.close();
+          console.log(_context3.t0); // pool.close();
 
-        case 15:
+        case 14:
         case "end":
           return _context3.stop();
       }
@@ -123,8 +111,7 @@ function getAreasByHq(hqId) {
 }
 
 function addArea(obj) {
-  var _pool4, result, insertInto;
-
+  var pool, result, insertInto;
   return regeneratorRuntime.async(function addArea$(_context4) {
     while (1) {
       switch (_context4.prev = _context4.next) {
@@ -135,9 +122,9 @@ function addArea(obj) {
           return regeneratorRuntime.awrap(sql.connect(config));
 
         case 4:
-          _pool4 = _context4.sent;
+          pool = _context4.sent;
           _context4.next = 7;
-          return regeneratorRuntime.awrap(_pool4.request().input("AreaCode", sql.VarChar, obj.AreaCode).input("AreaName", sql.VarChar, obj.AreaName).input("AREA_ZIP_CODE", sql.VarChar, obj.AREA_ZIP_CODE).query("SELECT * from AREA_MASTER WHERE AREA_NAME=@AreaName AND AREA_ZIP_CODE=@AREA_ZIP_CODE"));
+          return regeneratorRuntime.awrap(pool.request().input("AreaCode", sql.VarChar, obj.AreaCode).input("AreaName", sql.VarChar, obj.AreaName).input("AREA_ZIP_CODE", sql.VarChar, obj.AREA_ZIP_CODE).query("SELECT * from AREA_MASTER WHERE AREA_NAME=@AreaName AND AREA_ZIP_CODE=@AREA_ZIP_CODE"));
 
         case 7:
           result = _context4.sent;
@@ -148,7 +135,7 @@ function addArea(obj) {
           }
 
           _context4.next = 11;
-          return regeneratorRuntime.awrap(_pool4.request().input("AreaName", sql.NVarChar, obj.AreaName).input("AREA_ZIP_CODE", sql.NVarChar, obj.AREA_ZIP_CODE).input("CityId", sql.Int, obj.CityId).input("StateId", sql.Int, obj.StateId).input("CountryId", sql.Int, obj.CountryId).query("insert into AREA_MASTER ([AREA_COUNTRY_FKID] ,[AREA_STATE_FKID], [AREA_CITY_FKID],[AREA_NAME],[AREA_ZIP_CODE],[AREA_ACTIVE])  values(@CountryId,@StateId,@CityId,@AreaName,@AREA_ZIP_CODE,1)"));
+          return regeneratorRuntime.awrap(pool.request().input("AreaName", sql.NVarChar, obj.AreaName).input("AREA_ZIP_CODE", sql.NVarChar, obj.AREA_ZIP_CODE).input("CityId", sql.Int, obj.CityId).input("StateId", sql.Int, obj.StateId).input("CountryId", sql.Int, obj.CountryId).query("insert into AREA_MASTER ([AREA_COUNTRY_FKID] ,[AREA_STATE_FKID], [AREA_CITY_FKID],[AREA_NAME],[AREA_ZIP_CODE],[AREA_ACTIVE])  values(@CountryId,@StateId,@CityId,@AreaName,@AREA_ZIP_CODE,1)"));
 
         case 11:
           insertInto = _context4.sent;
@@ -158,13 +145,11 @@ function addArea(obj) {
             break;
           }
 
-          _pool4.close();
-
+          pool.close();
           return _context4.abrupt("return", true);
 
         case 17:
-          _pool4.close();
-
+          pool.close();
           return _context4.abrupt("return", false);
 
         case 19:
@@ -172,8 +157,7 @@ function addArea(obj) {
           break;
 
         case 21:
-          _pool4.close();
-
+          pool.close();
           return _context4.abrupt("return", "Already Existed!");
 
         case 23:
@@ -230,8 +214,7 @@ function updateArea(AreaId, obj) {
 }
 
 function deleteArea(AreaId) {
-  var _pool5, result;
-
+  var pool, result;
   return regeneratorRuntime.async(function deleteArea$(_context6) {
     while (1) {
       switch (_context6.prev = _context6.next) {
@@ -241,40 +224,36 @@ function deleteArea(AreaId) {
           return regeneratorRuntime.awrap(sql.connect(config));
 
         case 3:
-          _pool5 = _context6.sent;
+          pool = _context6.sent;
           _context6.next = 6;
-          return regeneratorRuntime.awrap(_pool5.request().input("input_parameter", AreaId).query("DELETE FROM AREA_MASTER WHERE AREA_PKID=@input_parameter"));
+          return regeneratorRuntime.awrap(pool.request().input("input_parameter", AreaId).query("DELETE FROM AREA_MASTER WHERE AREA_PKID=@input_parameter"));
 
         case 6:
           result = _context6.sent;
-
-          _pool5.close();
+          pool.close();
 
           if (!(result.rowsAffected[0] == 0)) {
             _context6.next = 13;
             break;
           }
 
-          _pool5.close();
-
+          pool.close();
           return _context6.abrupt("return", false);
 
         case 13:
-          _pool5.close();
-
+          pool.close();
           return _context6.abrupt("return", true);
 
         case 15:
-          _context6.next = 21;
+          _context6.next = 20;
           break;
 
         case 17:
           _context6.prev = 17;
           _context6.t0 = _context6["catch"](0);
-          console.log(_context6.t0);
-          pool.close();
+          console.log(_context6.t0); // pool.close();
 
-        case 21:
+        case 20:
         case "end":
           return _context6.stop();
       }

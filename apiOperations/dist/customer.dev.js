@@ -11,8 +11,7 @@ var config = require("../dbconfig");
 var sql = require("mssql");
 
 function getCustomersCat() {
-  var _pool, result;
-
+  var pool, result;
   return regeneratorRuntime.async(function getCustomersCat$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
@@ -22,24 +21,21 @@ function getCustomersCat() {
           return regeneratorRuntime.awrap(sql.connect(config));
 
         case 3:
-          _pool = _context.sent;
+          pool = _context.sent;
           _context.next = 6;
-          return regeneratorRuntime.awrap(_pool.request().query("SELECT * FROM [CUSTOMER_TYPE]"));
+          return regeneratorRuntime.awrap(pool.request().query("SELECT * FROM [CUSTOMER_TYPE]"));
 
         case 6:
           result = _context.sent;
-
-          _pool.close();
-
+          pool.close();
           return _context.abrupt("return", result.recordsets[0]);
 
         case 11:
           _context.prev = 11;
           _context.t0 = _context["catch"](0);
-          console.log(_context.t0);
-          pool.close();
+          console.log(_context.t0); // pool.close();
 
-        case 15:
+        case 14:
         case "end":
           return _context.stop();
       }
@@ -48,8 +44,7 @@ function getCustomersCat() {
 }
 
 function addCustomersCat(obj) {
-  var _pool2, result, insertInto;
-
+  var pool, result, insertInto;
   return regeneratorRuntime.async(function addCustomersCat$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
@@ -59,9 +54,9 @@ function addCustomersCat(obj) {
           return regeneratorRuntime.awrap(sql.connect(config));
 
         case 3:
-          _pool2 = _context2.sent;
+          pool = _context2.sent;
           _context2.next = 6;
-          return regeneratorRuntime.awrap(_pool2.request().input("CustCatName", sql.VarChar, obj.CustCatName).query("SELECT * from CUSTOMER_TYPE WHERE CUSTOMER_TYPE_NAME=@CustCatName"));
+          return regeneratorRuntime.awrap(pool.request().input("CustCatName", sql.VarChar, obj.CustCatName).query("SELECT * from CUSTOMER_TYPE WHERE CUSTOMER_TYPE_NAME=@CustCatName"));
 
         case 6:
           result = _context2.sent;
@@ -72,7 +67,7 @@ function addCustomersCat(obj) {
           }
 
           _context2.next = 10;
-          return regeneratorRuntime.awrap(_pool2.request().input("CustCatName", sql.VarChar, obj.CustCatName).query("insert into CUSTOMER_TYPE ([CUSTOMER_TYPE_NAME] ,[CUSTOMER_TYPE_ACTIVE])  values(@CustCatName,1)"));
+          return regeneratorRuntime.awrap(pool.request().input("CustCatName", sql.VarChar, obj.CustCatName).query("insert into CUSTOMER_TYPE ([CUSTOMER_TYPE_NAME] ,[CUSTOMER_TYPE_ACTIVE])  values(@CustCatName,1)"));
 
         case 10:
           insertInto = _context2.sent;
@@ -82,13 +77,11 @@ function addCustomersCat(obj) {
             break;
           }
 
-          _pool2.close();
-
+          pool.close();
           return _context2.abrupt("return", true);
 
         case 16:
-          _pool2.close();
-
+          pool.close();
           return _context2.abrupt("return", false);
 
         case 18:
@@ -96,8 +89,7 @@ function addCustomersCat(obj) {
           break;
 
         case 20:
-          _pool2.close();
-
+          pool.close();
           return _context2.abrupt("return", "Already Existed!");
 
         case 22:
@@ -118,8 +110,7 @@ function addCustomersCat(obj) {
 }
 
 function deleteCustomersCat(custId) {
-  var _pool3, result;
-
+  var pool, result;
   return regeneratorRuntime.async(function deleteCustomersCat$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
@@ -129,40 +120,36 @@ function deleteCustomersCat(custId) {
           return regeneratorRuntime.awrap(sql.connect(config));
 
         case 3:
-          _pool3 = _context3.sent;
+          pool = _context3.sent;
           _context3.next = 6;
-          return regeneratorRuntime.awrap(_pool3.request().input("input_parameter", custId).query("DELETE FROM CUSTOMER_TYPE WHERE CUSTOMER_TYPE_PKID=@input_parameter"));
+          return regeneratorRuntime.awrap(pool.request().input("input_parameter", custId).query("DELETE FROM CUSTOMER_TYPE WHERE CUSTOMER_TYPE_PKID=@input_parameter"));
 
         case 6:
           result = _context3.sent;
-
-          _pool3.close();
+          pool.close();
 
           if (!(result.rowsAffected[0] == 0)) {
             _context3.next = 13;
             break;
           }
 
-          _pool3.close();
-
+          pool.close();
           return _context3.abrupt("return", false);
 
         case 13:
-          _pool3.close();
-
+          pool.close();
           return _context3.abrupt("return", true);
 
         case 15:
-          _context3.next = 21;
+          _context3.next = 20;
           break;
 
         case 17:
           _context3.prev = 17;
           _context3.t0 = _context3["catch"](0);
-          console.log(_context3.t0);
-          pool.close();
+          console.log(_context3.t0); // pool.close();
 
-        case 21:
+        case 20:
         case "end":
           return _context3.stop();
       }

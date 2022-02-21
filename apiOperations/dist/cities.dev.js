@@ -4,15 +4,14 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-04 19:13:14
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-19 18:11:12
+ * @Last Modified time: 2022-02-21 18:27:45
  */
 var config = require("../dbconfig");
 
 var sql = require("mssql");
 
 function getCities() {
-  var _pool, result;
-
+  var pool, result;
   return regeneratorRuntime.async(function getCities$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
@@ -22,24 +21,21 @@ function getCities() {
           return regeneratorRuntime.awrap(sql.connect(config));
 
         case 3:
-          _pool = _context.sent;
+          pool = _context.sent;
           _context.next = 6;
-          return regeneratorRuntime.awrap(_pool.request().query("SELECT *FROM [CITY_MASTER] JOIN COUNTRY_MASTER ON COUNTRY_PKID=CITY_COUNTRY_FKID JOIN STATE_MASTER ON STATE_PKID=CITY_STATE_FKID"));
+          return regeneratorRuntime.awrap(pool.request().query("SELECT *FROM [CITY_MASTER] JOIN COUNTRY_MASTER ON COUNTRY_PKID=CITY_COUNTRY_FKID JOIN STATE_MASTER ON STATE_PKID=CITY_STATE_FKID"));
 
         case 6:
           result = _context.sent;
-
-          _pool.close();
-
+          pool.close();
           return _context.abrupt("return", result.recordsets[0]);
 
         case 11:
           _context.prev = 11;
           _context.t0 = _context["catch"](0);
-          console.log(_context.t0);
-          pool.close();
+          console.log(_context.t0); // pool.close();
 
-        case 15:
+        case 14:
         case "end":
           return _context.stop();
       }
@@ -48,8 +44,7 @@ function getCities() {
 }
 
 function addCity(obj) {
-  var _pool2, result, insertInto;
-
+  var pool, result, insertInto;
   return regeneratorRuntime.async(function addCity$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
@@ -60,9 +55,9 @@ function addCity(obj) {
           return regeneratorRuntime.awrap(sql.connect(config));
 
         case 4:
-          _pool2 = _context2.sent;
+          pool = _context2.sent;
           _context2.next = 7;
-          return regeneratorRuntime.awrap(_pool2.request().input("CityCode", sql.VarChar, obj.CityCode).input("CityName", sql.VarChar, obj.CityName).query("SELECT * from CITY_MASTER WHERE CITY_NAME=@CityName"));
+          return regeneratorRuntime.awrap(pool.request().input("CityCode", sql.VarChar, obj.CityCode).input("CityName", sql.VarChar, obj.CityName).query("SELECT * from CITY_MASTER WHERE CITY_NAME=@CityName"));
 
         case 7:
           result = _context2.sent;
@@ -73,7 +68,7 @@ function addCity(obj) {
           }
 
           _context2.next = 11;
-          return regeneratorRuntime.awrap(_pool2.request().input("CityCode", sql.NVarChar, obj.CityCode).input("CityName", sql.NVarChar, obj.CityName).input("StateId", sql.Int, obj.StateId).input("CountryId", sql.Int, obj.CountryId).query("insert into CITY_MASTER ([CITY_COUNTRY_FKID] ,[CITY_STATE_FKID], [CITY_CODE],[CITY_NAME],[CITY_ACTIVE])  values(@CountryId,@StateId,@CityCode,@CityName,1)"));
+          return regeneratorRuntime.awrap(pool.request().input("CityCode", sql.NVarChar, obj.CityCode).input("CityName", sql.NVarChar, obj.CityName).input("StateId", sql.Int, obj.StateId).input("CountryId", sql.Int, obj.CountryId).query("insert into CITY_MASTER ([CITY_COUNTRY_FKID] ,[CITY_STATE_FKID], [CITY_CODE],[CITY_NAME],[CITY_ACTIVE])  values(@CountryId,@StateId,@CityCode,@CityName,1)"));
 
         case 11:
           insertInto = _context2.sent;
@@ -83,13 +78,11 @@ function addCity(obj) {
             break;
           }
 
-          _pool2.close();
-
+          pool.close();
           return _context2.abrupt("return", true);
 
         case 17:
-          _pool2.close();
-
+          pool.close();
           return _context2.abrupt("return", false);
 
         case 19:
@@ -97,8 +90,7 @@ function addCity(obj) {
           break;
 
         case 21:
-          _pool2.close();
-
+          pool.close();
           return _context2.abrupt("return", "Already Existed!");
 
         case 23:
@@ -155,8 +147,7 @@ function updateCity(cityId, obj) {
 }
 
 function deleteCity(cityId) {
-  var _pool3, result;
-
+  var pool, result;
   return regeneratorRuntime.async(function deleteCity$(_context4) {
     while (1) {
       switch (_context4.prev = _context4.next) {
@@ -166,15 +157,13 @@ function deleteCity(cityId) {
           return regeneratorRuntime.awrap(sql.connect(config));
 
         case 3:
-          _pool3 = _context4.sent;
+          pool = _context4.sent;
           _context4.next = 6;
-          return regeneratorRuntime.awrap(_pool3.request().input("input_parameter", cityId).query("DELETE FROM CITY_MASTER WHERE CITY_PKID=@input_parameter"));
+          return regeneratorRuntime.awrap(pool.request().input("input_parameter", cityId).query("DELETE FROM CITY_MASTER WHERE CITY_PKID=@input_parameter"));
 
         case 6:
           result = _context4.sent;
-
-          _pool3.close();
-
+          pool.close();
           console.log("delete__>>", result);
 
           if (!(result.rowsAffected[0] == 0)) {
@@ -182,26 +171,23 @@ function deleteCity(cityId) {
             break;
           }
 
-          _pool3.close();
-
+          pool.close();
           return _context4.abrupt("return", false);
 
         case 14:
-          _pool3.close();
-
+          pool.close();
           return _context4.abrupt("return", true);
 
         case 16:
-          _context4.next = 22;
+          _context4.next = 21;
           break;
 
         case 18:
           _context4.prev = 18;
           _context4.t0 = _context4["catch"](0);
-          console.log(_context4.t0);
-          pool.close();
+          console.log(_context4.t0); // pool.close();
 
-        case 22:
+        case 21:
         case "end":
           return _context4.stop();
       }
@@ -210,8 +196,7 @@ function deleteCity(cityId) {
 }
 
 function getCitiesByStateId(stateId) {
-  var _pool4, result;
-
+  var pool, result;
   return regeneratorRuntime.async(function getCitiesByStateId$(_context5) {
     while (1) {
       switch (_context5.prev = _context5.next) {
@@ -221,24 +206,21 @@ function getCitiesByStateId(stateId) {
           return regeneratorRuntime.awrap(sql.connect(config));
 
         case 3:
-          _pool4 = _context5.sent;
+          pool = _context5.sent;
           _context5.next = 6;
-          return regeneratorRuntime.awrap(_pool4.request().input("input_parameter", stateId).query("SELECT * FROM [CITY_MASTER] JOIN COUNTRY_MASTER ON COUNTRY_PKID=CITY_COUNTRY_FKID JOIN STATE_MASTER ON STATE_PKID=CITY_STATE_FKID WHERE CITY_STATE_FKID=@input_parameter"));
+          return regeneratorRuntime.awrap(pool.request().input("input_parameter", stateId).query("SELECT * FROM [CITY_MASTER] JOIN COUNTRY_MASTER ON COUNTRY_PKID=CITY_COUNTRY_FKID JOIN STATE_MASTER ON STATE_PKID=CITY_STATE_FKID WHERE CITY_STATE_FKID=@input_parameter"));
 
         case 6:
           result = _context5.sent;
-
-          _pool4.close();
-
+          pool.close();
           return _context5.abrupt("return", result.recordsets[0]);
 
         case 11:
           _context5.prev = 11;
           _context5.t0 = _context5["catch"](0);
-          console.log(_context5.t0);
-          pool.close();
+          console.log(_context5.t0); // pool.close();
 
-        case 15:
+        case 14:
         case "end":
           return _context5.stop();
       }

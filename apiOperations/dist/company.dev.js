@@ -11,8 +11,7 @@ var config = require("../dbconfig");
 var sql = require("mssql");
 
 function getCompanies() {
-  var _pool, result;
-
+  var pool, result;
   return regeneratorRuntime.async(function getCompanies$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
@@ -22,25 +21,22 @@ function getCompanies() {
           return regeneratorRuntime.awrap(sql.connect(config));
 
         case 3:
-          _pool = _context.sent;
+          pool = _context.sent;
           _context.next = 6;
-          return regeneratorRuntime.awrap(_pool.request().query("SELECT * FROM [COMPANY] JOIN HQ ON HQ_PKID = COMPANY_HQ_FKID"));
+          return regeneratorRuntime.awrap(pool.request().query("SELECT * FROM [COMPANY] JOIN HQ ON HQ_PKID = COMPANY_HQ_FKID"));
 
         case 6:
           result = _context.sent;
-
-          _pool.close(); // console.log(result.recordsets);
-
+          pool.close(); // console.log(result.recordsets);
 
           return _context.abrupt("return", result.recordsets[0]);
 
         case 11:
           _context.prev = 11;
           _context.t0 = _context["catch"](0);
-          console.log(_context.t0);
-          pool.close();
+          console.log(_context.t0); // pool.close();
 
-        case 15:
+        case 14:
         case "end":
           return _context.stop();
       }
@@ -49,8 +45,7 @@ function getCompanies() {
 }
 
 function addCompany(obj) {
-  var _pool2, result, insertInto;
-
+  var pool, result, insertInto;
   return regeneratorRuntime.async(function addCompany$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
@@ -60,9 +55,9 @@ function addCompany(obj) {
           return regeneratorRuntime.awrap(sql.connect(config));
 
         case 3:
-          _pool2 = _context2.sent;
+          pool = _context2.sent;
           _context2.next = 6;
-          return regeneratorRuntime.awrap(_pool2.request().input("COMPANY_HQ_FKID", obj.COMPANY_HQ_FKID).input("COMPANY_NAME", obj.COMPANY_NAME).query("SELECT * FROM [COMPANY] JOIN HQ ON HQ_PKID = COMPANY_HQ_FKID WHERE COMPANY_HQ_FKID=@COMPANY_HQ_FKID AND COMPANY_NAME=@COMPANY_NAME"));
+          return regeneratorRuntime.awrap(pool.request().input("COMPANY_HQ_FKID", obj.COMPANY_HQ_FKID).input("COMPANY_NAME", obj.COMPANY_NAME).query("SELECT * FROM [COMPANY] JOIN HQ ON HQ_PKID = COMPANY_HQ_FKID WHERE COMPANY_HQ_FKID=@COMPANY_HQ_FKID AND COMPANY_NAME=@COMPANY_NAME"));
 
         case 6:
           result = _context2.sent;
@@ -73,7 +68,7 @@ function addCompany(obj) {
           }
 
           _context2.next = 10;
-          return regeneratorRuntime.awrap(_pool2.request().input("COMPANY_HQ_FKID", obj.COMPANY_HQ_FKID).input("COMPANY_NAME", obj.COMPANY_NAME).input("COMPANY_EMAIL", obj.COMPANY_EMAIL).input("COMPANY_PHONE", obj.COMPANY_PHONE).input("COMPANY_ADDRESS", obj.COMPANY_ADDRESS).query("insert into COMPANY ([COMPANY_NAME] ,[COMPANY_HQ_FKID] ,[COMPANY_EMAIL] ,[COMPANY_PHONE] ,[COMPANY_ADDRESS] ,[COMPANY_ISACTIVE])  values(@COMPANY_NAME,@COMPANY_HQ_FKID,@COMPANY_EMAIL,@COMPANY_PHONE,@COMPANY_ADDRESS,1)"));
+          return regeneratorRuntime.awrap(pool.request().input("COMPANY_HQ_FKID", obj.COMPANY_HQ_FKID).input("COMPANY_NAME", obj.COMPANY_NAME).input("COMPANY_EMAIL", obj.COMPANY_EMAIL).input("COMPANY_PHONE", obj.COMPANY_PHONE).input("COMPANY_ADDRESS", obj.COMPANY_ADDRESS).query("insert into COMPANY ([COMPANY_NAME] ,[COMPANY_HQ_FKID] ,[COMPANY_EMAIL] ,[COMPANY_PHONE] ,[COMPANY_ADDRESS] ,[COMPANY_ISACTIVE])  values(@COMPANY_NAME,@COMPANY_HQ_FKID,@COMPANY_EMAIL,@COMPANY_PHONE,@COMPANY_ADDRESS,1)"));
 
         case 10:
           insertInto = _context2.sent;
@@ -83,13 +78,11 @@ function addCompany(obj) {
             break;
           }
 
-          _pool2.close();
-
+          pool.close();
           return _context2.abrupt("return", true);
 
         case 16:
-          _pool2.close();
-
+          pool.close();
           return _context2.abrupt("return", false);
 
         case 18:
@@ -97,8 +90,7 @@ function addCompany(obj) {
           break;
 
         case 20:
-          _pool2.close();
-
+          pool.close();
           return _context2.abrupt("return", "0");
 
         case 22:
@@ -155,8 +147,7 @@ function updateCompany(Compid, obj) {
 }
 
 function deleteCompany(Compid) {
-  var _pool3, result;
-
+  var pool, result;
   return regeneratorRuntime.async(function deleteCompany$(_context4) {
     while (1) {
       switch (_context4.prev = _context4.next) {
@@ -166,40 +157,36 @@ function deleteCompany(Compid) {
           return regeneratorRuntime.awrap(sql.connect(config));
 
         case 3:
-          _pool3 = _context4.sent;
+          pool = _context4.sent;
           _context4.next = 6;
-          return regeneratorRuntime.awrap(_pool3.request().input("COMPANY_PKID", Compid).query("DELETE FROM COMPANY WHERE COMPANY_PKID=@COMPANY_PKID"));
+          return regeneratorRuntime.awrap(pool.request().input("COMPANY_PKID", Compid).query("DELETE FROM COMPANY WHERE COMPANY_PKID=@COMPANY_PKID"));
 
         case 6:
           result = _context4.sent;
-
-          _pool3.close();
+          pool.close();
 
           if (!(result.rowsAffected[0] == 0)) {
             _context4.next = 13;
             break;
           }
 
-          _pool3.close();
-
+          pool.close();
           return _context4.abrupt("return", false);
 
         case 13:
-          _pool3.close();
-
+          pool.close();
           return _context4.abrupt("return", true);
 
         case 15:
-          _context4.next = 21;
+          _context4.next = 20;
           break;
 
         case 17:
           _context4.prev = 17;
           _context4.t0 = _context4["catch"](0);
-          console.log(_context4.t0);
-          pool.close();
+          console.log(_context4.t0); // pool.close();
 
-        case 21:
+        case 20:
         case "end":
           return _context4.stop();
       }

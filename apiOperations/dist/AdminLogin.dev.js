@@ -11,8 +11,7 @@ var config = require("../dbconfig");
 var sql = require("mssql");
 
 function getAdminLogin(AdminEmail, AdminPass) {
-  var _pool, result;
-
+  var pool, result;
   return regeneratorRuntime.async(function getAdminLogin$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
@@ -22,14 +21,13 @@ function getAdminLogin(AdminEmail, AdminPass) {
           return regeneratorRuntime.awrap(sql.connect(config));
 
         case 3:
-          _pool = _context.sent;
+          pool = _context.sent;
           _context.next = 6;
-          return regeneratorRuntime.awrap(_pool.request().input("AdminEmail", AdminEmail).input("AdminPass", AdminPass).query("SELECT * FROM [SUPER_ADMIN] WHERE SUPER_ADMIN_EMAIL=@AdminEmail AND SUPER_ADMIN_PASSWORD=@AdminPass"));
+          return regeneratorRuntime.awrap(pool.request().input("AdminEmail", AdminEmail).input("AdminPass", AdminPass).query("SELECT * FROM [SUPER_ADMIN] WHERE SUPER_ADMIN_EMAIL=@AdminEmail AND SUPER_ADMIN_PASSWORD=@AdminPass"));
 
         case 6:
           result = _context.sent;
-
-          _pool.close();
+          pool.close();
 
           if (!(result.recordsets[0].length > 0)) {
             _context.next = 12;
@@ -42,16 +40,15 @@ function getAdminLogin(AdminEmail, AdminPass) {
           return _context.abrupt("return", false);
 
         case 13:
-          _context.next = 19;
+          _context.next = 18;
           break;
 
         case 15:
           _context.prev = 15;
           _context.t0 = _context["catch"](0);
-          console.log(_context.t0);
-          pool.close();
+          console.log(_context.t0); // pool.close();
 
-        case 19:
+        case 18:
         case "end":
           return _context.stop();
       }

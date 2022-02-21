@@ -2,7 +2,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-07 18:02:44
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-21 16:20:44
+ * @Last Modified time: 2022-02-21 19:33:11
  */
 
 var express = require("express");
@@ -68,7 +68,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/example/a", (req, res) => {
-  res.jsonp("Hello from A!");
+  res.json("Hello from A!");
 });
 
 router.use((req, res, next) => {
@@ -76,21 +76,21 @@ router.use((req, res, next) => {
   next();
 });
 
-router.route("/orders").get((request, response) => {
-  Db.getOrders().then((data) => {
+router.route("/orders").get(async (request, response) => {
+  await Db.getOrders().then((data) => {
     response.json(data);
   });
 });
 
-router.route("/orders/:id").get((request, response) => {
-  Db.getOrder(request.params.id).then((data) => {
+router.route("/orders/:id").get(async (request, response) => {
+  await Db.getOrder(request.params.id).then((data) => {
     response.json(data[0]);
   });
 });
 
-router.route("/orders").post((request, response) => {
+router.route("/orders").post(async (request, response) => {
   let order = { ...request.body };
-  Db.addOrder(order).then((data) => {
+  await Db.addOrder(order).then((data) => {
     response.status(201).json(data);
   });
 });
@@ -98,33 +98,39 @@ router.route("/orders").post((request, response) => {
 // -----------Login Api's--------------- //
 
 router.get("/AdminLogin/:email/:password", async (req, res) => {
-  res.jsonp(await AdmDb.getAdminLogin(req.params.email, req.params.password));
+  res.json(await AdmDb.getAdminLogin(req.params.email, req.params.password));
 });
 
 // -----------Country Api's--------------- //
 
-router.route("/countries").get((req, res) => {
-  CountryDb.getCountries().then((data) => {
+// router.route("/countries").get((req, res) => {
+//   CountryDb.getCountries().then((data) => {
+//     // console.log("data: ", data[0]);
+//     res.json(data[0]);
+//   });
+// });
+
+
+router.get("/countries", async (req, res) => {
+  res.json(await CountryDb.getCountries());
+});
+
+router.route("/countries/:id").get(async (req, res) => {
+  await CountryDb.getCountryById(req.params.id).then((data) => {
     res.json(data[0]);
   });
 });
 
-router.route("/countries/:id").get((req, res) => {
-  CountryDb.getCountryById(req.params.id).then((data) => {
-    res.json(data[0]);
-  });
-});
-
-router.route("/countries").post((req, res) => {
+router.route("/countries").post(async (req, res) => {
   let obj = { ...req.body };
 
-  CountryDb.addCountry(obj).then((data) => {
+  await CountryDb.addCountry(obj).then((data) => {
     res.status(201).json(data);
   });
 });
 
-router.route("/countries/:id").delete((req, res) => {
-  CountryDb.deleteCountry(req.params.id).then((data) => {
+router.route("/countries/:id").delete(async (req, res) => {
+  await CountryDb.deleteCountry(req.params.id).then((data) => {
     // console.log(data);
     res.json(data);
   });
@@ -141,21 +147,29 @@ router.put("/countries/:id", async function (req, res, next) {
 });
 
 // -------State Api's--------//
-router.route("/states").get((req, res) => {
-  StateDb.getStates().then((data) => {
-    res.jsonp(data);
+router.route("/states").get(async (req, res) => {
+  await StateDb.getStates().then((data) => {
+    res.json(data);
   });
 });
 
-router.route("/states/:id").get((req, res) => {
-  StateDb.getStatesById(req.params.id).then((data) => {
+router.route("/states/:id").get(async (req, res) => {
+  await StateDb.getStatesById(req.params.id).then((data) => {
     res.json(data[0]);
   });
 });
 
-router.route("/states").post((req, res) => {
+router.route("/states").post(async (req, res) => {
   let obj = { ...req.body };
-  StateDb.addState(obj).then((data) => {
+  await StateDb.addState(obj).then((data) => {
+    res.status(201).json(data);
+  });
+});
+router.route("/statesCheckBox").post(async (req, res) => {
+  let obj = { ...req.body };
+  // obj = obj.CountryId;
+  console.log("obj: ", obj);
+  StateDb.getForCheckBoxStateByCountryId(obj).then((data) => {
     res.status(201).json(data);
   });
 });
@@ -170,8 +184,8 @@ router.put("/states/:id", async function (req, res, next) {
   }
 });
 
-router.route("/getStateByCountryId/:id").get((req, res) => {
-  StateDb.getStateByCountryId(req.params.id).then((data) => {
+router.route("/getStateByCountryId/:id").get(async (req, res) => {
+  await StateDb.getStateByCountryId(req.params.id).then((data) => {
     res.json(data[0]);
   });
 });
@@ -225,11 +239,11 @@ router.delete("/cities/:id", async (req, res) => {
 // -------Area Api's----------------------------------------------------//
 
 router.get("/areas", async (req, res) => {
-  res.jsonp(await AreaDb.getAreas());
+  res.json(await AreaDb.getAreas());
 });
 
 router.get("/areasByCityId/:id", async (req, res) => {
-  res.jsonp(await AreaDb.getAreasByCityId(req.params.id));
+  res.json(await AreaDb.getAreasByCityId(req.params.id));
 });
 
 router.post("/areas", async (req, res) => {
@@ -259,12 +273,12 @@ router.delete("/areas/:id", async (req, res) => {
 });
 
 router.get("/getAreasByHq/:id", async (req, res) => {
-  res.jsonp(await AreaDb.getAreasByHq(req.params.id));
+  res.json(await AreaDb.getAreasByHq(req.params.id));
 });
 // -------HeadQuarter Api's----------------------------------------------------//
 
 router.get("/hq", async (req, res) => {
-  res.jsonp(await HqDb.getHq());
+  res.json(await HqDb.getHq());
 });
 
 router.post("/hq", async (req, res) => {
@@ -294,7 +308,7 @@ router.delete("/hq/:id", async (req, res) => {
 
 // -------COMPANY MASTER Api's----------------------------------------------------//
 router.get("/companies", async (req, res) => {
-  res.jsonp(await CompDb.getCompanies());
+  res.json(await CompDb.getCompanies());
 });
 
 router.post("/companies", async (req, res) => {
@@ -325,7 +339,7 @@ router.delete("/companies/:id", async (req, res) => {
 
 // -------EMPLOYEE-TYPE Api's----------------------------------------------------//
 router.get("/emptypes", async (req, res) => {
-  res.jsonp(await EmpsDb.getEmpTypes());
+  res.json(await EmpsDb.getEmpTypes());
 });
 
 router.post("/emptypes", async (req, res) => {
@@ -356,11 +370,11 @@ router.delete("/emptypes/:id", async (req, res) => {
 
 // -------EMPLOYEE-SUB-TYPE Api's----------------------------------------------------//
 router.get("/empsubtypes", async (req, res) => {
-  res.jsonp(await EmpsDb.getEmpSubTypes());
+  res.json(await EmpsDb.getEmpSubTypes());
 });
 
 router.get("/empsubtypesById/:id", async (req, res) => {
-  res.jsonp(await EmpsDb.getEmpSubTypesById(req.params.id));
+  res.json(await EmpsDb.getEmpSubTypesById(req.params.id));
 });
 
 router.post("/empsubtypes", async (req, res) => {
@@ -391,7 +405,7 @@ router.put("/empsubtypes/:id", async (req, res) => {
 // -------EMPLOYEE Details Api's----------------------------------------------------//
 
 router.get("/emps", async (req, res) => {
-  res.jsonp(await EmpsDb.getEmp());
+  res.json(await EmpsDb.getEmp());
 });
 
 router.post("/emps", async (req, res) => {
@@ -420,18 +434,18 @@ router.delete("/emps/:id", async (req, res) => {
 });
 
 router.get("/empById/:id", async (req, res) => {
-  res.jsonp(await EmpsDb.getEmpById(req.params.id));
+  res.json(await EmpsDb.getEmpById(req.params.id));
   console.log("req.params.id: ", req.params.id);
 });
 
 router.get("/getEmpByIsManager/:id", async (req, res) => {
-  res.jsonp(await EmpsDb.getEmpByIsManager(req.params.id));
+  res.json(await EmpsDb.getEmpByIsManager(req.params.id));
 });
 
 // -------CUSTOMER Api's----------------------------------------------------//
 
 router.get("/custcat", async (req, res) => {
-  res.jsonp(await CustsDb.getCustomersCat());
+  res.json(await CustsDb.getCustomersCat());
 });
 
 router.post("/custcat", async (req, res) => {
@@ -462,7 +476,7 @@ router.put("/custcat/:id", async (req, res) => {
 // -------UOM Api's----------------------------------------------------//
 
 router.get("/uom", async (req, res) => {
-  res.jsonp(await UomDb.getUom());
+  res.json(await UomDb.getUom());
 });
 
 router.post("/uom", async (req, res) => {

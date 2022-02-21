@@ -4,15 +4,14 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-08 12:20:30
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-14 13:01:37
+ * @Last Modified time: 2022-02-21 17:56:33
  */
 var config = require("../dbconfig");
 
 var sql = require("mssql");
 
 function getEmpTypes() {
-  var _pool, result;
-
+  var pool, result;
   return regeneratorRuntime.async(function getEmpTypes$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
@@ -22,24 +21,21 @@ function getEmpTypes() {
           return regeneratorRuntime.awrap(sql.connect(config));
 
         case 3:
-          _pool = _context.sent;
+          pool = _context.sent;
           _context.next = 6;
-          return regeneratorRuntime.awrap(_pool.request().query("SELECT * FROM [EMPLOYEE_TYPE]"));
+          return regeneratorRuntime.awrap(pool.request().query("SELECT * FROM [EMPLOYEE_TYPE]"));
 
         case 6:
           result = _context.sent;
-
-          _pool.close();
-
+          pool.close();
           return _context.abrupt("return", result.recordsets[0]);
 
         case 11:
           _context.prev = 11;
           _context.t0 = _context["catch"](0);
-          console.log(_context.t0);
-          pool.close();
+          console.log(_context.t0); // pool.close();
 
-        case 15:
+        case 14:
         case "end":
           return _context.stop();
       }
@@ -48,8 +44,7 @@ function getEmpTypes() {
 }
 
 function addEmpType(obj) {
-  var _pool2, result, insertInto;
-
+  var pool, result, insertInto;
   return regeneratorRuntime.async(function addEmpType$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
@@ -59,9 +54,9 @@ function addEmpType(obj) {
           return regeneratorRuntime.awrap(sql.connect(config));
 
         case 3:
-          _pool2 = _context2.sent;
+          pool = _context2.sent;
           _context2.next = 6;
-          return regeneratorRuntime.awrap(_pool2.request().input("EmpTypeName", sql.VarChar, obj.EmpTypeName).query("SELECT * from EMPLOYEE_TYPE WHERE EMPLOYEE_TYPE_NAME=@EmpTypeName"));
+          return regeneratorRuntime.awrap(pool.request().input("EmpTypeName", sql.VarChar, obj.EmpTypeName).query("SELECT * from EMPLOYEE_TYPE WHERE EMPLOYEE_TYPE_NAME=@EmpTypeName"));
 
         case 6:
           result = _context2.sent;
@@ -72,7 +67,7 @@ function addEmpType(obj) {
           }
 
           _context2.next = 10;
-          return regeneratorRuntime.awrap(_pool2.request().input("EmpTypeName", sql.VarChar, obj.EmpTypeName).query("insert into EMPLOYEE_TYPE ([EMPLOYEE_TYPE_NAME] ,[EMPLOYEE_TYPE_ISMANAGER] ,[EMPLOYEE_TYPE_ACTIVE])  values(@EmpTypeName,1,1)"));
+          return regeneratorRuntime.awrap(pool.request().input("EmpTypeName", sql.VarChar, obj.EmpTypeName).query("insert into EMPLOYEE_TYPE ([EMPLOYEE_TYPE_NAME] ,[EMPLOYEE_TYPE_ISMANAGER] ,[EMPLOYEE_TYPE_ACTIVE])  values(@EmpTypeName,1,1)"));
 
         case 10:
           insertInto = _context2.sent;
@@ -82,13 +77,11 @@ function addEmpType(obj) {
             break;
           }
 
-          _pool2.close();
-
+          pool.close();
           return _context2.abrupt("return", true);
 
         case 16:
-          _pool2.close();
-
+          pool.close();
           return _context2.abrupt("return", false);
 
         case 18:
@@ -96,8 +89,7 @@ function addEmpType(obj) {
           break;
 
         case 20:
-          _pool2.close();
-
+          pool.close();
           return _context2.abrupt("return", "Already Existed!");
 
         case 22:
@@ -154,8 +146,7 @@ function updateEmpType(empId, obj) {
 }
 
 function deleteEmpType(empId) {
-  var _pool3, result;
-
+  var pool, result;
   return regeneratorRuntime.async(function deleteEmpType$(_context4) {
     while (1) {
       switch (_context4.prev = _context4.next) {
@@ -165,40 +156,36 @@ function deleteEmpType(empId) {
           return regeneratorRuntime.awrap(sql.connect(config));
 
         case 3:
-          _pool3 = _context4.sent;
+          pool = _context4.sent;
           _context4.next = 6;
-          return regeneratorRuntime.awrap(_pool3.request().input("input_parameter", empId).query("DELETE FROM EMPLOYEE_TYPE WHERE EMPLOYEE_TYPE_PKID=@input_parameter"));
+          return regeneratorRuntime.awrap(pool.request().input("input_parameter", empId).query("DELETE FROM EMPLOYEE_TYPE WHERE EMPLOYEE_TYPE_PKID=@input_parameter"));
 
         case 6:
           result = _context4.sent;
-
-          _pool3.close();
+          pool.close();
 
           if (!(result.rowsAffected[0] == 0)) {
             _context4.next = 13;
             break;
           }
 
-          _pool3.close();
-
+          pool.close();
           return _context4.abrupt("return", false);
 
         case 13:
-          _pool3.close();
-
+          pool.close();
           return _context4.abrupt("return", true);
 
         case 15:
-          _context4.next = 21;
+          _context4.next = 20;
           break;
 
         case 17:
           _context4.prev = 17;
           _context4.t0 = _context4["catch"](0);
-          console.log(_context4.t0);
-          pool.close();
+          console.log(_context4.t0); // pool.close();
 
-        case 21:
+        case 20:
         case "end":
           return _context4.stop();
       }
@@ -207,8 +194,7 @@ function deleteEmpType(empId) {
 }
 
 function getEmpSubTypes() {
-  var _pool4, result;
-
+  var pool, result;
   return regeneratorRuntime.async(function getEmpSubTypes$(_context5) {
     while (1) {
       switch (_context5.prev = _context5.next) {
@@ -218,24 +204,21 @@ function getEmpSubTypes() {
           return regeneratorRuntime.awrap(sql.connect(config));
 
         case 3:
-          _pool4 = _context5.sent;
+          pool = _context5.sent;
           _context5.next = 6;
-          return regeneratorRuntime.awrap(_pool4.request().query("SELECT est.*,et.EMPLOYEE_TYPE_NAME FROM [EMPLOYEE_SUB_TYPE] est JOIN EMPLOYEE_TYPE et ON EMPLOYEE_TYPE_PKID=EMPLOYEE_SUB_TYPE_TYPE_FKID "));
+          return regeneratorRuntime.awrap(pool.request().query("SELECT est.*,et.EMPLOYEE_TYPE_NAME FROM [EMPLOYEE_SUB_TYPE] est JOIN EMPLOYEE_TYPE et ON EMPLOYEE_TYPE_PKID=EMPLOYEE_SUB_TYPE_TYPE_FKID "));
 
         case 6:
           result = _context5.sent;
-
-          _pool4.close();
-
+          pool.close();
           return _context5.abrupt("return", result.recordsets[0]);
 
         case 11:
           _context5.prev = 11;
           _context5.t0 = _context5["catch"](0);
-          console.log(_context5.t0);
-          pool.close();
+          console.log(_context5.t0); // pool.close();
 
-        case 15:
+        case 14:
         case "end":
           return _context5.stop();
       }
@@ -244,8 +227,7 @@ function getEmpSubTypes() {
 }
 
 function getEmpSubTypesById(EmpTypeId) {
-  var _pool5, result;
-
+  var pool, result;
   return regeneratorRuntime.async(function getEmpSubTypesById$(_context6) {
     while (1) {
       switch (_context6.prev = _context6.next) {
@@ -255,24 +237,21 @@ function getEmpSubTypesById(EmpTypeId) {
           return regeneratorRuntime.awrap(sql.connect(config));
 
         case 3:
-          _pool5 = _context6.sent;
+          pool = _context6.sent;
           _context6.next = 6;
-          return regeneratorRuntime.awrap(_pool5.request().input("EmpTypeId", sql.Int, EmpTypeId).query("SELECT * FROM [EMPLOYEE_SUB_TYPE] WHERE EMPLOYEE_SUB_TYPE_TYPE_FKID=@EmpTypeId"));
+          return regeneratorRuntime.awrap(pool.request().input("EmpTypeId", sql.Int, EmpTypeId).query("SELECT * FROM [EMPLOYEE_SUB_TYPE] WHERE EMPLOYEE_SUB_TYPE_TYPE_FKID=@EmpTypeId"));
 
         case 6:
           result = _context6.sent;
-
-          _pool5.close();
-
+          pool.close();
           return _context6.abrupt("return", result.recordsets[0]);
 
         case 11:
           _context6.prev = 11;
           _context6.t0 = _context6["catch"](0);
-          console.log(_context6.t0);
-          pool.close();
+          console.log(_context6.t0); // pool.close();
 
-        case 15:
+        case 14:
         case "end":
           return _context6.stop();
       }
@@ -281,8 +260,7 @@ function getEmpSubTypesById(EmpTypeId) {
 }
 
 function addEmpSubType(obj) {
-  var _pool6, result, insertInto;
-
+  var pool, result, insertInto;
   return regeneratorRuntime.async(function addEmpSubType$(_context7) {
     while (1) {
       switch (_context7.prev = _context7.next) {
@@ -292,9 +270,9 @@ function addEmpSubType(obj) {
           return regeneratorRuntime.awrap(sql.connect(config));
 
         case 3:
-          _pool6 = _context7.sent;
+          pool = _context7.sent;
           _context7.next = 6;
-          return regeneratorRuntime.awrap(_pool6.request().input("EmpTypeId", sql.VarChar, obj.EmpTypeId).input("EmpSubTypeName", sql.VarChar, obj.EmpSubTypeName).query("SELECT * from EMPLOYEE_SUB_TYPE WHERE EMPLOYEE_SUB_TYPE_NAME=@EmpSubTypeName"));
+          return regeneratorRuntime.awrap(pool.request().input("EmpTypeId", sql.VarChar, obj.EmpTypeId).input("EmpSubTypeName", sql.VarChar, obj.EmpSubTypeName).query("SELECT * from EMPLOYEE_SUB_TYPE WHERE EMPLOYEE_SUB_TYPE_NAME=@EmpSubTypeName"));
 
         case 6:
           result = _context7.sent;
@@ -305,7 +283,7 @@ function addEmpSubType(obj) {
           }
 
           _context7.next = 10;
-          return regeneratorRuntime.awrap(_pool6.request().input("EmpTypeId", sql.Int, obj.EmpTypeId).input("EmpSubTypeName", sql.VarChar, obj.EmpSubTypeName).query("insert into EMPLOYEE_SUB_TYPE ([EMPLOYEE_SUB_TYPE_TYPE_FKID] ,[EMPLOYEE_SUB_TYPE_NAME] ,[EMPLOYEE_SUB_TYPE_ACTIVE])  values(@EmpTypeId,@EmpSubTypeName,1)"));
+          return regeneratorRuntime.awrap(pool.request().input("EmpTypeId", sql.Int, obj.EmpTypeId).input("EmpSubTypeName", sql.VarChar, obj.EmpSubTypeName).query("insert into EMPLOYEE_SUB_TYPE ([EMPLOYEE_SUB_TYPE_TYPE_FKID] ,[EMPLOYEE_SUB_TYPE_NAME] ,[EMPLOYEE_SUB_TYPE_ACTIVE])  values(@EmpTypeId,@EmpSubTypeName,1)"));
 
         case 10:
           insertInto = _context7.sent;
@@ -315,13 +293,11 @@ function addEmpSubType(obj) {
             break;
           }
 
-          _pool6.close();
-
+          pool.close();
           return _context7.abrupt("return", true);
 
         case 16:
-          _pool6.close();
-
+          pool.close();
           return _context7.abrupt("return", false);
 
         case 18:
@@ -329,8 +305,7 @@ function addEmpSubType(obj) {
           break;
 
         case 20:
-          _pool6.close();
-
+          pool.close();
           return _context7.abrupt("return", "Already Existed!");
 
         case 22:
@@ -351,8 +326,7 @@ function addEmpSubType(obj) {
 }
 
 function deleteEmpSubType(empSubId) {
-  var _pool7, result;
-
+  var pool, result;
   return regeneratorRuntime.async(function deleteEmpSubType$(_context8) {
     while (1) {
       switch (_context8.prev = _context8.next) {
@@ -362,40 +336,36 @@ function deleteEmpSubType(empSubId) {
           return regeneratorRuntime.awrap(sql.connect(config));
 
         case 3:
-          _pool7 = _context8.sent;
+          pool = _context8.sent;
           _context8.next = 6;
-          return regeneratorRuntime.awrap(_pool7.request().input("input_parameter", empSubId).query("DELETE FROM EMPLOYEE_SUB_TYPE WHERE EMPLOYEE_SUB_TYPE_PKID=@input_parameter"));
+          return regeneratorRuntime.awrap(pool.request().input("input_parameter", empSubId).query("DELETE FROM EMPLOYEE_SUB_TYPE WHERE EMPLOYEE_SUB_TYPE_PKID=@input_parameter"));
 
         case 6:
           result = _context8.sent;
-
-          _pool7.close();
+          pool.close();
 
           if (!(result.rowsAffected[0] == 0)) {
             _context8.next = 13;
             break;
           }
 
-          _pool7.close();
-
+          pool.close();
           return _context8.abrupt("return", false);
 
         case 13:
-          _pool7.close();
-
+          pool.close();
           return _context8.abrupt("return", true);
 
         case 15:
-          _context8.next = 21;
+          _context8.next = 20;
           break;
 
         case 17:
           _context8.prev = 17;
           _context8.t0 = _context8["catch"](0);
-          console.log(_context8.t0);
-          pool.close();
+          console.log(_context8.t0); // pool.close();
 
-        case 21:
+        case 20:
         case "end":
           return _context8.stop();
       }
@@ -440,8 +410,7 @@ function updateEmpSubType(empSubtypeId, obj) {
 }
 
 function getEmp() {
-  var _pool8, result;
-
+  var pool, result;
   return regeneratorRuntime.async(function getEmp$(_context10) {
     while (1) {
       switch (_context10.prev = _context10.next) {
@@ -451,24 +420,21 @@ function getEmp() {
           return regeneratorRuntime.awrap(sql.connect(config));
 
         case 3:
-          _pool8 = _context10.sent;
+          pool = _context10.sent;
           _context10.next = 6;
-          return regeneratorRuntime.awrap(_pool8.request().query("SELECT [EMPLOYEE_PKID] ,[EMPLOYEE_TYPE_FKID] ,[EMPLOYEE_SUB_TYPE_FKID] ,[EMPLOYEE_ISMANAGER] ,[EMPLOLYEE_MANAGER_FKID] ,[EMPLOYEE_CODE] ,[EMPLOYEE_FIRST_NAME] ,[EMPLOYEE_LAST_NAME] ,[EMPLOYEE_DESIGNATION] ,[EMPLOYEE_HEADQUARTER] ,[EMPLOYEE_COMPANY] ,[EMPLOYEE_QUALIFICATION] ,[EMPLOYEE_EMAIL] ,[EMPLOYEE_PASSWORD] ,[EMPLOYEE_PROFILE] ,[EMPLOYEE_MOBILE] ,[EMPLOYEE_COUNTRY_FKID] ,[EMPLOYEE_STATE_FKID] ,[EMPLOYEE_CITY_FKID] ,[EMPLOYEE_AREA_FKID] ,[EMPLOYEE_COMPLETE_ADDRESS] ,[EMPLOYEE_CORRESPONDENCE_ADDRESS] ,[EMPLOYEE_REGION] ,[EMPLOYEE_SALARY] ,[EMPLOYEE_TARGET] ,[EMPLOYEE_DOB] ,[EMPLOYEE_DOJ] ,[EMPLOYEE_GENDER] ,[EMPLOYEE_REG_DATE] ,[EMPLOYEE_ACTIVE] FROM [EMPLOYEE_MASTER]"));
+          return regeneratorRuntime.awrap(pool.request().query("SELECT [EMPLOYEE_PKID] ,[EMPLOYEE_TYPE_FKID] ,[EMPLOYEE_SUB_TYPE_FKID] ,[EMPLOYEE_ISMANAGER] ,[EMPLOLYEE_MANAGER_FKID] ,[EMPLOYEE_CODE] ,[EMPLOYEE_FIRST_NAME] ,[EMPLOYEE_LAST_NAME] ,[EMPLOYEE_DESIGNATION] ,[EMPLOYEE_HEADQUARTER] ,[EMPLOYEE_COMPANY] ,[EMPLOYEE_QUALIFICATION] ,[EMPLOYEE_EMAIL] ,[EMPLOYEE_PASSWORD] ,[EMPLOYEE_PROFILE] ,[EMPLOYEE_MOBILE] ,[EMPLOYEE_COUNTRY_FKID] ,[EMPLOYEE_STATE_FKID] ,[EMPLOYEE_CITY_FKID] ,[EMPLOYEE_AREA_FKID] ,[EMPLOYEE_COMPLETE_ADDRESS] ,[EMPLOYEE_CORRESPONDENCE_ADDRESS] ,[EMPLOYEE_REGION] ,[EMPLOYEE_SALARY] ,[EMPLOYEE_TARGET] ,[EMPLOYEE_DOB] ,[EMPLOYEE_DOJ] ,[EMPLOYEE_GENDER] ,[EMPLOYEE_REG_DATE] ,[EMPLOYEE_ACTIVE] FROM [EMPLOYEE_MASTER]"));
 
         case 6:
           result = _context10.sent;
-
-          _pool8.close();
-
+          pool.close();
           return _context10.abrupt("return", result.recordsets[0]);
 
         case 11:
           _context10.prev = 11;
           _context10.t0 = _context10["catch"](0);
-          console.log(_context10.t0);
-          pool.close();
+          console.log(_context10.t0); // pool.close();
 
-        case 15:
+        case 14:
         case "end":
           return _context10.stop();
       }
@@ -477,8 +443,7 @@ function getEmp() {
 }
 
 function addEmp(obj) {
-  var _pool9, result, insertInto;
-
+  var pool, result, insertInto;
   return regeneratorRuntime.async(function addEmp$(_context11) {
     while (1) {
       switch (_context11.prev = _context11.next) {
@@ -488,9 +453,9 @@ function addEmp(obj) {
           return regeneratorRuntime.awrap(sql.connect(config));
 
         case 3:
-          _pool9 = _context11.sent;
+          pool = _context11.sent;
           _context11.next = 6;
-          return regeneratorRuntime.awrap(_pool9.request().input("Email", sql.VarChar, obj.Email).query("SELECT * from EMPLOYEE_MASTER WHERE EMPLOYEE_EMAIL=@Email"));
+          return regeneratorRuntime.awrap(pool.request().input("Email", sql.VarChar, obj.Email).query("SELECT * from EMPLOYEE_MASTER WHERE EMPLOYEE_EMAIL=@Email"));
 
         case 6:
           result = _context11.sent;
@@ -501,7 +466,7 @@ function addEmp(obj) {
           }
 
           _context11.next = 10;
-          return regeneratorRuntime.awrap(_pool9.request().input("Emptype", sql.VarChar, obj.Emptype).input("EmpSubtype", sql.VarChar, obj.EmpSubtype).input("Country", sql.VarChar, obj.Country).input("State", sql.VarChar, obj.State).input("City", sql.VarChar, obj.City).input("Area", sql.VarChar, obj.Area).input("FName", sql.VarChar, obj.FName).input("LName", sql.VarChar, obj.LName).input("Email", sql.VarChar, obj.Email).input("Designation", sql.VarChar, obj.Designation).input("HQtr", sql.VarChar, obj.HQtr).input("Company", sql.VarChar, obj.Company).input("Qlfn", sql.VarChar, obj.Qlfn).input("Address1", sql.VarChar, obj.Address1).input("Address2", sql.VarChar, obj.Address2).input("Region", sql.VarChar, obj.Region).input("Salary", sql.VarChar, obj.Salary).input("Target", sql.VarChar, obj.Target).input("Mobile", sql.VarChar, obj.Mobile).input("Gender", sql.VarChar, obj.Gender).input("IsManager", sql.VarChar, obj.IsManager).input("ReportingTo", sql.Int, obj.ReportingTo).input("Dob", sql.VarChar, obj.Dob).input("Doj", sql.VarChar, obj.Doj).input("Password", sql.VarChar, obj.Password).query("INSERT INTO [EMPLOYEE_MASTER] ([EMPLOYEE_TYPE_FKID] ,[EMPLOYEE_SUB_TYPE_FKID] ,[EMPLOYEE_ISMANAGER] ,[EMPLOLYEE_MANAGER_FKID] ,[EMPLOYEE_CODE] ,[EMPLOYEE_FIRST_NAME] ,[EMPLOYEE_LAST_NAME] ,[EMPLOYEE_DESIGNATION] ,[EMPLOYEE_HEADQUARTER] ,[EMPLOYEE_COMPANY] ,[EMPLOYEE_QUALIFICATION] ,[EMPLOYEE_EMAIL] ,[EMPLOYEE_PASSWORD] ,[EMPLOYEE_PROFILE] ,[EMPLOYEE_MOBILE] ,[EMPLOYEE_COUNTRY_FKID] ,[EMPLOYEE_STATE_FKID] ,[EMPLOYEE_CITY_FKID] ,[EMPLOYEE_AREA_FKID] ,[EMPLOYEE_COMPLETE_ADDRESS] ,[EMPLOYEE_CORRESPONDENCE_ADDRESS] ,[EMPLOYEE_REGION] ,[EMPLOYEE_SALARY] ,[EMPLOYEE_TARGET] ,[EMPLOYEE_DOB] ,[EMPLOYEE_DOJ] ,[EMPLOYEE_GENDER] ,[EMPLOYEE_REG_DATE] ,[EMPLOYEE_ACTIVE]) VALUES (@Emptype,@EmpSubtype,@IsManager,@ReportingTo,'code',@FName,@LName,@Designation,@HQtr,@Company,@Qlfn,@Email,@Password,'-',@Mobile,@Country,@State,@City,@Area,@Address1,@Address2,@Region,@Salary,@Target,@Dob,@Doj,@Gender, CAST( GETDATE() AS Date ),'1')"));
+          return regeneratorRuntime.awrap(pool.request().input("Emptype", sql.VarChar, obj.Emptype).input("EmpSubtype", sql.VarChar, obj.EmpSubtype).input("Country", sql.VarChar, obj.Country).input("State", sql.VarChar, obj.State).input("City", sql.VarChar, obj.City).input("Area", sql.VarChar, obj.Area).input("FName", sql.VarChar, obj.FName).input("LName", sql.VarChar, obj.LName).input("Email", sql.VarChar, obj.Email).input("Designation", sql.VarChar, obj.Designation).input("HQtr", sql.VarChar, obj.HQtr).input("Company", sql.VarChar, obj.Company).input("Qlfn", sql.VarChar, obj.Qlfn).input("Address1", sql.VarChar, obj.Address1).input("Address2", sql.VarChar, obj.Address2).input("Region", sql.VarChar, obj.Region).input("Salary", sql.VarChar, obj.Salary).input("Target", sql.VarChar, obj.Target).input("Mobile", sql.VarChar, obj.Mobile).input("Gender", sql.VarChar, obj.Gender).input("IsManager", sql.VarChar, obj.IsManager).input("ReportingTo", sql.Int, obj.ReportingTo).input("Dob", sql.VarChar, obj.Dob).input("Doj", sql.VarChar, obj.Doj).input("Password", sql.VarChar, obj.Password).query("INSERT INTO [EMPLOYEE_MASTER] ([EMPLOYEE_TYPE_FKID] ,[EMPLOYEE_SUB_TYPE_FKID] ,[EMPLOYEE_ISMANAGER] ,[EMPLOLYEE_MANAGER_FKID] ,[EMPLOYEE_CODE] ,[EMPLOYEE_FIRST_NAME] ,[EMPLOYEE_LAST_NAME] ,[EMPLOYEE_DESIGNATION] ,[EMPLOYEE_HEADQUARTER] ,[EMPLOYEE_COMPANY] ,[EMPLOYEE_QUALIFICATION] ,[EMPLOYEE_EMAIL] ,[EMPLOYEE_PASSWORD] ,[EMPLOYEE_PROFILE] ,[EMPLOYEE_MOBILE] ,[EMPLOYEE_COUNTRY_FKID] ,[EMPLOYEE_STATE_FKID] ,[EMPLOYEE_CITY_FKID] ,[EMPLOYEE_AREA_FKID] ,[EMPLOYEE_COMPLETE_ADDRESS] ,[EMPLOYEE_CORRESPONDENCE_ADDRESS] ,[EMPLOYEE_REGION] ,[EMPLOYEE_SALARY] ,[EMPLOYEE_TARGET] ,[EMPLOYEE_DOB] ,[EMPLOYEE_DOJ] ,[EMPLOYEE_GENDER] ,[EMPLOYEE_REG_DATE] ,[EMPLOYEE_ACTIVE]) VALUES (@Emptype,@EmpSubtype,@IsManager,@ReportingTo,'code',@FName,@LName,@Designation,@HQtr,@Company,@Qlfn,@Email,@Password,'-',@Mobile,@Country,@State,@City,@Area,@Address1,@Address2,@Region,@Salary,@Target,@Dob,@Doj,@Gender, CAST( GETDATE() AS Date ),'1')"));
 
         case 10:
           insertInto = _context11.sent;
@@ -511,13 +476,11 @@ function addEmp(obj) {
             break;
           }
 
-          _pool9.close();
-
+          pool.close();
           return _context11.abrupt("return", true);
 
         case 16:
-          _pool9.close();
-
+          pool.close();
           return _context11.abrupt("return", false);
 
         case 18:
@@ -525,8 +488,7 @@ function addEmp(obj) {
           break;
 
         case 20:
-          _pool9.close();
-
+          pool.close();
           return _context11.abrupt("return", "Already Existed!");
 
         case 22:
@@ -583,8 +545,7 @@ function updateEmp(empId, obj) {
 }
 
 function deleteEmp(empId) {
-  var _pool10, result;
-
+  var pool, result;
   return regeneratorRuntime.async(function deleteEmp$(_context13) {
     while (1) {
       switch (_context13.prev = _context13.next) {
@@ -594,40 +555,36 @@ function deleteEmp(empId) {
           return regeneratorRuntime.awrap(sql.connect(config));
 
         case 3:
-          _pool10 = _context13.sent;
+          pool = _context13.sent;
           _context13.next = 6;
-          return regeneratorRuntime.awrap(_pool10.request().input("input_parameter", empId).query("DELETE FROM EMPLOYEE_MASTER WHERE EMPLOYEE_PKID=@input_parameter"));
+          return regeneratorRuntime.awrap(pool.request().input("input_parameter", empId).query("DELETE FROM EMPLOYEE_MASTER WHERE EMPLOYEE_PKID=@input_parameter"));
 
         case 6:
           result = _context13.sent;
-
-          _pool10.close();
+          pool.close();
 
           if (!(result.rowsAffected[0] == 0)) {
             _context13.next = 13;
             break;
           }
 
-          _pool10.close();
-
+          pool.close();
           return _context13.abrupt("return", false);
 
         case 13:
-          _pool10.close();
-
+          pool.close();
           return _context13.abrupt("return", true);
 
         case 15:
-          _context13.next = 21;
+          _context13.next = 20;
           break;
 
         case 17:
           _context13.prev = 17;
           _context13.t0 = _context13["catch"](0);
-          console.log(_context13.t0);
-          pool.close();
+          console.log(_context13.t0); // pool.close();
 
-        case 21:
+        case 20:
         case "end":
           return _context13.stop();
       }
@@ -636,8 +593,7 @@ function deleteEmp(empId) {
 }
 
 function getEmpById(EmpId) {
-  var _pool11, result;
-
+  var pool, result;
   return regeneratorRuntime.async(function getEmpById$(_context14) {
     while (1) {
       switch (_context14.prev = _context14.next) {
@@ -648,24 +604,21 @@ function getEmpById(EmpId) {
           return regeneratorRuntime.awrap(sql.connect(config));
 
         case 4:
-          _pool11 = _context14.sent;
+          pool = _context14.sent;
           _context14.next = 7;
-          return regeneratorRuntime.awrap(_pool11.request().input("EmpId", EmpId).query("SELECT * FROM [EMPLOYEE_MASTER] WHERE EMPLOYEE_PKID=@EmpId"));
+          return regeneratorRuntime.awrap(pool.request().input("EmpId", EmpId).query("SELECT * FROM [EMPLOYEE_MASTER] WHERE EMPLOYEE_PKID=@EmpId"));
 
         case 7:
           result = _context14.sent;
-
-          _pool11.close();
-
+          pool.close();
           return _context14.abrupt("return", result.recordsets[0]);
 
         case 12:
           _context14.prev = 12;
           _context14.t0 = _context14["catch"](1);
-          console.log(_context14.t0);
-          pool.close();
+          console.log(_context14.t0); // pool.close();
 
-        case 16:
+        case 15:
         case "end":
           return _context14.stop();
       }
@@ -674,8 +627,7 @@ function getEmpById(EmpId) {
 }
 
 function getEmpByIsManager(IsManager) {
-  var _pool12, result;
-
+  var pool, result;
   return regeneratorRuntime.async(function getEmpByIsManager$(_context15) {
     while (1) {
       switch (_context15.prev = _context15.next) {
@@ -685,24 +637,21 @@ function getEmpByIsManager(IsManager) {
           return regeneratorRuntime.awrap(sql.connect(config));
 
         case 3:
-          _pool12 = _context15.sent;
+          pool = _context15.sent;
           _context15.next = 6;
-          return regeneratorRuntime.awrap(_pool12.request().input("IsManager", IsManager).query("SELECT * FROM [EMPLOYEE_MASTER] WHERE EMPLOYEE_ISMANAGER=@IsManager"));
+          return regeneratorRuntime.awrap(pool.request().input("IsManager", IsManager).query("SELECT * FROM [EMPLOYEE_MASTER] WHERE EMPLOYEE_ISMANAGER=@IsManager"));
 
         case 6:
           result = _context15.sent;
-
-          _pool12.close();
-
+          pool.close();
           return _context15.abrupt("return", result.recordsets[0]);
 
         case 11:
           _context15.prev = 11;
           _context15.t0 = _context15["catch"](0);
-          console.log(_context15.t0);
-          pool.close();
+          console.log(_context15.t0); // pool.close();
 
-        case 15:
+        case 14:
         case "end":
           return _context15.stop();
       }

@@ -26,7 +26,7 @@ const upload = async (req, res) => {
 
 
 const getListFiles = (req, res) => {
-  console.log("__basedir", __basedir);
+
   const directoryPath = __basedir + "/resources/static/assets/uploads/";
   // const directoryPath =
   // ("https://bposervicestemp.tranquildevelopers.com/tempfold/");
