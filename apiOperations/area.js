@@ -2,7 +2,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-07 17:55:30
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-21 11:58:27
+ * @Last Modified time: 2022-02-21 16:31:29
  */
 var config = require("../dbconfig");
 const sql = require("mssql");
@@ -52,7 +52,7 @@ async function getAreasByHq(hqId) {
       .request()
       .input("input_parameter", hqId)
       .query(
-        "SELECT * FROM AREA_MASTER JOIN HQ ON HQ_CITY_FKID=AREA_CITY_FKID WHERE AREA_CITY_FKID=@input_parameter"
+        "SELECT * FROM AREA_MASTER JOIN HQ ON HQ_CITY_FKID=AREA_CITY_FKID WHERE HQ_PKID=@input_parameter"
       );
     pool.close();
     // console.log(result.recordsets);

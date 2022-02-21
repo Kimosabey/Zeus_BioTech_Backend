@@ -4,7 +4,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-07 17:55:30
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-21 11:58:27
+ * @Last Modified time: 2022-02-21 16:31:29
  */
 var config = require("../dbconfig");
 
@@ -98,7 +98,7 @@ function getAreasByHq(hqId) {
         case 3:
           _pool3 = _context3.sent;
           _context3.next = 6;
-          return regeneratorRuntime.awrap(_pool3.request().input("input_parameter", hqId).query("SELECT * FROM AREA_MASTER JOIN HQ ON HQ_CITY_FKID=AREA_CITY_FKID WHERE AREA_CITY_FKID=@input_parameter"));
+          return regeneratorRuntime.awrap(_pool3.request().input("input_parameter", hqId).query("SELECT * FROM AREA_MASTER JOIN HQ ON HQ_CITY_FKID=AREA_CITY_FKID WHERE HQ_PKID=@input_parameter"));
 
         case 6:
           result = _context3.sent;
