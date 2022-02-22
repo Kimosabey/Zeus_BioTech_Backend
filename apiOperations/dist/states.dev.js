@@ -4,7 +4,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-04 16:20:37
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-21 18:59:52
+ * @Last Modified time: 2022-02-22 11:54:48
  */
 var config = require("../dbconfig");
 
@@ -28,7 +28,7 @@ function getStates() {
         case 6:
           result = _context.sent;
           pool.close();
-          return _context.abrupt("return", result.recordsets);
+          return _context.abrupt("return", result.recordsets[0]);
 
         case 11:
           _context.prev = 11;
@@ -61,7 +61,7 @@ function getStatesById(stateId) {
         case 6:
           result = _context2.sent;
           pool.close();
-          return _context2.abrupt("return", result.recordsets);
+          return _context2.abrupt("return", result.recordsets[0]);
 
         case 11:
           _context2.prev = 11;
@@ -94,7 +94,7 @@ function getStateByCountryId(countryId) {
         case 6:
           result = _context3.sent;
           pool.close();
-          return _context3.abrupt("return", result.recordsets);
+          return _context3.abrupt("return", result.recordsets[0]);
 
         case 11:
           _context3.prev = 11;
@@ -125,7 +125,7 @@ function getForCheckBoxStateByCountryId(ObjOfArr) {
           //     );
           //   pool.close();
           //   console.log("result.recordsets[0]: ", result.recordsets);
-          //   return result.recordsets;
+          //   return result.recordsets[0];
           // } catch (error) {
           //   console.log("->", error);
           //   // pool.close();

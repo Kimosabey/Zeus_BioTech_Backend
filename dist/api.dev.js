@@ -10,7 +10,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
  * @Author: Hey Kimo here!
  * @Date: 2022-02-07 18:02:44
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-21 19:33:11
+ * @Last Modified time: 2022-02-22 11:59:16
  */
 var express = require("express");
 
@@ -78,6 +78,19 @@ initRoutes(app); // --------------------------------
 app.get("/", function (req, res) {
   var responseText = '<h1 style="color:green;">Hello Kimo Restful Api Using Nodejs is Working!!!</h1>';
   res.send(responseText);
+});
+app.use(function (req, res, next) {
+  var error = new Error("Not found");
+  error.status = 404;
+  next(error);
+});
+app.use(function (error, req, res, next) {
+  res.status(error.status || 500);
+  res.json({
+    error: {
+      message: error.message
+    }
+  });
 });
 app.get("/example/a", function (req, res) {
   res.json("Hello from A!");

@@ -2,7 +2,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-04 16:20:31
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-21 18:58:31
+ * @Last Modified time: 2022-02-22 12:06:38
  */
 var config = require("../dbconfig");
 const sql = require("mssql");
@@ -35,7 +35,7 @@ async function getCountryById(countryId) {
         "SELECT * from COUNTRY_MASTER WHERE COUNTRY_PKID=@input_parameter"
       );
     pool.close();
-    return result.recordsets;
+    return result.recordsets[0];
   } catch (error) {
     console.log(error);
    // pool.close();

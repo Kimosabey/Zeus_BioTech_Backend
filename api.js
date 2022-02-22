@@ -2,7 +2,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-07 18:02:44
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-21 19:33:11
+ * @Last Modified time: 2022-02-22 11:59:16
  */
 
 var express = require("express");
@@ -67,6 +67,21 @@ app.get("/", (req, res) => {
   res.send(responseText);
 });
 
+app.use((req, res, next) => {
+  const error = new Error("Not found");
+  error.status = 404;
+  next(error);
+});
+
+app.use((error, req, res, next) => {
+  res.status(error.status || 500);
+  res.json({
+    error: {
+      message: error.message,
+    },
+  });
+});
+
 app.get("/example/a", (req, res) => {
   res.json("Hello from A!");
 });
@@ -109,7 +124,6 @@ router.get("/AdminLogin/:email/:password", async (req, res) => {
 //     res.json(data[0]);
 //   });
 // });
-
 
 router.get("/countries", async (req, res) => {
   res.json(await CountryDb.getCountries());
@@ -165,6 +179,8 @@ router.route("/states").post(async (req, res) => {
     res.status(201).json(data);
   });
 });
+
+
 router.route("/statesCheckBox").post(async (req, res) => {
   let obj = { ...req.body };
   // obj = obj.CountryId;
