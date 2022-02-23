@@ -2,7 +2,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-07 18:02:44
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-23 13:11:55
+ * @Last Modified time: 2022-02-23 18:54:45
  */
 
 var express = require("express");
@@ -16,6 +16,7 @@ var router = express.Router();
 router.use(bodyParser.json());
 
 // -------Operations Files ----------
+
 var Db = require("./apiOperations/dboperations");
 var CountryDb = require("./apiOperations/countries");
 var StateDb = require("./apiOperations/states");
@@ -458,8 +459,6 @@ router.get("/emps", async (req, res) => {
 
 router.post("/emps", async (req, res) => {
   let obj = { ...req.body };
-  console.log(" emps obj: ", obj);
-
   try {
     res.json(await EmpsDb.addEmp(obj));
   } catch (err) {
@@ -490,6 +489,23 @@ router.get("/empById/:id", async (req, res) => {
 router.get("/getEmpByIsManager/:id", async (req, res) => {
   res.json(await EmpsDb.getEmpByIsManager(req.params.id));
 });
+
+router.get("/GetEmployeeAddress/:id", async (req, res) => {
+  res.json(await EmpsDb.getAddressByEmpId(req.params.id));
+});
+
+router.get("/GetEmployeeCoveredAreas/:id", async (req, res) => {
+  res.json(await EmpsDb.getCoveredAreaByEmpId(req.params.id));
+});
+
+router.get("/GetEmployeeOtherCoveredAreas/:id", async (req, res) => {
+  res.json(await EmpsDb.getOtherCoveredAreasByEmpId(req.params.id));
+});
+
+router.get("/GetEmployeeOtherDocs/:id", async (req, res) => {
+  res.json(await EmpsDb.getDocsByEmpId(req.params.id));
+});
+
 
 // -------CUSTOMER Api's----------------------------------------------------//
 

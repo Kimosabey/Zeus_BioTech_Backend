@@ -2,7 +2,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-08 12:20:30
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-23 13:19:32
+ * @Last Modified time: 2022-02-23 19:00:42
  */
 
 var config = require("../dbconfig");
@@ -18,7 +18,7 @@ async function getEmpTypes() {
     return result.recordsets[0];
   } catch (error) {
     console.log(error);
-   // pool.close();
+    // pool.close();
   }
 }
 
@@ -97,7 +97,7 @@ async function deleteEmpType(empId) {
     }
   } catch (error) {
     console.log(error);
-   // pool.close();
+    // pool.close();
   }
 }
 
@@ -115,7 +115,7 @@ async function getEmpSubTypes() {
     return result.recordsets[0];
   } catch (error) {
     console.log(error);
-   // pool.close();
+    // pool.close();
   }
 }
 
@@ -193,7 +193,7 @@ async function deleteEmpSubType(empSubId) {
     }
   } catch (error) {
     console.log(error);
-   // pool.close();
+    // pool.close();
   }
 }
 
@@ -224,74 +224,120 @@ async function getEmp() {
   try {
     let pool = await sql.connect(config);
 
-    let result = await pool
-      .request()
-      .query(
-        "SELECT [EMPLOYEE_PKID] ,[EMPLOYEE_TYPE_FKID] ,[EMPLOYEE_SUB_TYPE_FKID] ,[EMPLOYEE_ISMANAGER] ,[EMPLOLYEE_MANAGER_FKID] ,[EMPLOYEE_CODE] ,[EMPLOYEE_FIRST_NAME] ,[EMPLOYEE_LAST_NAME] ,[EMPLOYEE_DESIGNATION] ,[EMPLOYEE_HEADQUARTER] ,[EMPLOYEE_COMPANY] ,[EMPLOYEE_QUALIFICATION] ,[EMPLOYEE_EMAIL] ,[EMPLOYEE_PASSWORD] ,[EMPLOYEE_PROFILE] ,[EMPLOYEE_MOBILE] ,[EMPLOYEE_COUNTRY_FKID] ,[EMPLOYEE_STATE_FKID] ,[EMPLOYEE_CITY_FKID] ,[EMPLOYEE_AREA_FKID] ,[EMPLOYEE_COMPLETE_ADDRESS] ,[EMPLOYEE_CORRESPONDENCE_ADDRESS] ,[EMPLOYEE_REGION] ,[EMPLOYEE_SALARY] ,[EMPLOYEE_TARGET] ,[EMPLOYEE_DOB] ,[EMPLOYEE_DOJ] ,[EMPLOYEE_GENDER] ,[EMPLOYEE_REG_DATE] ,[EMPLOYEE_ACTIVE] FROM [EMPLOYEE_MASTER]"
-      );
+    let result = await pool.request().execute("ViewAllEmployees");
+
     pool.close();
 
     return result.recordsets[0];
   } catch (error) {
     console.log(error);
-   // pool.close();
+    // pool.close();
   }
 }
 
 async function addEmp(obj) {
-  console.log('addEmp obj: ', obj);
-  // try {
-  //   let pool = await sql.connect(config);
-  //   let result = await pool
-  //     .request()
-  //     .input("Email", sql.VarChar, obj.Email)
-  //     .query("SELECT * from EMPLOYEE_MASTER WHERE EMPLOYEE_EMAIL=@Email");
-  //   if (result.rowsAffected[0] == 0) {
-  //     let insertInto = await pool
-  //       .request()
-  //       .input("Emptype", sql.VarChar, obj.Emptype)
-  //       .input("EmpSubtype", sql.VarChar, obj.EmpSubtype)
-  //       .input("Country", sql.VarChar, obj.Country)
-  //       .input("State", sql.VarChar, obj.State)
-  //       .input("City", sql.VarChar, obj.City)
-  //       .input("Area", sql.VarChar, obj.Area)
-  //       .input("FName", sql.VarChar, obj.FName)
-  //       .input("LName", sql.VarChar, obj.LName)
-  //       .input("Email", sql.VarChar, obj.Email)
-  //       .input("Designation", sql.VarChar, obj.Designation)
-  //       .input("HQtr", sql.VarChar, obj.HQtr)
-  //       .input("Company", sql.VarChar, obj.Company)
-  //       .input("Qlfn", sql.VarChar, obj.Qlfn)
-  //       .input("Address1", sql.VarChar, obj.Address1)
-  //       .input("Address2", sql.VarChar, obj.Address2)
-  //       .input("Region", sql.VarChar, obj.Region)
-  //       .input("Salary", sql.VarChar, obj.Salary)
-  //       .input("Target", sql.VarChar, obj.Target)
-  //       .input("Mobile", sql.VarChar, obj.Mobile)
-  //       .input("Gender", sql.VarChar, obj.Gender)
-  //       .input("IsManager", sql.VarChar, obj.IsManager)
-  //       .input("ReportingTo", sql.Int, obj.ReportingTo)
-  //       .input("Dob", sql.VarChar, obj.Dob)
-  //       .input("Doj", sql.VarChar, obj.Doj)
-  //       .input("Password", sql.VarChar, obj.Password)
-  //       .query(
-  //         "INSERT INTO [EMPLOYEE_MASTER] ([EMPLOYEE_TYPE_FKID] ,[EMPLOYEE_SUB_TYPE_FKID] ,[EMPLOYEE_ISMANAGER] ,[EMPLOLYEE_MANAGER_FKID] ,[EMPLOYEE_CODE] ,[EMPLOYEE_FIRST_NAME] ,[EMPLOYEE_LAST_NAME] ,[EMPLOYEE_DESIGNATION] ,[EMPLOYEE_HEADQUARTER] ,[EMPLOYEE_COMPANY] ,[EMPLOYEE_QUALIFICATION] ,[EMPLOYEE_EMAIL] ,[EMPLOYEE_PASSWORD] ,[EMPLOYEE_PROFILE] ,[EMPLOYEE_MOBILE] ,[EMPLOYEE_COUNTRY_FKID] ,[EMPLOYEE_STATE_FKID] ,[EMPLOYEE_CITY_FKID] ,[EMPLOYEE_AREA_FKID] ,[EMPLOYEE_COMPLETE_ADDRESS] ,[EMPLOYEE_CORRESPONDENCE_ADDRESS] ,[EMPLOYEE_REGION] ,[EMPLOYEE_SALARY] ,[EMPLOYEE_TARGET] ,[EMPLOYEE_DOB] ,[EMPLOYEE_DOJ] ,[EMPLOYEE_GENDER] ,[EMPLOYEE_REG_DATE] ,[EMPLOYEE_ACTIVE]) VALUES (@Emptype,@EmpSubtype,@IsManager,@ReportingTo,'code',@FName,@LName,@Designation,@HQtr,@Company,@Qlfn,@Email,@Password,'-',@Mobile,@Country,@State,@City,@Area,@Address1,@Address2,@Region,@Salary,@Target,@Dob,@Doj,@Gender, CAST( GETDATE() AS Date ),'1')"
-  //       );
-  //     // .execute('InsertOrders');
-  //     if (insertInto.rowsAffected == 1) {
-  //       pool.close();
-  //       return true;
-  //     } else {
-  //       pool.close();
-  //       return false;
-  //     }
-  //   } else {
-  //     pool.close();
-  //     return "Already Existed!";
-  //   }
-  // } catch (err) {
-  //   console.log(err);
-  // }
+  // console.log("OtherDocs: ", obj.OtherDocs);
+  // console.log("CoveredArea: ", obj.CoveredArea);
+  // console.log("OtherCoveredArea: ", obj.OtherCoveredArea);
+
+  try {
+    let pool = await sql.connect(config);
+    let result = await pool
+      .request()
+      .input("EMPLOYEE_EMAIL", obj.Email)
+      .input("EMPLOYEE_CONTACT", obj.PhoneNumber)
+      .query(
+        "SELECT * from EMPLOYEE_MASTER WHERE EMPLOYEE_EMAIL=@EMPLOYEE_EMAIL AND EMPLOYEE_CONTACT=@EMPLOYEE_CONTACT"
+      );
+
+    if (result.rowsAffected[0] == 0) {
+      let insertInto = await pool
+        .request()
+        .input("EMPLOYEE_TYPE_FKID", obj.Emptype)
+        .input("EMPOYEE_SUB_TYPE_FKID", obj.EmpSubtype)
+        .input("EMPLOYEE_HQ_FKID", obj.EmpHQ)
+        .input("EMPLOYEE_COMPANY_FKID", obj.Company)
+        .input("EMPLOYEE_NAME", obj.Name)
+        .input("EMPLOYEE_PROFILE", obj.Profile)
+        .input("EMPLOYEE_EMAIL", obj.Email)
+        .input("EMPLOYEE_ALT_EMAIL", obj.Email2)
+        .input("EMPLOYEE_CONTACT", obj.PhoneNumber)
+        .input("EMPLOYEE_ALT_CONTACT", obj.AlterNateNumber)
+        .input("EMPLOYEE_DESIGNATION", obj.Designation)
+        .input("EMPLOYEE_QUALIFICATION", obj.Qualification)
+        .input("EMPLOYEE_DOJ", obj.JoiningDate)
+        .input("EMPLOYEE_DOB", obj.DateofBirth)
+        .input("EMPLOYEE_REGION", obj.Region)
+        .input("EMPLOYEE_PASSWORD", obj.password)
+        .input("EMPLOYEE_GENDER", obj.Gender)
+        .input("EMPLOYEE_REPORTING_TO", obj.ReportingTo)
+        .input("EMPOLYEE_IS_MANAGER", obj.Ismanager)
+        .input("EMPLOYEE_SALARY", obj.salary)
+        .input("EMPLOYEE_DOR", obj.dateofreleaving)
+        .input("EMPLOYEE_ADDRESS1", obj.address1)
+        .input("EMPLOYEE_ADDRESS2", obj.address2)
+        .input("EMPLOYEE_ADDRESS3", obj.address3)
+        .input("EMPLOYEE_ADDRESS_ZIP", obj.ZipCode)
+        .input("EMPLOYEE_ALT_ADDRESS1", obj.altaddress1)
+        .input("EMPLOYEE_ALT_ADDRESS2", obj.altaddress2)
+        .input("EMPLOYEE_ALT_ADDRESS3", obj.altaddress3)
+        .input("EMPLOYEE_ALT_ADDRESS_ZIP", obj.altZipCode)
+        .query(
+          "insert into EMPLOYEE_MASTER ([EMPLOYEE_TYPE_FKID],[EMPOYEE_SUB_TYPE_FKID] ,[EMPLOYEE_HQ_FKID] ,[EMPLOYEE_COMPANY_FKID] ,[EMPLOYEE_NAME] ,[EMPLOYEE_EMAIL] ,[EMPLOYEE_ALT_EMAIL] ,[EMPLOYEE_CONTACT] ,[EMPLOYEE_ALT_CONTACT] ,[EMPLOYEE_DESIGNATION] ,[EMPLOYEE_QUALIFICATION] ,[EMPLOYEE_DOJ] ,[EMPLOYEE_DOB] ,[EMPLOYEE_REGION] ,[EMPLOYEE_GENDER] ,[EMPLOYEE_REPORTING_TO] ,[EMPLOYEE_PASSWORD] ,[EMPLOYEE_PROFILE] ,[EMPOLYEE_IS_MANAGER] ,[EMPLOYEE_SALARY] ,[EMPLOYEE_DOR] ,[EMPLOYEE_ADDRESS1] ,[EMPLOYEE_ADDRESS2] ,[EMPLOYEE_ADDRESS3] ,[EMPLOYEE_ADDRESS_ZIP] ,[EMPLOYEE_ALT_ADDRESS1] ,[EMPLOYEE_ALT_ADDRESS2] ,[EMPLOYEE_ALT_ADDRESS3] ,[EMPLOYEE_ALT_ADDRESS_ZIP] ,[EMPLOYEE_ACTIVE])  values(@EMPLOYEE_TYPE_FKID ,@EMPOYEE_SUB_TYPE_FKID ,@EMPLOYEE_HQ_FKID ,@EMPLOYEE_COMPANY_FKID ,@EMPLOYEE_NAME ,@EMPLOYEE_EMAIL ,@EMPLOYEE_ALT_EMAIL ,@EMPLOYEE_CONTACT ,@EMPLOYEE_ALT_CONTACT ,@EMPLOYEE_DESIGNATION ,@EMPLOYEE_QUALIFICATION ,@EMPLOYEE_DOJ ,@EMPLOYEE_DOB ,@EMPLOYEE_REGION ,@EMPLOYEE_GENDER ,@EMPLOYEE_REPORTING_TO ,@EMPLOYEE_PASSWORD ,@EMPLOYEE_PROFILE ,@EMPOLYEE_IS_MANAGER ,@EMPLOYEE_SALARY ,@EMPLOYEE_DOR ,@EMPLOYEE_ADDRESS1 ,@EMPLOYEE_ADDRESS2 ,@EMPLOYEE_ADDRESS3 ,@EMPLOYEE_ADDRESS_ZIP ,@EMPLOYEE_ALT_ADDRESS1 ,@EMPLOYEE_ALT_ADDRESS2 ,@EMPLOYEE_ALT_ADDRESS3 ,@EMPLOYEE_ALT_ADDRESS_ZIP ,1)"
+        );
+
+      if (insertInto.rowsAffected == 1) {
+        let result = await pool
+          .request()
+          .query("SELECT MAX(EMPLOYEE_PKID) AS PKID from EMPLOYEE_MASTER");
+
+        if (result.recordsets[0].length == 1) {
+          let insertProduct = await pool;
+          obj.OtherDocs.map((i) => {
+            insertProduct
+              .request()
+              .input("PKID", result.recordsets[0][0].PKID)
+              .input("doc", i)
+              .query(
+                `insert into EMPLOYEE_DOCS ([EMPLOYEE_DOCS_EMP_FKID] ,[EMPLOYEE_DOCS_FILE] ,[EMPLOYEE_DOCS_ACTIVE])  values(@PKID,@doc,1)`
+              );
+          });
+          let insertProduct2 = await pool;
+          obj.CoveredArea.map((i) => {
+            insertProduct2
+              .request()
+              .input("PKID", result.recordsets[0][0].PKID)
+              .input("doc", i)
+              .query(
+                `insert into EMPLOYEE_COVERED_AREA ([EMPLOYEE_COVERED_AREA_EMP_FKID] ,[EMPLOYEE_COVERED_AREA_AREA_FKID] ,[EMPLOYEE_COVERED_AREA_ACTIVE])  values(@PKID,@doc,1)`
+              );
+          });
+          let insertProduct3 = await pool;
+          obj.OtherCoveredArea.map((i) => {
+            insertProduct3
+              .request()
+              .input("PKID", result.recordsets[0][0].PKID)
+              .input("doc", i)
+              .query(
+                `insert into EMPLOYEE_OTHER_COVERED_AREA ([EMPLOYEE_OTHER_COVERED_AREA_EMP_FKID] ,[EMPLOYEE_OTHER_COVERED_AREA_AREA_FKID] ,[EMPLOYEE_OTHER_COVERED_AREA_ACTIVE] )  values(@PKID,@doc,1)`
+              );
+          });
+          return true;
+        } else {
+          pool.close();
+          return false;
+        }
+      } else {
+        pool.close();
+        return false;
+      }
+    } else {
+      pool.close();
+      return "0";
+    }
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 async function updateEmp(empId, obj) {
@@ -360,7 +406,7 @@ async function deleteEmp(empId) {
     }
   } catch (error) {
     console.log(error);
-   // pool.close();
+    // pool.close();
   }
 }
 
@@ -378,7 +424,82 @@ async function getEmpById(EmpId) {
     return result.recordsets[0];
   } catch (error) {
     console.log(error);
-   // pool.close();
+    // pool.close();
+  }
+}
+
+async function getAddressByEmpId(EmpId) {
+  try {
+    let pool = await sql.connect(config);
+
+    let result = await pool
+      .request()
+      .input("EmpId", EmpId)
+      .query(
+        "SELECT [EMPLOYEE_ADDRESS1] ,[EMPLOYEE_ADDRESS2] ,[EMPLOYEE_ADDRESS3] ,[EMPLOYEE_ADDRESS_ZIP] ,[EMPLOYEE_ALT_ADDRESS1] ,[EMPLOYEE_ALT_ADDRESS2] ,[EMPLOYEE_ALT_ADDRESS3] ,[EMPLOYEE_ALT_ADDRESS_ZIP]  FROM [EMPLOYEE_MASTER] WHERE EMPLOYEE_PKID=@EmpId"
+      );
+    pool.close();
+
+    return result.recordsets[0];
+  } catch (error) {
+    console.log(error);
+    // pool.close();
+  }
+}
+
+async function getCoveredAreaByEmpId(EmpId) {
+  try {
+    let pool = await sql.connect(config);
+
+    let result = await pool
+      .request()
+      .input("EmpId", EmpId)
+      .query(
+        "SELECT  EMPLOYEE_COVERED_AREA_PKID ,AREA_NAME,COUNTRY_NAME,STATE_NAME,CITY_NAME FROM AREA_MASTER JOIN EMPLOYEE_COVERED_AREA ON AREA_PKID=EMPLOYEE_COVERED_AREA_AREA_FKID JOIN CITY_MASTER ON CITY_PKID=AREA_CITY_FKID JOIN COUNTRY_MASTER ON COUNTRY_PKID=CITY_COUNTRY_FKID JOIN STATE_MASTER ON STATE_PKID=CITY_STATE_FKID  WHERE EMPLOYEE_COVERED_AREA_EMP_FKID=@EmpId"
+      );
+    pool.close();
+
+    return result.recordsets[0];
+  } catch (error) {
+    console.log(error);
+    // pool.close();
+  }
+}
+
+async function getOtherCoveredAreasByEmpId(EmpId) {
+  try {
+    let pool = await sql.connect(config);
+
+    let result = await pool
+      .request()
+      .input("EmpId", EmpId)
+      .query(
+        "SELECT EMPLOYEE_OTHER_COVERED_AREA_PKID, AREA_NAME,COUNTRY_NAME,STATE_NAME,CITY_NAME FROM AREA_MASTER JOIN EMPLOYEE_OTHER_COVERED_AREA ON AREA_PKID=EMPLOYEE_OTHER_COVERED_AREA_AREA_FKID JOIN CITY_MASTER ON CITY_PKID=AREA_CITY_FKID JOIN COUNTRY_MASTER ON COUNTRY_PKID=CITY_COUNTRY_FKID JOIN STATE_MASTER ON STATE_PKID=CITY_STATE_FKID  WHERE EMPLOYEE_OTHER_COVERED_AREA_EMP_FKID=@EmpId"
+      );
+    pool.close();
+
+    return result.recordsets[0];
+  } catch (error) {
+    console.log(error);
+    // pool.close();
+  }
+}
+async function getDocsByEmpId(EmpId) {
+  try {
+    let pool = await sql.connect(config);
+
+    let result = await pool
+      .request()
+      .input("EmpId", EmpId)
+      .query(
+        "SELECT EMPLOYEE_DOCS_FILE FROM [EMPLOYEE_DOCS] WHERE EMPLOYEE_DOCS_EMP_FKID=@EmpId"
+      );
+    pool.close();
+
+    return result.recordsets[0];
+  } catch (error) {
+    console.log(error);
+    // pool.close();
   }
 }
 
@@ -397,13 +518,12 @@ async function getEmpByIsManager(IsManager) {
     return result.recordsets[0];
   } catch (error) {
     console.log(error);
-   // pool.close();
+    // pool.close();
   }
 }
 
 async function importEmps(obj) {
   console.log("obj: ", obj);
- 
 
   // try {
   //   let insertInto = await pool
@@ -466,4 +586,8 @@ module.exports = {
   getEmpByIsManager: getEmpByIsManager,
   updateEmp: updateEmp,
   importEmps: importEmps,
+  getAddressByEmpId: getAddressByEmpId,
+  getCoveredAreaByEmpId: getCoveredAreaByEmpId,
+  getDocsByEmpId: getDocsByEmpId,
+  getOtherCoveredAreasByEmpId: getOtherCoveredAreasByEmpId,
 };

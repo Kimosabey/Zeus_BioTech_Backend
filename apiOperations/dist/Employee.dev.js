@@ -4,7 +4,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-08 12:20:30
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-23 13:19:32
+ * @Last Modified time: 2022-02-23 19:00:42
  */
 var config = require("../dbconfig");
 
@@ -422,7 +422,7 @@ function getEmp() {
         case 3:
           pool = _context10.sent;
           _context10.next = 6;
-          return regeneratorRuntime.awrap(pool.request().query("SELECT [EMPLOYEE_PKID] ,[EMPLOYEE_TYPE_FKID] ,[EMPLOYEE_SUB_TYPE_FKID] ,[EMPLOYEE_ISMANAGER] ,[EMPLOLYEE_MANAGER_FKID] ,[EMPLOYEE_CODE] ,[EMPLOYEE_FIRST_NAME] ,[EMPLOYEE_LAST_NAME] ,[EMPLOYEE_DESIGNATION] ,[EMPLOYEE_HEADQUARTER] ,[EMPLOYEE_COMPANY] ,[EMPLOYEE_QUALIFICATION] ,[EMPLOYEE_EMAIL] ,[EMPLOYEE_PASSWORD] ,[EMPLOYEE_PROFILE] ,[EMPLOYEE_MOBILE] ,[EMPLOYEE_COUNTRY_FKID] ,[EMPLOYEE_STATE_FKID] ,[EMPLOYEE_CITY_FKID] ,[EMPLOYEE_AREA_FKID] ,[EMPLOYEE_COMPLETE_ADDRESS] ,[EMPLOYEE_CORRESPONDENCE_ADDRESS] ,[EMPLOYEE_REGION] ,[EMPLOYEE_SALARY] ,[EMPLOYEE_TARGET] ,[EMPLOYEE_DOB] ,[EMPLOYEE_DOJ] ,[EMPLOYEE_GENDER] ,[EMPLOYEE_REG_DATE] ,[EMPLOYEE_ACTIVE] FROM [EMPLOYEE_MASTER]"));
+          return regeneratorRuntime.awrap(pool.request().execute("ViewAllEmployees"));
 
         case 6:
           result = _context10.sent;
@@ -443,69 +443,112 @@ function getEmp() {
 }
 
 function addEmp(obj) {
+  var pool, result, insertInto, _result, insertProduct, insertProduct2, insertProduct3;
+
   return regeneratorRuntime.async(function addEmp$(_context11) {
     while (1) {
       switch (_context11.prev = _context11.next) {
         case 0:
-          console.log('addEmp obj: ', obj); // try {
-          //   let pool = await sql.connect(config);
-          //   let result = await pool
-          //     .request()
-          //     .input("Email", sql.VarChar, obj.Email)
-          //     .query("SELECT * from EMPLOYEE_MASTER WHERE EMPLOYEE_EMAIL=@Email");
-          //   if (result.rowsAffected[0] == 0) {
-          //     let insertInto = await pool
-          //       .request()
-          //       .input("Emptype", sql.VarChar, obj.Emptype)
-          //       .input("EmpSubtype", sql.VarChar, obj.EmpSubtype)
-          //       .input("Country", sql.VarChar, obj.Country)
-          //       .input("State", sql.VarChar, obj.State)
-          //       .input("City", sql.VarChar, obj.City)
-          //       .input("Area", sql.VarChar, obj.Area)
-          //       .input("FName", sql.VarChar, obj.FName)
-          //       .input("LName", sql.VarChar, obj.LName)
-          //       .input("Email", sql.VarChar, obj.Email)
-          //       .input("Designation", sql.VarChar, obj.Designation)
-          //       .input("HQtr", sql.VarChar, obj.HQtr)
-          //       .input("Company", sql.VarChar, obj.Company)
-          //       .input("Qlfn", sql.VarChar, obj.Qlfn)
-          //       .input("Address1", sql.VarChar, obj.Address1)
-          //       .input("Address2", sql.VarChar, obj.Address2)
-          //       .input("Region", sql.VarChar, obj.Region)
-          //       .input("Salary", sql.VarChar, obj.Salary)
-          //       .input("Target", sql.VarChar, obj.Target)
-          //       .input("Mobile", sql.VarChar, obj.Mobile)
-          //       .input("Gender", sql.VarChar, obj.Gender)
-          //       .input("IsManager", sql.VarChar, obj.IsManager)
-          //       .input("ReportingTo", sql.Int, obj.ReportingTo)
-          //       .input("Dob", sql.VarChar, obj.Dob)
-          //       .input("Doj", sql.VarChar, obj.Doj)
-          //       .input("Password", sql.VarChar, obj.Password)
-          //       .query(
-          //         "INSERT INTO [EMPLOYEE_MASTER] ([EMPLOYEE_TYPE_FKID] ,[EMPLOYEE_SUB_TYPE_FKID] ,[EMPLOYEE_ISMANAGER] ,[EMPLOLYEE_MANAGER_FKID] ,[EMPLOYEE_CODE] ,[EMPLOYEE_FIRST_NAME] ,[EMPLOYEE_LAST_NAME] ,[EMPLOYEE_DESIGNATION] ,[EMPLOYEE_HEADQUARTER] ,[EMPLOYEE_COMPANY] ,[EMPLOYEE_QUALIFICATION] ,[EMPLOYEE_EMAIL] ,[EMPLOYEE_PASSWORD] ,[EMPLOYEE_PROFILE] ,[EMPLOYEE_MOBILE] ,[EMPLOYEE_COUNTRY_FKID] ,[EMPLOYEE_STATE_FKID] ,[EMPLOYEE_CITY_FKID] ,[EMPLOYEE_AREA_FKID] ,[EMPLOYEE_COMPLETE_ADDRESS] ,[EMPLOYEE_CORRESPONDENCE_ADDRESS] ,[EMPLOYEE_REGION] ,[EMPLOYEE_SALARY] ,[EMPLOYEE_TARGET] ,[EMPLOYEE_DOB] ,[EMPLOYEE_DOJ] ,[EMPLOYEE_GENDER] ,[EMPLOYEE_REG_DATE] ,[EMPLOYEE_ACTIVE]) VALUES (@Emptype,@EmpSubtype,@IsManager,@ReportingTo,'code',@FName,@LName,@Designation,@HQtr,@Company,@Qlfn,@Email,@Password,'-',@Mobile,@Country,@State,@City,@Area,@Address1,@Address2,@Region,@Salary,@Target,@Dob,@Doj,@Gender, CAST( GETDATE() AS Date ),'1')"
-          //       );
-          //     // .execute('InsertOrders');
-          //     if (insertInto.rowsAffected == 1) {
-          //       pool.close();
-          //       return true;
-          //     } else {
-          //       pool.close();
-          //       return false;
-          //     }
-          //   } else {
-          //     pool.close();
-          //     return "Already Existed!";
-          //   }
-          // } catch (err) {
-          //   console.log(err);
-          // }
+          _context11.prev = 0;
+          _context11.next = 3;
+          return regeneratorRuntime.awrap(sql.connect(config));
 
-        case 1:
+        case 3:
+          pool = _context11.sent;
+          _context11.next = 6;
+          return regeneratorRuntime.awrap(pool.request().input("EMPLOYEE_EMAIL", obj.Email).input("EMPLOYEE_CONTACT", obj.PhoneNumber).query("SELECT * from EMPLOYEE_MASTER WHERE EMPLOYEE_EMAIL=@EMPLOYEE_EMAIL AND EMPLOYEE_CONTACT=@EMPLOYEE_CONTACT"));
+
+        case 6:
+          result = _context11.sent;
+
+          if (!(result.rowsAffected[0] == 0)) {
+            _context11.next = 39;
+            break;
+          }
+
+          _context11.next = 10;
+          return regeneratorRuntime.awrap(pool.request().input("EMPLOYEE_TYPE_FKID", obj.Emptype).input("EMPOYEE_SUB_TYPE_FKID", obj.EmpSubtype).input("EMPLOYEE_HQ_FKID", obj.EmpHQ).input("EMPLOYEE_COMPANY_FKID", obj.Company).input("EMPLOYEE_NAME", obj.Name).input("EMPLOYEE_PROFILE", obj.Profile).input("EMPLOYEE_EMAIL", obj.Email).input("EMPLOYEE_ALT_EMAIL", obj.Email2).input("EMPLOYEE_CONTACT", obj.PhoneNumber).input("EMPLOYEE_ALT_CONTACT", obj.AlterNateNumber).input("EMPLOYEE_DESIGNATION", obj.Designation).input("EMPLOYEE_QUALIFICATION", obj.Qualification).input("EMPLOYEE_DOJ", obj.JoiningDate).input("EMPLOYEE_DOB", obj.DateofBirth).input("EMPLOYEE_REGION", obj.Region).input("EMPLOYEE_PASSWORD", obj.password).input("EMPLOYEE_GENDER", obj.Gender).input("EMPLOYEE_REPORTING_TO", obj.ReportingTo).input("EMPOLYEE_IS_MANAGER", obj.Ismanager).input("EMPLOYEE_SALARY", obj.salary).input("EMPLOYEE_DOR", obj.dateofreleaving).input("EMPLOYEE_ADDRESS1", obj.address1).input("EMPLOYEE_ADDRESS2", obj.address2).input("EMPLOYEE_ADDRESS3", obj.address3).input("EMPLOYEE_ADDRESS_ZIP", obj.ZipCode).input("EMPLOYEE_ALT_ADDRESS1", obj.altaddress1).input("EMPLOYEE_ALT_ADDRESS2", obj.altaddress2).input("EMPLOYEE_ALT_ADDRESS3", obj.altaddress3).input("EMPLOYEE_ALT_ADDRESS_ZIP", obj.altZipCode).query("insert into EMPLOYEE_MASTER ([EMPLOYEE_TYPE_FKID],[EMPOYEE_SUB_TYPE_FKID] ,[EMPLOYEE_HQ_FKID] ,[EMPLOYEE_COMPANY_FKID] ,[EMPLOYEE_NAME] ,[EMPLOYEE_EMAIL] ,[EMPLOYEE_ALT_EMAIL] ,[EMPLOYEE_CONTACT] ,[EMPLOYEE_ALT_CONTACT] ,[EMPLOYEE_DESIGNATION] ,[EMPLOYEE_QUALIFICATION] ,[EMPLOYEE_DOJ] ,[EMPLOYEE_DOB] ,[EMPLOYEE_REGION] ,[EMPLOYEE_GENDER] ,[EMPLOYEE_REPORTING_TO] ,[EMPLOYEE_PASSWORD] ,[EMPLOYEE_PROFILE] ,[EMPOLYEE_IS_MANAGER] ,[EMPLOYEE_SALARY] ,[EMPLOYEE_DOR] ,[EMPLOYEE_ADDRESS1] ,[EMPLOYEE_ADDRESS2] ,[EMPLOYEE_ADDRESS3] ,[EMPLOYEE_ADDRESS_ZIP] ,[EMPLOYEE_ALT_ADDRESS1] ,[EMPLOYEE_ALT_ADDRESS2] ,[EMPLOYEE_ALT_ADDRESS3] ,[EMPLOYEE_ALT_ADDRESS_ZIP] ,[EMPLOYEE_ACTIVE])  values(@EMPLOYEE_TYPE_FKID ,@EMPOYEE_SUB_TYPE_FKID ,@EMPLOYEE_HQ_FKID ,@EMPLOYEE_COMPANY_FKID ,@EMPLOYEE_NAME ,@EMPLOYEE_EMAIL ,@EMPLOYEE_ALT_EMAIL ,@EMPLOYEE_CONTACT ,@EMPLOYEE_ALT_CONTACT ,@EMPLOYEE_DESIGNATION ,@EMPLOYEE_QUALIFICATION ,@EMPLOYEE_DOJ ,@EMPLOYEE_DOB ,@EMPLOYEE_REGION ,@EMPLOYEE_GENDER ,@EMPLOYEE_REPORTING_TO ,@EMPLOYEE_PASSWORD ,@EMPLOYEE_PROFILE ,@EMPOLYEE_IS_MANAGER ,@EMPLOYEE_SALARY ,@EMPLOYEE_DOR ,@EMPLOYEE_ADDRESS1 ,@EMPLOYEE_ADDRESS2 ,@EMPLOYEE_ADDRESS3 ,@EMPLOYEE_ADDRESS_ZIP ,@EMPLOYEE_ALT_ADDRESS1 ,@EMPLOYEE_ALT_ADDRESS2 ,@EMPLOYEE_ALT_ADDRESS3 ,@EMPLOYEE_ALT_ADDRESS_ZIP ,1)"));
+
+        case 10:
+          insertInto = _context11.sent;
+
+          if (!(insertInto.rowsAffected == 1)) {
+            _context11.next = 35;
+            break;
+          }
+
+          _context11.next = 14;
+          return regeneratorRuntime.awrap(pool.request().query("SELECT MAX(EMPLOYEE_PKID) AS PKID from EMPLOYEE_MASTER"));
+
+        case 14:
+          _result = _context11.sent;
+
+          if (!(_result.recordsets[0].length == 1)) {
+            _context11.next = 31;
+            break;
+          }
+
+          _context11.next = 18;
+          return regeneratorRuntime.awrap(pool);
+
+        case 18:
+          insertProduct = _context11.sent;
+          obj.OtherDocs.map(function (i) {
+            insertProduct.request().input("PKID", _result.recordsets[0][0].PKID).input("doc", i).query("insert into EMPLOYEE_DOCS ([EMPLOYEE_DOCS_EMP_FKID] ,[EMPLOYEE_DOCS_FILE] ,[EMPLOYEE_DOCS_ACTIVE])  values(@PKID,@doc,1)");
+          });
+          _context11.next = 22;
+          return regeneratorRuntime.awrap(pool);
+
+        case 22:
+          insertProduct2 = _context11.sent;
+          obj.CoveredArea.map(function (i) {
+            insertProduct2.request().input("PKID", _result.recordsets[0][0].PKID).input("doc", i).query("insert into EMPLOYEE_COVERED_AREA ([EMPLOYEE_COVERED_AREA_EMP_FKID] ,[EMPLOYEE_COVERED_AREA_AREA_FKID] ,[EMPLOYEE_COVERED_AREA_ACTIVE])  values(@PKID,@doc,1)");
+          });
+          _context11.next = 26;
+          return regeneratorRuntime.awrap(pool);
+
+        case 26:
+          insertProduct3 = _context11.sent;
+          obj.OtherCoveredArea.map(function (i) {
+            insertProduct3.request().input("PKID", _result.recordsets[0][0].PKID).input("doc", i).query("insert into EMPLOYEE_OTHER_COVERED_AREA ([EMPLOYEE_OTHER_COVERED_AREA_EMP_FKID] ,[EMPLOYEE_OTHER_COVERED_AREA_AREA_FKID] ,[EMPLOYEE_OTHER_COVERED_AREA_ACTIVE] )  values(@PKID,@doc,1)");
+          });
+          return _context11.abrupt("return", true);
+
+        case 31:
+          pool.close();
+          return _context11.abrupt("return", false);
+
+        case 33:
+          _context11.next = 37;
+          break;
+
+        case 35:
+          pool.close();
+          return _context11.abrupt("return", false);
+
+        case 37:
+          _context11.next = 41;
+          break;
+
+        case 39:
+          pool.close();
+          return _context11.abrupt("return", "0");
+
+        case 41:
+          _context11.next = 46;
+          break;
+
+        case 43:
+          _context11.prev = 43;
+          _context11.t0 = _context11["catch"](0);
+          console.log(_context11.t0);
+
+        case 46:
         case "end":
           return _context11.stop();
       }
     }
-  });
+  }, null, null, [[0, 43]]);
 }
 
 function updateEmp(empId, obj) {
@@ -626,9 +669,9 @@ function getEmpById(EmpId) {
   }, null, null, [[1, 12]]);
 }
 
-function getEmpByIsManager(IsManager) {
+function getAddressByEmpId(EmpId) {
   var pool, result;
-  return regeneratorRuntime.async(function getEmpByIsManager$(_context15) {
+  return regeneratorRuntime.async(function getAddressByEmpId$(_context15) {
     while (1) {
       switch (_context15.prev = _context15.next) {
         case 0:
@@ -639,7 +682,7 @@ function getEmpByIsManager(IsManager) {
         case 3:
           pool = _context15.sent;
           _context15.next = 6;
-          return regeneratorRuntime.awrap(pool.request().input("IsManager", IsManager).query("SELECT * FROM [EMPLOYEE_MASTER] WHERE EMPLOYEE_ISMANAGER=@IsManager"));
+          return regeneratorRuntime.awrap(pool.request().input("EmpId", EmpId).query("SELECT [EMPLOYEE_ADDRESS1] ,[EMPLOYEE_ADDRESS2] ,[EMPLOYEE_ADDRESS3] ,[EMPLOYEE_ADDRESS_ZIP] ,[EMPLOYEE_ALT_ADDRESS1] ,[EMPLOYEE_ALT_ADDRESS2] ,[EMPLOYEE_ALT_ADDRESS3] ,[EMPLOYEE_ALT_ADDRESS_ZIP]  FROM [EMPLOYEE_MASTER] WHERE EMPLOYEE_PKID=@EmpId"));
 
         case 6:
           result = _context15.sent;
@@ -659,10 +702,142 @@ function getEmpByIsManager(IsManager) {
   }, null, null, [[0, 11]]);
 }
 
-function importEmps(obj) {
-  return regeneratorRuntime.async(function importEmps$(_context16) {
+function getCoveredAreaByEmpId(EmpId) {
+  var pool, result;
+  return regeneratorRuntime.async(function getCoveredAreaByEmpId$(_context16) {
     while (1) {
       switch (_context16.prev = _context16.next) {
+        case 0:
+          _context16.prev = 0;
+          _context16.next = 3;
+          return regeneratorRuntime.awrap(sql.connect(config));
+
+        case 3:
+          pool = _context16.sent;
+          _context16.next = 6;
+          return regeneratorRuntime.awrap(pool.request().input("EmpId", EmpId).query("SELECT  EMPLOYEE_COVERED_AREA_PKID ,AREA_NAME,COUNTRY_NAME,STATE_NAME,CITY_NAME FROM AREA_MASTER JOIN EMPLOYEE_COVERED_AREA ON AREA_PKID=EMPLOYEE_COVERED_AREA_AREA_FKID JOIN CITY_MASTER ON CITY_PKID=AREA_CITY_FKID JOIN COUNTRY_MASTER ON COUNTRY_PKID=CITY_COUNTRY_FKID JOIN STATE_MASTER ON STATE_PKID=CITY_STATE_FKID  WHERE EMPLOYEE_COVERED_AREA_EMP_FKID=@EmpId"));
+
+        case 6:
+          result = _context16.sent;
+          pool.close();
+          return _context16.abrupt("return", result.recordsets[0]);
+
+        case 11:
+          _context16.prev = 11;
+          _context16.t0 = _context16["catch"](0);
+          console.log(_context16.t0); // pool.close();
+
+        case 14:
+        case "end":
+          return _context16.stop();
+      }
+    }
+  }, null, null, [[0, 11]]);
+}
+
+function getOtherCoveredAreasByEmpId(EmpId) {
+  var pool, result;
+  return regeneratorRuntime.async(function getOtherCoveredAreasByEmpId$(_context17) {
+    while (1) {
+      switch (_context17.prev = _context17.next) {
+        case 0:
+          _context17.prev = 0;
+          _context17.next = 3;
+          return regeneratorRuntime.awrap(sql.connect(config));
+
+        case 3:
+          pool = _context17.sent;
+          _context17.next = 6;
+          return regeneratorRuntime.awrap(pool.request().input("EmpId", EmpId).query("SELECT EMPLOYEE_OTHER_COVERED_AREA_PKID, AREA_NAME,COUNTRY_NAME,STATE_NAME,CITY_NAME FROM AREA_MASTER JOIN EMPLOYEE_OTHER_COVERED_AREA ON AREA_PKID=EMPLOYEE_OTHER_COVERED_AREA_AREA_FKID JOIN CITY_MASTER ON CITY_PKID=AREA_CITY_FKID JOIN COUNTRY_MASTER ON COUNTRY_PKID=CITY_COUNTRY_FKID JOIN STATE_MASTER ON STATE_PKID=CITY_STATE_FKID  WHERE EMPLOYEE_OTHER_COVERED_AREA_EMP_FKID=@EmpId"));
+
+        case 6:
+          result = _context17.sent;
+          pool.close();
+          return _context17.abrupt("return", result.recordsets[0]);
+
+        case 11:
+          _context17.prev = 11;
+          _context17.t0 = _context17["catch"](0);
+          console.log(_context17.t0); // pool.close();
+
+        case 14:
+        case "end":
+          return _context17.stop();
+      }
+    }
+  }, null, null, [[0, 11]]);
+}
+
+function getDocsByEmpId(EmpId) {
+  var pool, result;
+  return regeneratorRuntime.async(function getDocsByEmpId$(_context18) {
+    while (1) {
+      switch (_context18.prev = _context18.next) {
+        case 0:
+          _context18.prev = 0;
+          _context18.next = 3;
+          return regeneratorRuntime.awrap(sql.connect(config));
+
+        case 3:
+          pool = _context18.sent;
+          _context18.next = 6;
+          return regeneratorRuntime.awrap(pool.request().input("EmpId", EmpId).query("SELECT EMPLOYEE_DOCS_FILE FROM [EMPLOYEE_DOCS] WHERE EMPLOYEE_DOCS_EMP_FKID=@EmpId"));
+
+        case 6:
+          result = _context18.sent;
+          pool.close();
+          return _context18.abrupt("return", result.recordsets[0]);
+
+        case 11:
+          _context18.prev = 11;
+          _context18.t0 = _context18["catch"](0);
+          console.log(_context18.t0); // pool.close();
+
+        case 14:
+        case "end":
+          return _context18.stop();
+      }
+    }
+  }, null, null, [[0, 11]]);
+}
+
+function getEmpByIsManager(IsManager) {
+  var pool, result;
+  return regeneratorRuntime.async(function getEmpByIsManager$(_context19) {
+    while (1) {
+      switch (_context19.prev = _context19.next) {
+        case 0:
+          _context19.prev = 0;
+          _context19.next = 3;
+          return regeneratorRuntime.awrap(sql.connect(config));
+
+        case 3:
+          pool = _context19.sent;
+          _context19.next = 6;
+          return regeneratorRuntime.awrap(pool.request().input("IsManager", IsManager).query("SELECT * FROM [EMPLOYEE_MASTER] WHERE EMPLOYEE_ISMANAGER=@IsManager"));
+
+        case 6:
+          result = _context19.sent;
+          pool.close();
+          return _context19.abrupt("return", result.recordsets[0]);
+
+        case 11:
+          _context19.prev = 11;
+          _context19.t0 = _context19["catch"](0);
+          console.log(_context19.t0); // pool.close();
+
+        case 14:
+        case "end":
+          return _context19.stop();
+      }
+    }
+  }, null, null, [[0, 11]]);
+}
+
+function importEmps(obj) {
+  return regeneratorRuntime.async(function importEmps$(_context20) {
+    while (1) {
+      switch (_context20.prev = _context20.next) {
         case 0:
           console.log("obj: ", obj); // try {
           //   let insertInto = await pool
@@ -709,7 +884,7 @@ function importEmps(obj) {
 
         case 1:
         case "end":
-          return _context16.stop();
+          return _context20.stop();
       }
     }
   });
@@ -731,5 +906,9 @@ module.exports = {
   getEmpById: getEmpById,
   getEmpByIsManager: getEmpByIsManager,
   updateEmp: updateEmp,
-  importEmps: importEmps
+  importEmps: importEmps,
+  getAddressByEmpId: getAddressByEmpId,
+  getCoveredAreaByEmpId: getCoveredAreaByEmpId,
+  getDocsByEmpId: getDocsByEmpId,
+  getOtherCoveredAreasByEmpId: getOtherCoveredAreasByEmpId
 };
