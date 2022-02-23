@@ -4,7 +4,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-07 17:55:30
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-22 13:05:27
+ * @Last Modified time: 2022-02-23 12:58:16
  */
 var config = require("../dbconfig");
 
@@ -177,22 +177,58 @@ function addArea(obj) {
   }, null, null, [[1, 25]]);
 }
 
-function updateArea(AreaId, obj) {
-  var pool, result, message;
-  return regeneratorRuntime.async(function updateArea$(_context5) {
+function getForCheckBoxAreaByCityId(ObjOfArr) {
+  var x, y, z, pool, result;
+  return regeneratorRuntime.async(function getForCheckBoxAreaByCityId$(_context5) {
     while (1) {
       switch (_context5.prev = _context5.next) {
         case 0:
-          _context5.next = 2;
+          x = ObjOfArr.CountryId;
+          y = ObjOfArr.StateId;
+          z = ObjOfArr.CityId;
+          _context5.prev = 3;
+          _context5.next = 6;
+          return regeneratorRuntime.awrap(sql.connect(config));
+
+        case 6:
+          pool = _context5.sent;
+          _context5.next = 9;
+          return regeneratorRuntime.awrap(pool.request().query("select * from [dbo].[AREA_MASTER] where [AREA_STATE_FKID] in (".concat(y, ") AND AREA_COUNTRY_FKID in (").concat(x, ") AND AREA_CITY_FKID IN (").concat(z, ") ")));
+
+        case 9:
+          result = _context5.sent;
+          pool.close();
+          return _context5.abrupt("return", result.recordsets[0]);
+
+        case 14:
+          _context5.prev = 14;
+          _context5.t0 = _context5["catch"](3);
+          console.log(_context5.t0); // pool.close();
+
+        case 17:
+        case "end":
+          return _context5.stop();
+      }
+    }
+  }, null, null, [[3, 14]]);
+}
+
+function updateArea(AreaId, obj) {
+  var pool, result, message;
+  return regeneratorRuntime.async(function updateArea$(_context6) {
+    while (1) {
+      switch (_context6.prev = _context6.next) {
+        case 0:
+          _context6.next = 2;
           return regeneratorRuntime.awrap(sql.connect(config));
 
         case 2:
-          pool = _context5.sent;
-          _context5.next = 5;
+          pool = _context6.sent;
+          _context6.next = 5;
           return regeneratorRuntime.awrap(pool.request().input("AreaId", sql.Int, AreaId).input("AREA_ZIP_CODE", obj.AREA_ZIP_CODE).input("StateId", sql.Int, obj.StateId).input("CountryId", sql.Int, obj.CountryId).input("CityId", sql.Int, obj.CityId).input("AreaName", sql.NVarChar, obj.AreaName).query("UPDATE AREA_MASTER SET AREA_COUNTRY_FKID = @CountryId, AREA_STATE_FKID= @StateId,AREA_CITY_FKID=@CityId,AREA_NAME=@AreaName ,AREA_ZIP_CODE=@AREA_ZIP_CODE WHERE AREA_PKID =@AreaId"));
 
         case 5:
-          result = _context5.sent;
+          result = _context6.sent;
           pool.close();
           message = false;
 
@@ -203,11 +239,11 @@ function updateArea(AreaId, obj) {
           pool.close(); // return { message };
           // console.log(pool._connected);
 
-          return _context5.abrupt("return", message);
+          return _context6.abrupt("return", message);
 
         case 11:
         case "end":
-          return _context5.stop();
+          return _context6.stop();
       }
     }
   });
@@ -215,47 +251,47 @@ function updateArea(AreaId, obj) {
 
 function deleteArea(AreaId) {
   var pool, result;
-  return regeneratorRuntime.async(function deleteArea$(_context6) {
+  return regeneratorRuntime.async(function deleteArea$(_context7) {
     while (1) {
-      switch (_context6.prev = _context6.next) {
+      switch (_context7.prev = _context7.next) {
         case 0:
-          _context6.prev = 0;
-          _context6.next = 3;
+          _context7.prev = 0;
+          _context7.next = 3;
           return regeneratorRuntime.awrap(sql.connect(config));
 
         case 3:
-          pool = _context6.sent;
-          _context6.next = 6;
+          pool = _context7.sent;
+          _context7.next = 6;
           return regeneratorRuntime.awrap(pool.request().input("input_parameter", AreaId).query("DELETE FROM AREA_MASTER WHERE AREA_PKID=@input_parameter"));
 
         case 6:
-          result = _context6.sent;
+          result = _context7.sent;
           pool.close();
 
           if (!(result.rowsAffected[0] == 0)) {
-            _context6.next = 13;
+            _context7.next = 13;
             break;
           }
 
           pool.close();
-          return _context6.abrupt("return", false);
+          return _context7.abrupt("return", false);
 
         case 13:
           pool.close();
-          return _context6.abrupt("return", true);
+          return _context7.abrupt("return", true);
 
         case 15:
-          _context6.next = 20;
+          _context7.next = 20;
           break;
 
         case 17:
-          _context6.prev = 17;
-          _context6.t0 = _context6["catch"](0);
-          console.log(_context6.t0); // pool.close();
+          _context7.prev = 17;
+          _context7.t0 = _context7["catch"](0);
+          console.log(_context7.t0); // pool.close();
 
         case 20:
         case "end":
-          return _context6.stop();
+          return _context7.stop();
       }
     }
   }, null, null, [[0, 17]]);
@@ -267,5 +303,6 @@ module.exports = {
   addArea: addArea,
   updateArea: updateArea,
   deleteArea: deleteArea,
-  getAreasByHq: getAreasByHq
+  getAreasByHq: getAreasByHq,
+  getForCheckBoxAreaByCityId: getForCheckBoxAreaByCityId
 };

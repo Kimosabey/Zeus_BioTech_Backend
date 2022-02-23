@@ -4,7 +4,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-04 16:20:37
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-22 11:54:48
+ * @Last Modified time: 2022-02-23 12:30:38
  */
 var config = require("../dbconfig");
 
@@ -99,7 +99,7 @@ function getStateByCountryId(countryId) {
         case 11:
           _context3.prev = 11;
           _context3.t0 = _context3["catch"](0);
-          console.log("->", _context3.t0); // pool.close();
+          console.log(_context3.t0); // pool.close();
 
         case 14:
         case "end":
@@ -110,33 +110,37 @@ function getStateByCountryId(countryId) {
 }
 
 function getForCheckBoxStateByCountryId(ObjOfArr) {
-  var x;
+  var x, pool, result;
   return regeneratorRuntime.async(function getForCheckBoxStateByCountryId$(_context4) {
     while (1) {
       switch (_context4.prev = _context4.next) {
         case 0:
-          x = ObjOfArr.CountryId.toString();
-          console.log("x: ", x); // try {
-          //   let pool = await sql.connect(config);
-          //   let result = await pool
-          //     .request()
-          //     .query(
-          //       `select * from [dbo].[STATE_MASTER] where [STATE_COUNTRY_FKID] in (${x})`
-          //     );
-          //   pool.close();
-          //   console.log("result.recordsets[0]: ", result.recordsets);
-          //   return result.recordsets[0];
-          // } catch (error) {
-          //   console.log("->", error);
-          //   // pool.close();
-          // }
+          x = ObjOfArr.CountryId;
+          _context4.prev = 1;
+          _context4.next = 4;
+          return regeneratorRuntime.awrap(sql.connect(config));
 
-        case 2:
+        case 4:
+          pool = _context4.sent;
+          _context4.next = 7;
+          return regeneratorRuntime.awrap(pool.request().query("select * from [dbo].[STATE_MASTER] where [STATE_COUNTRY_FKID] in (".concat(x, ")")));
+
+        case 7:
+          result = _context4.sent;
+          pool.close();
+          return _context4.abrupt("return", result.recordsets[0]);
+
+        case 12:
+          _context4.prev = 12;
+          _context4.t0 = _context4["catch"](1);
+          console.log(_context4.t0); // pool.close();
+
+        case 15:
         case "end":
           return _context4.stop();
       }
     }
-  });
+  }, null, null, [[1, 12]]);
 }
 
 function addState(obj) {

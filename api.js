@@ -2,7 +2,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-07 18:02:44
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-22 11:59:16
+ * @Last Modified time: 2022-02-23 13:11:55
  */
 
 var express = require("express");
@@ -180,14 +180,24 @@ router.route("/states").post(async (req, res) => {
   });
 });
 
+// router.route("/statesCheckBox").post(async (req, res) => {
+//   let obj = { ...req.body };
+//   // obj = obj.CountryId;
+//   console.log("statesCheckBox : ", obj);
+//   StateDb.getForCheckBoxStateByCountryId(obj).then((data) => {
+//     res.status(201).json(data);
+//   });
+// });
 
-router.route("/statesCheckBox").post(async (req, res) => {
+router.post("/statesCheckBox", async (req, res) => {
   let obj = { ...req.body };
-  // obj = obj.CountryId;
-  console.log("obj: ", obj);
-  StateDb.getForCheckBoxStateByCountryId(obj).then((data) => {
-    res.status(201).json(data);
-  });
+
+  try {
+    res.json(await StateDb.getForCheckBoxStateByCountryId(obj));
+  } catch (err) {
+    console.error(`Error while Adding`, err.message);
+    next(err);
+  }
 });
 
 router.put("/states/:id", async function (req, res, next) {
@@ -202,7 +212,7 @@ router.put("/states/:id", async function (req, res, next) {
 
 router.route("/getStateByCountryId/:id").get(async (req, res) => {
   await StateDb.getStateByCountryId(req.params.id).then((data) => {
-    res.json(data[0]);
+    res.json(data);
   });
 });
 
@@ -231,6 +241,17 @@ router.post("/cities", async (req, res) => {
 
   try {
     res.json(await CityDb.addCity(obj));
+  } catch (err) {
+    console.error(`Error while Adding`, err.message);
+    next(err);
+  }
+});
+
+router.post("/citiesCheckBox", async (req, res) => {
+  let obj = { ...req.body };
+
+  try {
+    res.json(await CityDb.getForCheckBoxCityByStateId(obj));
   } catch (err) {
     console.error(`Error while Adding`, err.message);
     next(err);
@@ -267,6 +288,17 @@ router.post("/areas", async (req, res) => {
 
   try {
     res.json(await AreaDb.addArea(obj));
+  } catch (err) {
+    console.error(`Error while Adding`, err.message);
+    next(err);
+  }
+});
+
+router.post("/areasCheckBox", async (req, res) => {
+  let obj = { ...req.body };
+
+  try {
+    res.json(await AreaDb.getForCheckBoxAreaByCityId(obj));
   } catch (err) {
     console.error(`Error while Adding`, err.message);
     next(err);
@@ -426,6 +458,7 @@ router.get("/emps", async (req, res) => {
 
 router.post("/emps", async (req, res) => {
   let obj = { ...req.body };
+  console.log(" emps obj: ", obj);
 
   try {
     res.json(await EmpsDb.addEmp(obj));

@@ -2,7 +2,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-04 16:20:37
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-22 11:54:48
+ * @Last Modified time: 2022-02-23 12:30:38
  */
 var config = require("../dbconfig");
 const sql = require("mssql");
@@ -54,30 +54,28 @@ async function getStateByCountryId(countryId) {
     pool.close();
     return result.recordsets[0];
   } catch (error) {
-    console.log("->", error);
+    console.log(error);
     // pool.close();
   }
 }
 
 async function getForCheckBoxStateByCountryId(ObjOfArr) {
-  let x = ObjOfArr.CountryId.toString();
-  console.log("x: ", x);
+  let x = ObjOfArr.CountryId;
 
-  // try {
-  //   let pool = await sql.connect(config);
-  //   let result = await pool
-  //     .request()
-  //     .query(
-  //       `select * from [dbo].[STATE_MASTER] where [STATE_COUNTRY_FKID] in (${x})`
-  //     );
-  //   pool.close();
+  try {
+    let pool = await sql.connect(config);
+    let result = await pool
+      .request()
+      .query(
+        `select * from [dbo].[STATE_MASTER] where [STATE_COUNTRY_FKID] in (${x})`
+      );
+    pool.close();
 
-  //   console.log("result.recordsets[0]: ", result.recordsets);
-  //   return result.recordsets[0];
-  // } catch (error) {
-  //   console.log("->", error);
-  //   // pool.close();
-  // }
+    return result.recordsets[0];
+  } catch (error) {
+    console.log(error);
+    // pool.close();
+  }
 }
 
 async function addState(obj) {
@@ -152,7 +150,7 @@ async function deleteState(stateId) {
     }
   } catch (error) {
     console.log(error);
-   // pool.close();
+    // pool.close();
   }
 }
 

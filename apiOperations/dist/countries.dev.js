@@ -4,7 +4,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-04 16:20:31
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-22 12:06:38
+ * @Last Modified time: 2022-02-23 13:19:50
  */
 var config = require("../dbconfig");
 
@@ -16,31 +16,33 @@ function getCountries() {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
-          _context.prev = 0;
-          _context.next = 3;
+          console.log("getCountries: ", getCountries);
+          _context.prev = 1;
+          _context.next = 4;
           return regeneratorRuntime.awrap(sql.connect(config));
 
-        case 3:
+        case 4:
           pool = _context.sent;
-          _context.next = 6;
+          _context.next = 7;
           return regeneratorRuntime.awrap(pool.request().query("SELECT TOP 1000 [COUNTRY_PKID] ,[COUNTRY_CODE] ,[COUNTRY_NAME] ,[COUNTRY_ACTIVE] FROM [COUNTRY_MASTER]"));
 
-        case 6:
+        case 7:
           result = _context.sent;
           pool.close();
+          console.log("result.recordsets[0]: ", result.recordsets[0]);
           return _context.abrupt("return", result.recordsets[0]);
 
-        case 11:
-          _context.prev = 11;
-          _context.t0 = _context["catch"](0);
+        case 13:
+          _context.prev = 13;
+          _context.t0 = _context["catch"](1);
           console.log(_context.t0); // pool.close();
 
-        case 14:
+        case 16:
         case "end":
           return _context.stop();
       }
     }
-  }, null, null, [[0, 11]]);
+  }, null, null, [[1, 13]]);
 }
 
 function getCountryById(countryId) {

@@ -2,7 +2,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-04 19:13:14
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-21 18:27:45
+ * @Last Modified time: 2022-02-23 12:02:59
  */
 var config = require("../dbconfig");
 const sql = require("mssql");
@@ -21,13 +21,11 @@ async function getCities() {
     return result.recordsets[0];
   } catch (error) {
     console.log(error);
-   // pool.close();
+    // pool.close();
   }
 }
 
 async function addCity(obj) {
-  console.log("addCity obj ----->: ", obj);
-
   try {
     let pool = await sql.connect(config);
     let result = await pool
@@ -58,6 +56,27 @@ async function addCity(obj) {
     }
   } catch (err) {
     console.log(err);
+  }
+}
+
+async function getForCheckBoxCityByStateId(ObjOfArr) {
+  let x = ObjOfArr.CountryId;
+  let y = ObjOfArr.StateId;
+
+  try {
+    let pool = await sql.connect(config);
+    let result = await pool
+      .request()
+      .query(
+        `select * from [dbo].[CITY_MASTER] where [CITY_STATE_FKID] in (${y}) AND CITY_COUNTRY_FKID in (${x})`
+      );
+    pool.close();
+
+
+    return result.recordsets[0];
+  } catch (error) {
+    console.log("->", error);
+    // pool.close();
   }
 }
 
@@ -104,7 +123,7 @@ async function deleteCity(cityId) {
     }
   } catch (error) {
     console.log(error);
-   // pool.close();
+    // pool.close();
   }
 }
 
@@ -123,7 +142,7 @@ async function getCitiesByStateId(stateId) {
     return result.recordsets[0];
   } catch (error) {
     console.log(error);
-   // pool.close();
+    // pool.close();
   }
 }
 
@@ -133,4 +152,5 @@ module.exports = {
   updateCity: updateCity,
   deleteCity: deleteCity,
   getCitiesByStateId: getCitiesByStateId,
+  getForCheckBoxCityByStateId: getForCheckBoxCityByStateId,
 };

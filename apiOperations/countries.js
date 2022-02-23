@@ -2,12 +2,14 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-04 16:20:31
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-22 12:06:38
+ * @Last Modified time: 2022-02-23 13:19:50
  */
 var config = require("../dbconfig");
 const sql = require("mssql");
 
 async function getCountries() {
+  console.log("getCountries: ", getCountries);
+
   try {
     let pool = await sql.connect(config);
 
@@ -17,7 +19,7 @@ async function getCountries() {
         "SELECT TOP 1000 [COUNTRY_PKID] ,[COUNTRY_CODE] ,[COUNTRY_NAME] ,[COUNTRY_ACTIVE] FROM [COUNTRY_MASTER]"
       );
     pool.close();
-
+    console.log("result.recordsets[0]: ", result.recordsets[0]);
     return result.recordsets[0];
   } catch (error) {
     console.log(error);
@@ -38,7 +40,7 @@ async function getCountryById(countryId) {
     return result.recordsets[0];
   } catch (error) {
     console.log(error);
-   // pool.close();
+    // pool.close();
   }
 }
 
@@ -92,7 +94,7 @@ async function deleteCountry(countryId) {
     }
   } catch (error) {
     console.log(error);
-   // pool.close();
+    // pool.close();
   }
 }
 

@@ -10,7 +10,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
  * @Author: Hey Kimo here!
  * @Date: 2022-02-07 18:02:44
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-22 11:59:16
+ * @Last Modified time: 2022-02-23 13:11:55
  */
 var express = require("express");
 
@@ -342,26 +342,47 @@ router.route("/states").post(function _callee12(req, res) {
       }
     }
   });
-});
-router.route("/statesCheckBox").post(function _callee13(req, res) {
+}); // router.route("/statesCheckBox").post(async (req, res) => {
+//   let obj = { ...req.body };
+//   // obj = obj.CountryId;
+//   console.log("statesCheckBox : ", obj);
+//   StateDb.getForCheckBoxStateByCountryId(obj).then((data) => {
+//     res.status(201).json(data);
+//   });
+// });
+
+router.post("/statesCheckBox", function _callee13(req, res) {
   var obj;
   return regeneratorRuntime.async(function _callee13$(_context13) {
     while (1) {
       switch (_context13.prev = _context13.next) {
         case 0:
-          obj = _objectSpread({}, req.body); // obj = obj.CountryId;
+          obj = _objectSpread({}, req.body);
+          _context13.prev = 1;
+          _context13.t0 = res;
+          _context13.next = 5;
+          return regeneratorRuntime.awrap(StateDb.getForCheckBoxStateByCountryId(obj));
 
-          console.log("obj: ", obj);
-          StateDb.getForCheckBoxStateByCountryId(obj).then(function (data) {
-            res.status(201).json(data);
-          });
+        case 5:
+          _context13.t1 = _context13.sent;
 
-        case 3:
+          _context13.t0.json.call(_context13.t0, _context13.t1);
+
+          _context13.next = 13;
+          break;
+
+        case 9:
+          _context13.prev = 9;
+          _context13.t2 = _context13["catch"](1);
+          console.error("Error while Adding", _context13.t2.message);
+          next(_context13.t2);
+
+        case 13:
         case "end":
           return _context13.stop();
       }
     }
-  });
+  }, null, null, [[1, 9]]);
 });
 router.put("/states/:id", function _callee14(req, res, next) {
   var obj;
@@ -403,7 +424,7 @@ router.route("/getStateByCountryId/:id").get(function _callee15(req, res) {
         case 0:
           _context15.next = 2;
           return regeneratorRuntime.awrap(StateDb.getStateByCountryId(req.params.id).then(function (data) {
-            res.json(data[0]);
+            res.json(data);
           }));
 
         case 2:
@@ -510,70 +531,81 @@ router.post("/cities", function _callee19(req, res) {
     }
   }, null, null, [[1, 9]]);
 });
-router.put("/cities/:id", function _callee20(req, res, next) {
+router.post("/citiesCheckBox", function _callee20(req, res) {
   var obj;
   return regeneratorRuntime.async(function _callee20$(_context20) {
     while (1) {
       switch (_context20.prev = _context20.next) {
         case 0:
           obj = _objectSpread({}, req.body);
-          console.log("obj :>> ", obj);
-          _context20.prev = 2;
+          _context20.prev = 1;
           _context20.t0 = res;
-          _context20.next = 6;
-          return regeneratorRuntime.awrap(CityDb.updateCity(req.params.id, obj));
+          _context20.next = 5;
+          return regeneratorRuntime.awrap(CityDb.getForCheckBoxCityByStateId(obj));
 
-        case 6:
+        case 5:
           _context20.t1 = _context20.sent;
 
           _context20.t0.json.call(_context20.t0, _context20.t1);
 
-          _context20.next = 14;
+          _context20.next = 13;
           break;
 
-        case 10:
-          _context20.prev = 10;
-          _context20.t2 = _context20["catch"](2);
-          console.error("Error while updating", _context20.t2.message);
+        case 9:
+          _context20.prev = 9;
+          _context20.t2 = _context20["catch"](1);
+          console.error("Error while Adding", _context20.t2.message);
           next(_context20.t2);
 
-        case 14:
+        case 13:
         case "end":
           return _context20.stop();
       }
     }
-  }, null, null, [[2, 10]]);
+  }, null, null, [[1, 9]]);
 });
-router["delete"]("/cities/:id", function _callee21(req, res) {
+router.put("/cities/:id", function _callee21(req, res, next) {
+  var obj;
   return regeneratorRuntime.async(function _callee21$(_context21) {
     while (1) {
       switch (_context21.prev = _context21.next) {
         case 0:
+          obj = _objectSpread({}, req.body);
+          console.log("obj :>> ", obj);
+          _context21.prev = 2;
           _context21.t0 = res;
-          _context21.next = 3;
-          return regeneratorRuntime.awrap(CityDb.deleteCity(req.params.id));
+          _context21.next = 6;
+          return regeneratorRuntime.awrap(CityDb.updateCity(req.params.id, obj));
 
-        case 3:
+        case 6:
           _context21.t1 = _context21.sent;
 
           _context21.t0.json.call(_context21.t0, _context21.t1);
 
-        case 5:
+          _context21.next = 14;
+          break;
+
+        case 10:
+          _context21.prev = 10;
+          _context21.t2 = _context21["catch"](2);
+          console.error("Error while updating", _context21.t2.message);
+          next(_context21.t2);
+
+        case 14:
         case "end":
           return _context21.stop();
       }
     }
-  });
-}); // -------Area Api's----------------------------------------------------//
-
-router.get("/areas", function _callee22(req, res) {
+  }, null, null, [[2, 10]]);
+});
+router["delete"]("/cities/:id", function _callee22(req, res) {
   return regeneratorRuntime.async(function _callee22$(_context22) {
     while (1) {
       switch (_context22.prev = _context22.next) {
         case 0:
           _context22.t0 = res;
           _context22.next = 3;
-          return regeneratorRuntime.awrap(AreaDb.getAreas());
+          return regeneratorRuntime.awrap(CityDb.deleteCity(req.params.id));
 
         case 3:
           _context22.t1 = _context22.sent;
@@ -586,15 +618,16 @@ router.get("/areas", function _callee22(req, res) {
       }
     }
   });
-});
-router.get("/areasByCityId/:id", function _callee23(req, res) {
+}); // -------Area Api's----------------------------------------------------//
+
+router.get("/areas", function _callee23(req, res) {
   return regeneratorRuntime.async(function _callee23$(_context23) {
     while (1) {
       switch (_context23.prev = _context23.next) {
         case 0:
           _context23.t0 = res;
           _context23.next = 3;
-          return regeneratorRuntime.awrap(AreaDb.getAreasByCityId(req.params.id));
+          return regeneratorRuntime.awrap(AreaDb.getAreas());
 
         case 3:
           _context23.t1 = _context23.sent;
@@ -608,40 +641,28 @@ router.get("/areasByCityId/:id", function _callee23(req, res) {
     }
   });
 });
-router.post("/areas", function _callee24(req, res) {
-  var obj;
+router.get("/areasByCityId/:id", function _callee24(req, res) {
   return regeneratorRuntime.async(function _callee24$(_context24) {
     while (1) {
       switch (_context24.prev = _context24.next) {
         case 0:
-          obj = _objectSpread({}, req.body);
-          _context24.prev = 1;
           _context24.t0 = res;
-          _context24.next = 5;
-          return regeneratorRuntime.awrap(AreaDb.addArea(obj));
+          _context24.next = 3;
+          return regeneratorRuntime.awrap(AreaDb.getAreasByCityId(req.params.id));
 
-        case 5:
+        case 3:
           _context24.t1 = _context24.sent;
 
           _context24.t0.json.call(_context24.t0, _context24.t1);
 
-          _context24.next = 13;
-          break;
-
-        case 9:
-          _context24.prev = 9;
-          _context24.t2 = _context24["catch"](1);
-          console.error("Error while Adding", _context24.t2.message);
-          next(_context24.t2);
-
-        case 13:
+        case 5:
         case "end":
           return _context24.stop();
       }
     }
-  }, null, null, [[1, 9]]);
+  });
 });
-router.put("/areas/:id", function _callee25(req, res) {
+router.post("/areas", function _callee25(req, res) {
   var obj;
   return regeneratorRuntime.async(function _callee25$(_context25) {
     while (1) {
@@ -651,7 +672,7 @@ router.put("/areas/:id", function _callee25(req, res) {
           _context25.prev = 1;
           _context25.t0 = res;
           _context25.next = 5;
-          return regeneratorRuntime.awrap(AreaDb.updateArea(req.params.id, obj));
+          return regeneratorRuntime.awrap(AreaDb.addArea(obj));
 
         case 5:
           _context25.t1 = _context25.sent;
@@ -674,57 +695,80 @@ router.put("/areas/:id", function _callee25(req, res) {
     }
   }, null, null, [[1, 9]]);
 });
-router["delete"]("/areas/:id", function _callee26(req, res) {
+router.post("/areasCheckBox", function _callee26(req, res) {
+  var obj;
   return regeneratorRuntime.async(function _callee26$(_context26) {
     while (1) {
       switch (_context26.prev = _context26.next) {
         case 0:
+          obj = _objectSpread({}, req.body);
+          _context26.prev = 1;
           _context26.t0 = res;
-          _context26.next = 3;
-          return regeneratorRuntime.awrap(AreaDb.deleteArea(req.params.id));
+          _context26.next = 5;
+          return regeneratorRuntime.awrap(AreaDb.getForCheckBoxAreaByCityId(obj));
 
-        case 3:
+        case 5:
           _context26.t1 = _context26.sent;
 
           _context26.t0.json.call(_context26.t0, _context26.t1);
 
-        case 5:
+          _context26.next = 13;
+          break;
+
+        case 9:
+          _context26.prev = 9;
+          _context26.t2 = _context26["catch"](1);
+          console.error("Error while Adding", _context26.t2.message);
+          next(_context26.t2);
+
+        case 13:
         case "end":
           return _context26.stop();
       }
     }
-  });
+  }, null, null, [[1, 9]]);
 });
-router.get("/getAreasByHq/:id", function _callee27(req, res) {
+router.put("/areas/:id", function _callee27(req, res) {
+  var obj;
   return regeneratorRuntime.async(function _callee27$(_context27) {
     while (1) {
       switch (_context27.prev = _context27.next) {
         case 0:
+          obj = _objectSpread({}, req.body);
+          _context27.prev = 1;
           _context27.t0 = res;
-          _context27.next = 3;
-          return regeneratorRuntime.awrap(AreaDb.getAreasByHq(req.params.id));
+          _context27.next = 5;
+          return regeneratorRuntime.awrap(AreaDb.updateArea(req.params.id, obj));
 
-        case 3:
+        case 5:
           _context27.t1 = _context27.sent;
 
           _context27.t0.json.call(_context27.t0, _context27.t1);
 
-        case 5:
+          _context27.next = 13;
+          break;
+
+        case 9:
+          _context27.prev = 9;
+          _context27.t2 = _context27["catch"](1);
+          console.error("Error while Adding", _context27.t2.message);
+          next(_context27.t2);
+
+        case 13:
         case "end":
           return _context27.stop();
       }
     }
-  });
-}); // -------HeadQuarter Api's----------------------------------------------------//
-
-router.get("/hq", function _callee28(req, res) {
+  }, null, null, [[1, 9]]);
+});
+router["delete"]("/areas/:id", function _callee28(req, res) {
   return regeneratorRuntime.async(function _callee28$(_context28) {
     while (1) {
       switch (_context28.prev = _context28.next) {
         case 0:
           _context28.t0 = res;
           _context28.next = 3;
-          return regeneratorRuntime.awrap(HqDb.getHq());
+          return regeneratorRuntime.awrap(AreaDb.deleteArea(req.params.id));
 
         case 3:
           _context28.t1 = _context28.sent;
@@ -738,341 +782,341 @@ router.get("/hq", function _callee28(req, res) {
     }
   });
 });
-router.post("/hq", function _callee29(req, res) {
-  var obj;
+router.get("/getAreasByHq/:id", function _callee29(req, res) {
   return regeneratorRuntime.async(function _callee29$(_context29) {
     while (1) {
       switch (_context29.prev = _context29.next) {
         case 0:
-          obj = _objectSpread({}, req.body);
-          _context29.prev = 1;
           _context29.t0 = res;
-          _context29.next = 5;
-          return regeneratorRuntime.awrap(HqDb.addHq(obj));
+          _context29.next = 3;
+          return regeneratorRuntime.awrap(AreaDb.getAreasByHq(req.params.id));
 
-        case 5:
+        case 3:
           _context29.t1 = _context29.sent;
 
           _context29.t0.json.call(_context29.t0, _context29.t1);
 
-          _context29.next = 13;
-          break;
-
-        case 9:
-          _context29.prev = 9;
-          _context29.t2 = _context29["catch"](1);
-          console.error("Error while Adding", _context29.t2.message);
-          next(_context29.t2);
-
-        case 13:
+        case 5:
         case "end":
           return _context29.stop();
       }
     }
-  }, null, null, [[1, 9]]);
-});
-router.put("/hq/:id", function _callee30(req, res) {
-  var obj;
+  });
+}); // -------HeadQuarter Api's----------------------------------------------------//
+
+router.get("/hq", function _callee30(req, res) {
   return regeneratorRuntime.async(function _callee30$(_context30) {
     while (1) {
       switch (_context30.prev = _context30.next) {
         case 0:
-          obj = _objectSpread({}, req.body);
-          _context30.prev = 1;
           _context30.t0 = res;
-          _context30.next = 5;
-          return regeneratorRuntime.awrap(HqDb.updateHq(req.params.id, obj));
+          _context30.next = 3;
+          return regeneratorRuntime.awrap(HqDb.getHq());
 
-        case 5:
+        case 3:
           _context30.t1 = _context30.sent;
 
           _context30.t0.json.call(_context30.t0, _context30.t1);
 
-          _context30.next = 13;
-          break;
-
-        case 9:
-          _context30.prev = 9;
-          _context30.t2 = _context30["catch"](1);
-          console.error("Error while Adding", _context30.t2.message);
-          next(_context30.t2);
-
-        case 13:
+        case 5:
         case "end":
           return _context30.stop();
       }
     }
-  }, null, null, [[1, 9]]);
+  });
 });
-router["delete"]("/hq/:id", function _callee31(req, res) {
+router.post("/hq", function _callee31(req, res) {
+  var obj;
   return regeneratorRuntime.async(function _callee31$(_context31) {
     while (1) {
       switch (_context31.prev = _context31.next) {
         case 0:
+          obj = _objectSpread({}, req.body);
+          _context31.prev = 1;
           _context31.t0 = res;
-          _context31.next = 3;
-          return regeneratorRuntime.awrap(HqDb.deleteHq(req.params.id));
+          _context31.next = 5;
+          return regeneratorRuntime.awrap(HqDb.addHq(obj));
 
-        case 3:
+        case 5:
           _context31.t1 = _context31.sent;
 
           _context31.t0.json.call(_context31.t0, _context31.t1);
 
-        case 5:
+          _context31.next = 13;
+          break;
+
+        case 9:
+          _context31.prev = 9;
+          _context31.t2 = _context31["catch"](1);
+          console.error("Error while Adding", _context31.t2.message);
+          next(_context31.t2);
+
+        case 13:
         case "end":
           return _context31.stop();
+      }
+    }
+  }, null, null, [[1, 9]]);
+});
+router.put("/hq/:id", function _callee32(req, res) {
+  var obj;
+  return regeneratorRuntime.async(function _callee32$(_context32) {
+    while (1) {
+      switch (_context32.prev = _context32.next) {
+        case 0:
+          obj = _objectSpread({}, req.body);
+          _context32.prev = 1;
+          _context32.t0 = res;
+          _context32.next = 5;
+          return regeneratorRuntime.awrap(HqDb.updateHq(req.params.id, obj));
+
+        case 5:
+          _context32.t1 = _context32.sent;
+
+          _context32.t0.json.call(_context32.t0, _context32.t1);
+
+          _context32.next = 13;
+          break;
+
+        case 9:
+          _context32.prev = 9;
+          _context32.t2 = _context32["catch"](1);
+          console.error("Error while Adding", _context32.t2.message);
+          next(_context32.t2);
+
+        case 13:
+        case "end":
+          return _context32.stop();
+      }
+    }
+  }, null, null, [[1, 9]]);
+});
+router["delete"]("/hq/:id", function _callee33(req, res) {
+  return regeneratorRuntime.async(function _callee33$(_context33) {
+    while (1) {
+      switch (_context33.prev = _context33.next) {
+        case 0:
+          _context33.t0 = res;
+          _context33.next = 3;
+          return regeneratorRuntime.awrap(HqDb.deleteHq(req.params.id));
+
+        case 3:
+          _context33.t1 = _context33.sent;
+
+          _context33.t0.json.call(_context33.t0, _context33.t1);
+
+        case 5:
+        case "end":
+          return _context33.stop();
       }
     }
   });
 }); // -------COMPANY MASTER Api's----------------------------------------------------//
 
-router.get("/companies", function _callee32(req, res) {
-  return regeneratorRuntime.async(function _callee32$(_context32) {
-    while (1) {
-      switch (_context32.prev = _context32.next) {
-        case 0:
-          _context32.t0 = res;
-          _context32.next = 3;
-          return regeneratorRuntime.awrap(CompDb.getCompanies());
-
-        case 3:
-          _context32.t1 = _context32.sent;
-
-          _context32.t0.json.call(_context32.t0, _context32.t1);
-
-        case 5:
-        case "end":
-          return _context32.stop();
-      }
-    }
-  });
-});
-router.post("/companies", function _callee33(req, res) {
-  var obj;
-  return regeneratorRuntime.async(function _callee33$(_context33) {
-    while (1) {
-      switch (_context33.prev = _context33.next) {
-        case 0:
-          obj = _objectSpread({}, req.body);
-          _context33.prev = 1;
-          _context33.t0 = res;
-          _context33.next = 5;
-          return regeneratorRuntime.awrap(CompDb.addCompany(obj));
-
-        case 5:
-          _context33.t1 = _context33.sent;
-
-          _context33.t0.json.call(_context33.t0, _context33.t1);
-
-          _context33.next = 13;
-          break;
-
-        case 9:
-          _context33.prev = 9;
-          _context33.t2 = _context33["catch"](1);
-          console.error("Error while Adding", _context33.t2.message);
-          next(_context33.t2);
-
-        case 13:
-        case "end":
-          return _context33.stop();
-      }
-    }
-  }, null, null, [[1, 9]]);
-});
-router.put("/companies/:id", function _callee34(req, res) {
-  var obj;
+router.get("/companies", function _callee34(req, res) {
   return regeneratorRuntime.async(function _callee34$(_context34) {
     while (1) {
       switch (_context34.prev = _context34.next) {
         case 0:
-          obj = _objectSpread({}, req.body);
-          _context34.prev = 1;
           _context34.t0 = res;
-          _context34.next = 5;
-          return regeneratorRuntime.awrap(CompDb.updateCompany(req.params.id, obj));
+          _context34.next = 3;
+          return regeneratorRuntime.awrap(CompDb.getCompanies());
 
-        case 5:
+        case 3:
           _context34.t1 = _context34.sent;
 
           _context34.t0.json.call(_context34.t0, _context34.t1);
 
-          _context34.next = 13;
-          break;
-
-        case 9:
-          _context34.prev = 9;
-          _context34.t2 = _context34["catch"](1);
-          console.error("Error while Adding", _context34.t2.message);
-          next(_context34.t2);
-
-        case 13:
+        case 5:
         case "end":
           return _context34.stop();
       }
     }
-  }, null, null, [[1, 9]]);
+  });
 });
-router["delete"]("/companies/:id", function _callee35(req, res) {
+router.post("/companies", function _callee35(req, res) {
+  var obj;
   return regeneratorRuntime.async(function _callee35$(_context35) {
     while (1) {
       switch (_context35.prev = _context35.next) {
         case 0:
+          obj = _objectSpread({}, req.body);
+          _context35.prev = 1;
           _context35.t0 = res;
-          _context35.next = 3;
-          return regeneratorRuntime.awrap(CompDb.deleteCompany(req.params.id));
+          _context35.next = 5;
+          return regeneratorRuntime.awrap(CompDb.addCompany(obj));
 
-        case 3:
+        case 5:
           _context35.t1 = _context35.sent;
 
           _context35.t0.json.call(_context35.t0, _context35.t1);
 
-        case 5:
+          _context35.next = 13;
+          break;
+
+        case 9:
+          _context35.prev = 9;
+          _context35.t2 = _context35["catch"](1);
+          console.error("Error while Adding", _context35.t2.message);
+          next(_context35.t2);
+
+        case 13:
         case "end":
           return _context35.stop();
+      }
+    }
+  }, null, null, [[1, 9]]);
+});
+router.put("/companies/:id", function _callee36(req, res) {
+  var obj;
+  return regeneratorRuntime.async(function _callee36$(_context36) {
+    while (1) {
+      switch (_context36.prev = _context36.next) {
+        case 0:
+          obj = _objectSpread({}, req.body);
+          _context36.prev = 1;
+          _context36.t0 = res;
+          _context36.next = 5;
+          return regeneratorRuntime.awrap(CompDb.updateCompany(req.params.id, obj));
+
+        case 5:
+          _context36.t1 = _context36.sent;
+
+          _context36.t0.json.call(_context36.t0, _context36.t1);
+
+          _context36.next = 13;
+          break;
+
+        case 9:
+          _context36.prev = 9;
+          _context36.t2 = _context36["catch"](1);
+          console.error("Error while Adding", _context36.t2.message);
+          next(_context36.t2);
+
+        case 13:
+        case "end":
+          return _context36.stop();
+      }
+    }
+  }, null, null, [[1, 9]]);
+});
+router["delete"]("/companies/:id", function _callee37(req, res) {
+  return regeneratorRuntime.async(function _callee37$(_context37) {
+    while (1) {
+      switch (_context37.prev = _context37.next) {
+        case 0:
+          _context37.t0 = res;
+          _context37.next = 3;
+          return regeneratorRuntime.awrap(CompDb.deleteCompany(req.params.id));
+
+        case 3:
+          _context37.t1 = _context37.sent;
+
+          _context37.t0.json.call(_context37.t0, _context37.t1);
+
+        case 5:
+        case "end":
+          return _context37.stop();
       }
     }
   });
 }); // -------EMPLOYEE-TYPE Api's----------------------------------------------------//
 
-router.get("/emptypes", function _callee36(req, res) {
-  return regeneratorRuntime.async(function _callee36$(_context36) {
-    while (1) {
-      switch (_context36.prev = _context36.next) {
-        case 0:
-          _context36.t0 = res;
-          _context36.next = 3;
-          return regeneratorRuntime.awrap(EmpsDb.getEmpTypes());
-
-        case 3:
-          _context36.t1 = _context36.sent;
-
-          _context36.t0.json.call(_context36.t0, _context36.t1);
-
-        case 5:
-        case "end":
-          return _context36.stop();
-      }
-    }
-  });
-});
-router.post("/emptypes", function _callee37(req, res) {
-  var obj;
-  return regeneratorRuntime.async(function _callee37$(_context37) {
-    while (1) {
-      switch (_context37.prev = _context37.next) {
-        case 0:
-          obj = _objectSpread({}, req.body);
-          _context37.prev = 1;
-          _context37.t0 = res;
-          _context37.next = 5;
-          return regeneratorRuntime.awrap(EmpsDb.addEmpType(obj));
-
-        case 5:
-          _context37.t1 = _context37.sent;
-
-          _context37.t0.json.call(_context37.t0, _context37.t1);
-
-          _context37.next = 13;
-          break;
-
-        case 9:
-          _context37.prev = 9;
-          _context37.t2 = _context37["catch"](1);
-          console.error("Error while Adding", _context37.t2.message);
-          next(_context37.t2);
-
-        case 13:
-        case "end":
-          return _context37.stop();
-      }
-    }
-  }, null, null, [[1, 9]]);
-});
-router.put("/emptypes/:id", function _callee38(req, res) {
-  var obj;
+router.get("/emptypes", function _callee38(req, res) {
   return regeneratorRuntime.async(function _callee38$(_context38) {
     while (1) {
       switch (_context38.prev = _context38.next) {
         case 0:
-          obj = _objectSpread({}, req.body);
-          _context38.prev = 1;
           _context38.t0 = res;
-          _context38.next = 5;
-          return regeneratorRuntime.awrap(EmpsDb.updateEmpType(req.params.id, obj));
+          _context38.next = 3;
+          return regeneratorRuntime.awrap(EmpsDb.getEmpTypes());
 
-        case 5:
+        case 3:
           _context38.t1 = _context38.sent;
 
           _context38.t0.json.call(_context38.t0, _context38.t1);
 
-          _context38.next = 13;
-          break;
-
-        case 9:
-          _context38.prev = 9;
-          _context38.t2 = _context38["catch"](1);
-          console.error("Error while Adding", _context38.t2.message);
-          next(_context38.t2);
-
-        case 13:
+        case 5:
         case "end":
           return _context38.stop();
       }
     }
-  }, null, null, [[1, 9]]);
+  });
 });
-router["delete"]("/emptypes/:id", function _callee39(req, res) {
+router.post("/emptypes", function _callee39(req, res) {
+  var obj;
   return regeneratorRuntime.async(function _callee39$(_context39) {
     while (1) {
       switch (_context39.prev = _context39.next) {
         case 0:
+          obj = _objectSpread({}, req.body);
+          _context39.prev = 1;
           _context39.t0 = res;
-          _context39.next = 3;
-          return regeneratorRuntime.awrap(EmpsDb.deleteEmpType(req.params.id));
+          _context39.next = 5;
+          return regeneratorRuntime.awrap(EmpsDb.addEmpType(obj));
 
-        case 3:
+        case 5:
           _context39.t1 = _context39.sent;
 
           _context39.t0.json.call(_context39.t0, _context39.t1);
 
-        case 5:
+          _context39.next = 13;
+          break;
+
+        case 9:
+          _context39.prev = 9;
+          _context39.t2 = _context39["catch"](1);
+          console.error("Error while Adding", _context39.t2.message);
+          next(_context39.t2);
+
+        case 13:
         case "end":
           return _context39.stop();
       }
     }
-  });
-}); // -------EMPLOYEE-SUB-TYPE Api's----------------------------------------------------//
-
-router.get("/empsubtypes", function _callee40(req, res) {
+  }, null, null, [[1, 9]]);
+});
+router.put("/emptypes/:id", function _callee40(req, res) {
+  var obj;
   return regeneratorRuntime.async(function _callee40$(_context40) {
     while (1) {
       switch (_context40.prev = _context40.next) {
         case 0:
+          obj = _objectSpread({}, req.body);
+          _context40.prev = 1;
           _context40.t0 = res;
-          _context40.next = 3;
-          return regeneratorRuntime.awrap(EmpsDb.getEmpSubTypes());
+          _context40.next = 5;
+          return regeneratorRuntime.awrap(EmpsDb.updateEmpType(req.params.id, obj));
 
-        case 3:
+        case 5:
           _context40.t1 = _context40.sent;
 
           _context40.t0.json.call(_context40.t0, _context40.t1);
 
-        case 5:
+          _context40.next = 13;
+          break;
+
+        case 9:
+          _context40.prev = 9;
+          _context40.t2 = _context40["catch"](1);
+          console.error("Error while Adding", _context40.t2.message);
+          next(_context40.t2);
+
+        case 13:
         case "end":
           return _context40.stop();
       }
     }
-  });
+  }, null, null, [[1, 9]]);
 });
-router.get("/empsubtypesById/:id", function _callee41(req, res) {
+router["delete"]("/emptypes/:id", function _callee41(req, res) {
   return regeneratorRuntime.async(function _callee41$(_context41) {
     while (1) {
       switch (_context41.prev = _context41.next) {
         case 0:
           _context41.t0 = res;
           _context41.next = 3;
-          return regeneratorRuntime.awrap(EmpsDb.getEmpSubTypesById(req.params.id));
+          return regeneratorRuntime.awrap(EmpsDb.deleteEmpType(req.params.id));
 
         case 3:
           _context41.t1 = _context41.sent;
@@ -1085,48 +1129,37 @@ router.get("/empsubtypesById/:id", function _callee41(req, res) {
       }
     }
   });
-});
-router.post("/empsubtypes", function _callee42(req, res) {
-  var obj;
+}); // -------EMPLOYEE-SUB-TYPE Api's----------------------------------------------------//
+
+router.get("/empsubtypes", function _callee42(req, res) {
   return regeneratorRuntime.async(function _callee42$(_context42) {
     while (1) {
       switch (_context42.prev = _context42.next) {
         case 0:
-          obj = _objectSpread({}, req.body);
-          _context42.prev = 1;
           _context42.t0 = res;
-          _context42.next = 5;
-          return regeneratorRuntime.awrap(EmpsDb.addEmpSubType(obj));
+          _context42.next = 3;
+          return regeneratorRuntime.awrap(EmpsDb.getEmpSubTypes());
 
-        case 5:
+        case 3:
           _context42.t1 = _context42.sent;
 
           _context42.t0.json.call(_context42.t0, _context42.t1);
 
-          _context42.next = 13;
-          break;
-
-        case 9:
-          _context42.prev = 9;
-          _context42.t2 = _context42["catch"](1);
-          console.error("Error while Adding", _context42.t2.message);
-          next(_context42.t2);
-
-        case 13:
+        case 5:
         case "end":
           return _context42.stop();
       }
     }
-  }, null, null, [[1, 9]]);
+  });
 });
-router["delete"]("/empsubtypes/:id", function _callee43(req, res) {
+router.get("/empsubtypesById/:id", function _callee43(req, res) {
   return regeneratorRuntime.async(function _callee43$(_context43) {
     while (1) {
       switch (_context43.prev = _context43.next) {
         case 0:
           _context43.t0 = res;
           _context43.next = 3;
-          return regeneratorRuntime.awrap(EmpsDb.deleteEmpSubType(req.params.id));
+          return regeneratorRuntime.awrap(EmpsDb.getEmpSubTypesById(req.params.id));
 
         case 3:
           _context43.t1 = _context43.sent;
@@ -1140,7 +1173,7 @@ router["delete"]("/empsubtypes/:id", function _callee43(req, res) {
     }
   });
 });
-router.put("/empsubtypes/:id", function _callee44(req, res) {
+router.post("/empsubtypes", function _callee44(req, res) {
   var obj;
   return regeneratorRuntime.async(function _callee44$(_context44) {
     while (1) {
@@ -1150,7 +1183,7 @@ router.put("/empsubtypes/:id", function _callee44(req, res) {
           _context44.prev = 1;
           _context44.t0 = res;
           _context44.next = 5;
-          return regeneratorRuntime.awrap(EmpsDb.updateEmpSubType(req.params.id, obj));
+          return regeneratorRuntime.awrap(EmpsDb.addEmpSubType(obj));
 
         case 5:
           _context44.t1 = _context44.sent;
@@ -1172,16 +1205,15 @@ router.put("/empsubtypes/:id", function _callee44(req, res) {
       }
     }
   }, null, null, [[1, 9]]);
-}); // -------EMPLOYEE Details Api's----------------------------------------------------//
-
-router.get("/emps", function _callee45(req, res) {
+});
+router["delete"]("/empsubtypes/:id", function _callee45(req, res) {
   return regeneratorRuntime.async(function _callee45$(_context45) {
     while (1) {
       switch (_context45.prev = _context45.next) {
         case 0:
           _context45.t0 = res;
           _context45.next = 3;
-          return regeneratorRuntime.awrap(EmpsDb.getEmp());
+          return regeneratorRuntime.awrap(EmpsDb.deleteEmpSubType(req.params.id));
 
         case 3:
           _context45.t1 = _context45.sent;
@@ -1195,7 +1227,7 @@ router.get("/emps", function _callee45(req, res) {
     }
   });
 });
-router.post("/emps", function _callee46(req, res) {
+router.put("/empsubtypes/:id", function _callee46(req, res) {
   var obj;
   return regeneratorRuntime.async(function _callee46$(_context46) {
     while (1) {
@@ -1205,7 +1237,7 @@ router.post("/emps", function _callee46(req, res) {
           _context46.prev = 1;
           _context46.t0 = res;
           _context46.next = 5;
-          return regeneratorRuntime.awrap(EmpsDb.addEmp(obj));
+          return regeneratorRuntime.awrap(EmpsDb.updateEmpSubType(req.params.id, obj));
 
         case 5:
           _context46.t1 = _context46.sent;
@@ -1227,92 +1259,104 @@ router.post("/emps", function _callee46(req, res) {
       }
     }
   }, null, null, [[1, 9]]);
-});
-router.post("/importemps", function _callee47(req, res) {
-  var obj;
+}); // -------EMPLOYEE Details Api's----------------------------------------------------//
+
+router.get("/emps", function _callee47(req, res) {
   return regeneratorRuntime.async(function _callee47$(_context47) {
     while (1) {
       switch (_context47.prev = _context47.next) {
         case 0:
-          obj = _objectSpread({}, req.body);
-          _context47.prev = 1;
           _context47.t0 = res;
-          _context47.next = 5;
-          return regeneratorRuntime.awrap(EmpsDb.importEmps(obj));
+          _context47.next = 3;
+          return regeneratorRuntime.awrap(EmpsDb.getEmp());
 
-        case 5:
+        case 3:
           _context47.t1 = _context47.sent;
 
           _context47.t0.json.call(_context47.t0, _context47.t1);
 
-          _context47.next = 13;
-          break;
-
-        case 9:
-          _context47.prev = 9;
-          _context47.t2 = _context47["catch"](1);
-          console.error("Error while Adding", _context47.t2.message);
-          next(_context47.t2);
-
-        case 13:
+        case 5:
         case "end":
           return _context47.stop();
       }
     }
-  }, null, null, [[1, 9]]);
+  });
 });
-router["delete"]("/emps/:id", function _callee48(req, res) {
+router.post("/emps", function _callee48(req, res) {
+  var obj;
   return regeneratorRuntime.async(function _callee48$(_context48) {
     while (1) {
       switch (_context48.prev = _context48.next) {
         case 0:
+          obj = _objectSpread({}, req.body);
+          console.log(" emps obj: ", obj);
+          _context48.prev = 2;
           _context48.t0 = res;
-          _context48.next = 3;
-          return regeneratorRuntime.awrap(EmpsDb.deleteEmp(req.params.id));
+          _context48.next = 6;
+          return regeneratorRuntime.awrap(EmpsDb.addEmp(obj));
 
-        case 3:
+        case 6:
           _context48.t1 = _context48.sent;
 
           _context48.t0.json.call(_context48.t0, _context48.t1);
 
-        case 5:
+          _context48.next = 14;
+          break;
+
+        case 10:
+          _context48.prev = 10;
+          _context48.t2 = _context48["catch"](2);
+          console.error("Error while Adding", _context48.t2.message);
+          next(_context48.t2);
+
+        case 14:
         case "end":
           return _context48.stop();
       }
     }
-  });
+  }, null, null, [[2, 10]]);
 });
-router.get("/empById/:id", function _callee49(req, res) {
+router.post("/importemps", function _callee49(req, res) {
+  var obj;
   return regeneratorRuntime.async(function _callee49$(_context49) {
     while (1) {
       switch (_context49.prev = _context49.next) {
         case 0:
+          obj = _objectSpread({}, req.body);
+          _context49.prev = 1;
           _context49.t0 = res;
-          _context49.next = 3;
-          return regeneratorRuntime.awrap(EmpsDb.getEmpById(req.params.id));
+          _context49.next = 5;
+          return regeneratorRuntime.awrap(EmpsDb.importEmps(obj));
 
-        case 3:
+        case 5:
           _context49.t1 = _context49.sent;
 
           _context49.t0.json.call(_context49.t0, _context49.t1);
 
-          console.log("req.params.id: ", req.params.id);
+          _context49.next = 13;
+          break;
 
-        case 6:
+        case 9:
+          _context49.prev = 9;
+          _context49.t2 = _context49["catch"](1);
+          console.error("Error while Adding", _context49.t2.message);
+          next(_context49.t2);
+
+        case 13:
         case "end":
           return _context49.stop();
       }
     }
-  });
+  }, null, null, [[1, 9]]);
 });
-router.get("/getEmpByIsManager/:id", function _callee50(req, res) {
+router["delete"]("/emps/:id", function _callee50(req, res) {
   return regeneratorRuntime.async(function _callee50$(_context50) {
     while (1) {
       switch (_context50.prev = _context50.next) {
         case 0:
           _context50.t0 = res;
           _context50.next = 3;
-          return regeneratorRuntime.awrap(EmpsDb.getEmpByIsManager(req.params.id));
+          return regeneratorRuntime.awrap(EmpsDb.deleteEmp(req.params.id));
 
         case 3:
           _context50.t1 = _context50.sent;
@@ -1325,69 +1369,60 @@ router.get("/getEmpByIsManager/:id", function _callee50(req, res) {
       }
     }
   });
-}); // -------CUSTOMER Api's----------------------------------------------------//
-
-router.get("/custcat", function _callee51(req, res) {
+});
+router.get("/empById/:id", function _callee51(req, res) {
   return regeneratorRuntime.async(function _callee51$(_context51) {
     while (1) {
       switch (_context51.prev = _context51.next) {
         case 0:
           _context51.t0 = res;
           _context51.next = 3;
-          return regeneratorRuntime.awrap(CustsDb.getCustomersCat());
+          return regeneratorRuntime.awrap(EmpsDb.getEmpById(req.params.id));
 
         case 3:
           _context51.t1 = _context51.sent;
 
           _context51.t0.json.call(_context51.t0, _context51.t1);
 
-        case 5:
+          console.log("req.params.id: ", req.params.id);
+
+        case 6:
         case "end":
           return _context51.stop();
       }
     }
   });
 });
-router.post("/custcat", function _callee52(req, res) {
-  var obj;
+router.get("/getEmpByIsManager/:id", function _callee52(req, res) {
   return regeneratorRuntime.async(function _callee52$(_context52) {
     while (1) {
       switch (_context52.prev = _context52.next) {
         case 0:
-          obj = _objectSpread({}, req.body);
-          _context52.prev = 1;
           _context52.t0 = res;
-          _context52.next = 5;
-          return regeneratorRuntime.awrap(CustsDb.addCustomersCat(obj));
+          _context52.next = 3;
+          return regeneratorRuntime.awrap(EmpsDb.getEmpByIsManager(req.params.id));
 
-        case 5:
+        case 3:
           _context52.t1 = _context52.sent;
 
           _context52.t0.json.call(_context52.t0, _context52.t1);
 
-          _context52.next = 12;
-          break;
-
-        case 9:
-          _context52.prev = 9;
-          _context52.t2 = _context52["catch"](1);
-          console.error("Error while Adding", _context52.t2.message);
-
-        case 12:
+        case 5:
         case "end":
           return _context52.stop();
       }
     }
-  }, null, null, [[1, 9]]);
-});
-router["delete"]("/custcat/:id", function _callee53(req, res) {
+  });
+}); // -------CUSTOMER Api's----------------------------------------------------//
+
+router.get("/custcat", function _callee53(req, res) {
   return regeneratorRuntime.async(function _callee53$(_context53) {
     while (1) {
       switch (_context53.prev = _context53.next) {
         case 0:
           _context53.t0 = res;
           _context53.next = 3;
-          return regeneratorRuntime.awrap(CustsDb.deleteCustomersCat(req.params.id));
+          return regeneratorRuntime.awrap(CustsDb.getCustomersCat());
 
         case 3:
           _context53.t1 = _context53.sent;
@@ -1401,7 +1436,7 @@ router["delete"]("/custcat/:id", function _callee53(req, res) {
     }
   });
 });
-router.put("/custcat/:id", function _callee54(req, res) {
+router.post("/custcat", function _callee54(req, res) {
   var obj;
   return regeneratorRuntime.async(function _callee54$(_context54) {
     while (1) {
@@ -1411,38 +1446,36 @@ router.put("/custcat/:id", function _callee54(req, res) {
           _context54.prev = 1;
           _context54.t0 = res;
           _context54.next = 5;
-          return regeneratorRuntime.awrap(CustsDb.updateCustomersCat(req.params.id, obj));
+          return regeneratorRuntime.awrap(CustsDb.addCustomersCat(obj));
 
         case 5:
           _context54.t1 = _context54.sent;
 
           _context54.t0.json.call(_context54.t0, _context54.t1);
 
-          _context54.next = 13;
+          _context54.next = 12;
           break;
 
         case 9:
           _context54.prev = 9;
           _context54.t2 = _context54["catch"](1);
           console.error("Error while Adding", _context54.t2.message);
-          next(_context54.t2);
 
-        case 13:
+        case 12:
         case "end":
           return _context54.stop();
       }
     }
   }, null, null, [[1, 9]]);
-}); // -------UOM Api's----------------------------------------------------//
-
-router.get("/uom", function _callee55(req, res) {
+});
+router["delete"]("/custcat/:id", function _callee55(req, res) {
   return regeneratorRuntime.async(function _callee55$(_context55) {
     while (1) {
       switch (_context55.prev = _context55.next) {
         case 0:
           _context55.t0 = res;
           _context55.next = 3;
-          return regeneratorRuntime.awrap(UomDb.getUom());
+          return regeneratorRuntime.awrap(CustsDb.deleteCustomersCat(req.params.id));
 
         case 3:
           _context55.t1 = _context55.sent;
@@ -1456,7 +1489,7 @@ router.get("/uom", function _callee55(req, res) {
     }
   });
 });
-router.post("/uom", function _callee56(req, res) {
+router.put("/custcat/:id", function _callee56(req, res) {
   var obj;
   return regeneratorRuntime.async(function _callee56$(_context56) {
     while (1) {
@@ -1466,7 +1499,7 @@ router.post("/uom", function _callee56(req, res) {
           _context56.prev = 1;
           _context56.t0 = res;
           _context56.next = 5;
-          return regeneratorRuntime.awrap(UomDb.addUom(obj));
+          return regeneratorRuntime.awrap(CustsDb.updateCustomersCat(req.params.id, obj));
 
         case 5:
           _context56.t1 = _context56.sent;
@@ -1488,15 +1521,16 @@ router.post("/uom", function _callee56(req, res) {
       }
     }
   }, null, null, [[1, 9]]);
-});
-router["delete"]("/uom/:id", function _callee57(req, res) {
+}); // -------UOM Api's----------------------------------------------------//
+
+router.get("/uom", function _callee57(req, res) {
   return regeneratorRuntime.async(function _callee57$(_context57) {
     while (1) {
       switch (_context57.prev = _context57.next) {
         case 0:
           _context57.t0 = res;
           _context57.next = 3;
-          return regeneratorRuntime.awrap(UomDb.deleteUom(req.params.id));
+          return regeneratorRuntime.awrap(UomDb.getUom());
 
         case 3:
           _context57.t1 = _context57.sent;
@@ -1510,7 +1544,7 @@ router["delete"]("/uom/:id", function _callee57(req, res) {
     }
   });
 });
-router.put("/uom/:id", function _callee58(req, res) {
+router.post("/uom", function _callee58(req, res) {
   var obj;
   return regeneratorRuntime.async(function _callee58$(_context58) {
     while (1) {
@@ -1520,7 +1554,7 @@ router.put("/uom/:id", function _callee58(req, res) {
           _context58.prev = 1;
           _context58.t0 = res;
           _context58.next = 5;
-          return regeneratorRuntime.awrap(UomDb.updateUom(req.params.id, obj));
+          return regeneratorRuntime.awrap(UomDb.addUom(obj));
 
         case 5:
           _context58.t1 = _context58.sent;
@@ -1539,6 +1573,60 @@ router.put("/uom/:id", function _callee58(req, res) {
         case 13:
         case "end":
           return _context58.stop();
+      }
+    }
+  }, null, null, [[1, 9]]);
+});
+router["delete"]("/uom/:id", function _callee59(req, res) {
+  return regeneratorRuntime.async(function _callee59$(_context59) {
+    while (1) {
+      switch (_context59.prev = _context59.next) {
+        case 0:
+          _context59.t0 = res;
+          _context59.next = 3;
+          return regeneratorRuntime.awrap(UomDb.deleteUom(req.params.id));
+
+        case 3:
+          _context59.t1 = _context59.sent;
+
+          _context59.t0.json.call(_context59.t0, _context59.t1);
+
+        case 5:
+        case "end":
+          return _context59.stop();
+      }
+    }
+  });
+});
+router.put("/uom/:id", function _callee60(req, res) {
+  var obj;
+  return regeneratorRuntime.async(function _callee60$(_context60) {
+    while (1) {
+      switch (_context60.prev = _context60.next) {
+        case 0:
+          obj = _objectSpread({}, req.body);
+          _context60.prev = 1;
+          _context60.t0 = res;
+          _context60.next = 5;
+          return regeneratorRuntime.awrap(UomDb.updateUom(req.params.id, obj));
+
+        case 5:
+          _context60.t1 = _context60.sent;
+
+          _context60.t0.json.call(_context60.t0, _context60.t1);
+
+          _context60.next = 13;
+          break;
+
+        case 9:
+          _context60.prev = 9;
+          _context60.t2 = _context60["catch"](1);
+          console.error("Error while Adding", _context60.t2.message);
+          next(_context60.t2);
+
+        case 13:
+        case "end":
+          return _context60.stop();
       }
     }
   }, null, null, [[1, 9]]);
