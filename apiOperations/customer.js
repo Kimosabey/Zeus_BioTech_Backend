@@ -81,6 +81,11 @@ async function deleteCustomersCat(custId) {
 }
 
 async function updateCustomersCat(custId, obj) {
+  try {
+    
+  } catch (error) {
+    
+  }
   let pool = await sql.connect(config);
   let result = await pool
     .request()
@@ -100,6 +105,105 @@ async function updateCustomersCat(custId, obj) {
   // return { message };
   // console.log(pool._connected);
   return message;
+}
+
+async function getCustomersType() {
+  try {
+    let pool = await sql.connect(config);
+
+    let result = await pool
+      .request()
+      .query(
+        "SELECT [CUSTOMER_TYPE_PKID] ,[CUSTOMER_TYPE_NAME] ,[CUSTOMER_TYPE_ISACTIVE] FROM [CUSTOMER_TYPE] WHERE [CUSTOMER_TYPE_ACTIVE]=1"
+      );
+    pool.close();
+    return result.recordsets[0];
+  } catch (error) {
+    console.log("getCustomersType-->", error);
+  }
+}
+
+
+async function addCustomersType(obj) {
+  try {
+    let pool = await sql.connect(config);
+    let result = await pool
+      .request()
+      .input("CustTypeName", obj.CustTypeName)
+      .query(
+        "SELECT * from CUSTOMER_TYPE WHERE CUSTOMER_TYPE_NAME=@CustTypeName"
+      );
+    if (result.rowsAffected[0] == 0) {
+      let insertInto = await pool
+        .request()
+        .input("CustTypeName", obj.CustTypeName)
+
+        .query(
+          "insert into CUSTOMER_CATEGORY ([CUSTOMER_CATEGORY_NAME] ,[CUSTOMER_CATEGORY_ISACTIVE])  values(@CustCatName,1)"
+        );
+      // .execute('InsertOrders');
+      if (insertInto.rowsAffected == 1) {
+        pool.close();
+        return true;
+      } else {
+        pool.close();
+        return false;
+      }
+    } else {
+      pool.close();
+      return "0";
+    }
+  } catch (err) {
+    console.log("addCustomersType-->", err);
+  }
+}
+
+async function updateCustomersType(custId, obj) {
+
+  try {
+    
+  } catch (error) {
+    
+  }
+  let pool = await sql.connect(config);
+  let result = await pool
+    .request()
+    .input("custId", custId)
+    .input("CustTypeName", obj.CustTypeName)
+    .query(
+      `UPDATE CUSTOMER_TYPE SET CUSTOMER_TYPE_NAME = @CustTypeName WHERE CUSTOMER_TYPE_PKID =@custId`
+    );
+
+  let message = false;
+
+  if (result.rowsAffected) {
+    message = true;
+  }
+  pool.close();
+  // return { message };
+  // console.log(pool._connected);
+  return message;
+}
+
+async function deleteCustomersType(custId) {
+  try {
+    let pool = await sql.connect(config);
+    let result = await pool
+      .request()
+      .input("custId", custId)
+      .query("DELETE FROM CUSTOMER_TYPE WHERE CUSTOMER_TYPE_PKID=@custId");
+
+    if (result.rowsAffected[0] == 0) {
+      pool.close();
+      return false;
+    } else {
+      pool.close();
+      return true;
+    }
+  } catch (error) {
+    console.log("deleteCustomersType-->", error);
+    // pool.close();
+  }
 }
 
 module.exports = {
