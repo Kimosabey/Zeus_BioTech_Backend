@@ -2,7 +2,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-04 16:20:31
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-23 13:19:50
+ * @Last Modified time: 2022-02-24 17:01:33
  */
 var config = require("../dbconfig");
 const sql = require("mssql");
@@ -13,16 +13,12 @@ async function getCountries() {
   try {
     let pool = await sql.connect(config);
 
-    let result = await pool
-      .request()
-      .query(
-        "SELECT TOP 1000 [COUNTRY_PKID] ,[COUNTRY_CODE] ,[COUNTRY_NAME] ,[COUNTRY_ACTIVE] FROM [COUNTRY_MASTER]"
-      );
+    let result = await pool.request().query("SELECT * FROM [COUNTRY_MASTER]");
     pool.close();
-    console.log("result.recordsets[0]: ", result.recordsets[0]);
+
     return result.recordsets[0];
   } catch (error) {
-    console.log(error);
+    console.log("getCountries error--->", error);
     // pool.close();
   }
 }
@@ -32,14 +28,12 @@ async function getCountryById(countryId) {
     let pool = await sql.connect(config);
     let result = await pool
       .request()
-      .input("input_parameter", countryId)
-      .query(
-        "SELECT * from COUNTRY_MASTER WHERE COUNTRY_PKID=@input_parameter"
-      );
+      .input("countryId", countryId)
+      .query("SELECT * from COUNTRY_MASTER WHERE COUNTRY_PKID=@countryId");
     pool.close();
     return result.recordsets[0];
   } catch (error) {
-    console.log(error);
+    console.log("getCountryById error--->", error);
     // pool.close();
   }
 }

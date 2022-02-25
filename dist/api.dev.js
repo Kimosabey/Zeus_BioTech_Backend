@@ -10,7 +10,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
  * @Author: Hey Kimo here!
  * @Date: 2022-02-07 18:02:44
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-23 18:54:45
+ * @Last Modified time: 2022-02-24 16:49:19
  */
 var express = require("express");
 
@@ -186,16 +186,12 @@ router.get("/countries", function _callee5(req, res) {
     while (1) {
       switch (_context5.prev = _context5.next) {
         case 0:
-          _context5.t0 = res;
-          _context5.next = 3;
-          return regeneratorRuntime.awrap(CountryDb.getCountries());
+          _context5.next = 2;
+          return regeneratorRuntime.awrap(CountryDb.getCountries().then(function (data) {
+            res.json(data);
+          }));
 
-        case 3:
-          _context5.t1 = _context5.sent;
-
-          _context5.t0.json.call(_context5.t0, _context5.t1);
-
-        case 5:
+        case 2:
         case "end":
           return _context5.stop();
       }
@@ -245,7 +241,6 @@ router.route("/countries/:id")["delete"](function _callee8(req, res) {
         case 0:
           _context8.next = 2;
           return regeneratorRuntime.awrap(CountryDb.deleteCountry(req.params.id).then(function (data) {
-            // console.log(data);
             res.json(data);
           }));
 
@@ -464,11 +459,12 @@ router.route("/cities").get(function _callee17(req, res) {
       switch (_context17.prev = _context17.next) {
         case 0:
           obj = _objectSpread({}, req.body);
-          CityDb.getCities(obj).then(function (data) {
+          _context17.next = 3;
+          return regeneratorRuntime.awrap(CityDb.getCities(obj).then(function (data) {
             res.status(201).json(data);
-          });
+          }));
 
-        case 2:
+        case 3:
         case "end":
           return _context17.stop();
       }
@@ -1348,58 +1344,68 @@ router.post("/importemps", function _callee49(req, res) {
     }
   }, null, null, [[1, 9]]);
 });
-router["delete"]("/emps/:id", function _callee50(req, res) {
+router.put("/emps/:id", function _callee50(req, res, next) {
+  var obj;
   return regeneratorRuntime.async(function _callee50$(_context50) {
     while (1) {
       switch (_context50.prev = _context50.next) {
         case 0:
+          obj = _objectSpread({}, req.body);
+          _context50.prev = 1;
           _context50.t0 = res;
-          _context50.next = 3;
-          return regeneratorRuntime.awrap(EmpsDb.deleteEmp(req.params.id));
+          _context50.next = 5;
+          return regeneratorRuntime.awrap(EmpsDb.updateEmp(req.params.id, obj));
 
-        case 3:
+        case 5:
           _context50.t1 = _context50.sent;
 
           _context50.t0.json.call(_context50.t0, _context50.t1);
 
-        case 5:
+          _context50.next = 13;
+          break;
+
+        case 9:
+          _context50.prev = 9;
+          _context50.t2 = _context50["catch"](1);
+          console.error("Error while Updating", _context50.t2.message);
+          next(_context50.t2);
+
+        case 13:
         case "end":
           return _context50.stop();
       }
     }
-  });
+  }, null, null, [[1, 9]]);
 });
-router.get("/empById/:id", function _callee51(req, res) {
+router["delete"]("/emps/:id", function _callee51(req, res) {
   return regeneratorRuntime.async(function _callee51$(_context51) {
     while (1) {
       switch (_context51.prev = _context51.next) {
         case 0:
           _context51.t0 = res;
           _context51.next = 3;
-          return regeneratorRuntime.awrap(EmpsDb.getEmpById(req.params.id));
+          return regeneratorRuntime.awrap(EmpsDb.deleteEmp(req.params.id));
 
         case 3:
           _context51.t1 = _context51.sent;
 
           _context51.t0.json.call(_context51.t0, _context51.t1);
 
-          console.log("req.params.id: ", req.params.id);
-
-        case 6:
+        case 5:
         case "end":
           return _context51.stop();
       }
     }
   });
 });
-router.get("/getEmpByIsManager/:id", function _callee52(req, res) {
+router["delete"]("/DeleteEmpDocs/:id", function _callee52(req, res) {
   return regeneratorRuntime.async(function _callee52$(_context52) {
     while (1) {
       switch (_context52.prev = _context52.next) {
         case 0:
           _context52.t0 = res;
           _context52.next = 3;
-          return regeneratorRuntime.awrap(EmpsDb.getEmpByIsManager(req.params.id));
+          return regeneratorRuntime.awrap(EmpsDb.DeleteEmpDocs(req.params.id));
 
         case 3:
           _context52.t1 = _context52.sent;
@@ -1413,35 +1419,37 @@ router.get("/getEmpByIsManager/:id", function _callee52(req, res) {
     }
   });
 });
-router.get("/GetEmployeeAddress/:id", function _callee53(req, res) {
+router.get("/empById/:id", function _callee53(req, res) {
   return regeneratorRuntime.async(function _callee53$(_context53) {
     while (1) {
       switch (_context53.prev = _context53.next) {
         case 0:
           _context53.t0 = res;
           _context53.next = 3;
-          return regeneratorRuntime.awrap(EmpsDb.getAddressByEmpId(req.params.id));
+          return regeneratorRuntime.awrap(EmpsDb.getEmpById(req.params.id));
 
         case 3:
           _context53.t1 = _context53.sent;
 
           _context53.t0.json.call(_context53.t0, _context53.t1);
 
-        case 5:
+          console.log("req.params.id: ", req.params.id);
+
+        case 6:
         case "end":
           return _context53.stop();
       }
     }
   });
 });
-router.get("/GetEmployeeCoveredAreas/:id", function _callee54(req, res) {
+router.get("/getEmpByIsManager/:id", function _callee54(req, res) {
   return regeneratorRuntime.async(function _callee54$(_context54) {
     while (1) {
       switch (_context54.prev = _context54.next) {
         case 0:
           _context54.t0 = res;
           _context54.next = 3;
-          return regeneratorRuntime.awrap(EmpsDb.getCoveredAreaByEmpId(req.params.id));
+          return regeneratorRuntime.awrap(EmpsDb.getEmpByIsManager(req.params.id));
 
         case 3:
           _context54.t1 = _context54.sent;
@@ -1455,14 +1463,14 @@ router.get("/GetEmployeeCoveredAreas/:id", function _callee54(req, res) {
     }
   });
 });
-router.get("/GetEmployeeOtherCoveredAreas/:id", function _callee55(req, res) {
+router.get("/GetEmployeeAddress/:id", function _callee55(req, res) {
   return regeneratorRuntime.async(function _callee55$(_context55) {
     while (1) {
       switch (_context55.prev = _context55.next) {
         case 0:
           _context55.t0 = res;
           _context55.next = 3;
-          return regeneratorRuntime.awrap(EmpsDb.getOtherCoveredAreasByEmpId(req.params.id));
+          return regeneratorRuntime.awrap(EmpsDb.getAddressByEmpId(req.params.id));
 
         case 3:
           _context55.t1 = _context55.sent;
@@ -1476,14 +1484,14 @@ router.get("/GetEmployeeOtherCoveredAreas/:id", function _callee55(req, res) {
     }
   });
 });
-router.get("/GetEmployeeOtherDocs/:id", function _callee56(req, res) {
+router.get("/GetEmployeeCoveredAreas/:id", function _callee56(req, res) {
   return regeneratorRuntime.async(function _callee56$(_context56) {
     while (1) {
       switch (_context56.prev = _context56.next) {
         case 0:
           _context56.t0 = res;
           _context56.next = 3;
-          return regeneratorRuntime.awrap(EmpsDb.getDocsByEmpId(req.params.id));
+          return regeneratorRuntime.awrap(EmpsDb.getCoveredAreaByEmpId(req.params.id));
 
         case 3:
           _context56.t1 = _context56.sent;
@@ -1496,16 +1504,15 @@ router.get("/GetEmployeeOtherDocs/:id", function _callee56(req, res) {
       }
     }
   });
-}); // -------CUSTOMER Api's----------------------------------------------------//
-
-router.get("/custcat", function _callee57(req, res) {
+});
+router.get("/GetEmployeeOtherCoveredAreas/:id", function _callee57(req, res) {
   return regeneratorRuntime.async(function _callee57$(_context57) {
     while (1) {
       switch (_context57.prev = _context57.next) {
         case 0:
           _context57.t0 = res;
           _context57.next = 3;
-          return regeneratorRuntime.awrap(CustsDb.getCustomersCat());
+          return regeneratorRuntime.awrap(EmpsDb.getOtherCoveredAreasByEmpId(req.params.id));
 
         case 3:
           _context57.t1 = _context57.sent;
@@ -1519,46 +1526,35 @@ router.get("/custcat", function _callee57(req, res) {
     }
   });
 });
-router.post("/custcat", function _callee58(req, res) {
-  var obj;
+router.get("/GetEmployeeOtherDocs/:id", function _callee58(req, res) {
   return regeneratorRuntime.async(function _callee58$(_context58) {
     while (1) {
       switch (_context58.prev = _context58.next) {
         case 0:
-          obj = _objectSpread({}, req.body);
-          _context58.prev = 1;
           _context58.t0 = res;
-          _context58.next = 5;
-          return regeneratorRuntime.awrap(CustsDb.addCustomersCat(obj));
+          _context58.next = 3;
+          return regeneratorRuntime.awrap(EmpsDb.getDocsByEmpId(req.params.id));
 
-        case 5:
+        case 3:
           _context58.t1 = _context58.sent;
 
           _context58.t0.json.call(_context58.t0, _context58.t1);
 
-          _context58.next = 12;
-          break;
-
-        case 9:
-          _context58.prev = 9;
-          _context58.t2 = _context58["catch"](1);
-          console.error("Error while Adding", _context58.t2.message);
-
-        case 12:
+        case 5:
         case "end":
           return _context58.stop();
       }
     }
-  }, null, null, [[1, 9]]);
+  });
 });
-router["delete"]("/custcat/:id", function _callee59(req, res) {
+router.get("/GetEmployeeCoveredAreasForEdit/:EmpId/:hqId", function _callee59(req, res) {
   return regeneratorRuntime.async(function _callee59$(_context59) {
     while (1) {
       switch (_context59.prev = _context59.next) {
         case 0:
           _context59.t0 = res;
           _context59.next = 3;
-          return regeneratorRuntime.awrap(CustsDb.deleteCustomersCat(req.params.id));
+          return regeneratorRuntime.awrap(EmpsDb.GetEmployeeCoveredAreasForEdit(req.params.EmpId, req.params.hqId));
 
         case 3:
           _context59.t1 = _context59.sent;
@@ -1572,48 +1568,35 @@ router["delete"]("/custcat/:id", function _callee59(req, res) {
     }
   });
 });
-router.put("/custcat/:id", function _callee60(req, res) {
-  var obj;
+router.get("/getEmpCountriesInCoveredAreasForEdit/:EmpId", function _callee60(req, res) {
   return regeneratorRuntime.async(function _callee60$(_context60) {
     while (1) {
       switch (_context60.prev = _context60.next) {
         case 0:
-          obj = _objectSpread({}, req.body);
-          _context60.prev = 1;
           _context60.t0 = res;
-          _context60.next = 5;
-          return regeneratorRuntime.awrap(CustsDb.updateCustomersCat(req.params.id, obj));
+          _context60.next = 3;
+          return regeneratorRuntime.awrap(EmpsDb.getEmpCountriesInCoveredAreasForEdit(req.params.EmpId));
 
-        case 5:
+        case 3:
           _context60.t1 = _context60.sent;
 
           _context60.t0.json.call(_context60.t0, _context60.t1);
 
-          _context60.next = 13;
-          break;
-
-        case 9:
-          _context60.prev = 9;
-          _context60.t2 = _context60["catch"](1);
-          console.error("Error while Adding", _context60.t2.message);
-          next(_context60.t2);
-
-        case 13:
+        case 5:
         case "end":
           return _context60.stop();
       }
     }
-  }, null, null, [[1, 9]]);
-}); // -------UOM Api's----------------------------------------------------//
-
-router.get("/uom", function _callee61(req, res) {
+  });
+});
+router.get("/getEmpStatesInCoveredAreasForEdit/:EmpId", function _callee61(req, res) {
   return regeneratorRuntime.async(function _callee61$(_context61) {
     while (1) {
       switch (_context61.prev = _context61.next) {
         case 0:
           _context61.t0 = res;
           _context61.next = 3;
-          return regeneratorRuntime.awrap(UomDb.getUom());
+          return regeneratorRuntime.awrap(EmpsDb.getEmpStatesInCoveredAreasForEdit(req.params.EmpId));
 
         case 3:
           _context61.t1 = _context61.sent;
@@ -1627,47 +1610,35 @@ router.get("/uom", function _callee61(req, res) {
     }
   });
 });
-router.post("/uom", function _callee62(req, res) {
-  var obj;
+router.get("/getEmpCitiesInCoveredAreasForEdit/:EmpId", function _callee62(req, res) {
   return regeneratorRuntime.async(function _callee62$(_context62) {
     while (1) {
       switch (_context62.prev = _context62.next) {
         case 0:
-          obj = _objectSpread({}, req.body);
-          _context62.prev = 1;
           _context62.t0 = res;
-          _context62.next = 5;
-          return regeneratorRuntime.awrap(UomDb.addUom(obj));
+          _context62.next = 3;
+          return regeneratorRuntime.awrap(EmpsDb.getEmpCitiesInCoveredAreasForEdit(req.params.EmpId));
 
-        case 5:
+        case 3:
           _context62.t1 = _context62.sent;
 
           _context62.t0.json.call(_context62.t0, _context62.t1);
 
-          _context62.next = 13;
-          break;
-
-        case 9:
-          _context62.prev = 9;
-          _context62.t2 = _context62["catch"](1);
-          console.error("Error while Adding", _context62.t2.message);
-          next(_context62.t2);
-
-        case 13:
+        case 5:
         case "end":
           return _context62.stop();
       }
     }
-  }, null, null, [[1, 9]]);
+  });
 });
-router["delete"]("/uom/:id", function _callee63(req, res) {
+router.get("/getEmpAreasInCoveredAreasForEdit/:EmpId", function _callee63(req, res) {
   return regeneratorRuntime.async(function _callee63$(_context63) {
     while (1) {
       switch (_context63.prev = _context63.next) {
         case 0:
           _context63.t0 = res;
           _context63.next = 3;
-          return regeneratorRuntime.awrap(UomDb.deleteUom(req.params.id));
+          return regeneratorRuntime.awrap(EmpsDb.getEmpAreasInCoveredAreasForEdit(req.params.EmpId));
 
         case 3:
           _context63.t1 = _context63.sent;
@@ -1681,35 +1652,240 @@ router["delete"]("/uom/:id", function _callee63(req, res) {
     }
   });
 });
-router.put("/uom/:id", function _callee64(req, res) {
-  var obj;
+router.get("/getAllManagers", function _callee64(req, res) {
   return regeneratorRuntime.async(function _callee64$(_context64) {
     while (1) {
       switch (_context64.prev = _context64.next) {
         case 0:
-          obj = _objectSpread({}, req.body);
-          _context64.prev = 1;
           _context64.t0 = res;
-          _context64.next = 5;
-          return regeneratorRuntime.awrap(UomDb.updateUom(req.params.id, obj));
+          _context64.next = 3;
+          return regeneratorRuntime.awrap(EmpsDb.getAllManagers());
 
-        case 5:
+        case 3:
           _context64.t1 = _context64.sent;
 
           _context64.t0.json.call(_context64.t0, _context64.t1);
 
-          _context64.next = 13;
+        case 5:
+        case "end":
+          return _context64.stop();
+      }
+    }
+  });
+}); // -------CUSTOMER Api's----------------------------------------------------//
+
+router.get("/custcat", function _callee65(req, res) {
+  return regeneratorRuntime.async(function _callee65$(_context65) {
+    while (1) {
+      switch (_context65.prev = _context65.next) {
+        case 0:
+          _context65.t0 = res;
+          _context65.next = 3;
+          return regeneratorRuntime.awrap(CustsDb.getCustomersCat());
+
+        case 3:
+          _context65.t1 = _context65.sent;
+
+          _context65.t0.json.call(_context65.t0, _context65.t1);
+
+        case 5:
+        case "end":
+          return _context65.stop();
+      }
+    }
+  });
+});
+router.post("/custcat", function _callee66(req, res) {
+  var obj;
+  return regeneratorRuntime.async(function _callee66$(_context66) {
+    while (1) {
+      switch (_context66.prev = _context66.next) {
+        case 0:
+          obj = _objectSpread({}, req.body);
+          _context66.prev = 1;
+          _context66.t0 = res;
+          _context66.next = 5;
+          return regeneratorRuntime.awrap(CustsDb.addCustomersCat(obj));
+
+        case 5:
+          _context66.t1 = _context66.sent;
+
+          _context66.t0.json.call(_context66.t0, _context66.t1);
+
+          _context66.next = 12;
           break;
 
         case 9:
-          _context64.prev = 9;
-          _context64.t2 = _context64["catch"](1);
-          console.error("Error while Adding", _context64.t2.message);
-          next(_context64.t2);
+          _context66.prev = 9;
+          _context66.t2 = _context66["catch"](1);
+          console.error("Error while Adding", _context66.t2.message);
+
+        case 12:
+        case "end":
+          return _context66.stop();
+      }
+    }
+  }, null, null, [[1, 9]]);
+});
+router["delete"]("/custcat/:id", function _callee67(req, res) {
+  return regeneratorRuntime.async(function _callee67$(_context67) {
+    while (1) {
+      switch (_context67.prev = _context67.next) {
+        case 0:
+          _context67.t0 = res;
+          _context67.next = 3;
+          return regeneratorRuntime.awrap(CustsDb.deleteCustomersCat(req.params.id));
+
+        case 3:
+          _context67.t1 = _context67.sent;
+
+          _context67.t0.json.call(_context67.t0, _context67.t1);
+
+        case 5:
+        case "end":
+          return _context67.stop();
+      }
+    }
+  });
+});
+router.put("/custcat/:id", function _callee68(req, res) {
+  var obj;
+  return regeneratorRuntime.async(function _callee68$(_context68) {
+    while (1) {
+      switch (_context68.prev = _context68.next) {
+        case 0:
+          obj = _objectSpread({}, req.body);
+          _context68.prev = 1;
+          _context68.t0 = res;
+          _context68.next = 5;
+          return regeneratorRuntime.awrap(CustsDb.updateCustomersCat(req.params.id, obj));
+
+        case 5:
+          _context68.t1 = _context68.sent;
+
+          _context68.t0.json.call(_context68.t0, _context68.t1);
+
+          _context68.next = 13;
+          break;
+
+        case 9:
+          _context68.prev = 9;
+          _context68.t2 = _context68["catch"](1);
+          console.error("Error while Adding", _context68.t2.message);
+          next(_context68.t2);
 
         case 13:
         case "end":
-          return _context64.stop();
+          return _context68.stop();
+      }
+    }
+  }, null, null, [[1, 9]]);
+}); // -------UOM Api's----------------------------------------------------//
+
+router.get("/uom", function _callee69(req, res) {
+  return regeneratorRuntime.async(function _callee69$(_context69) {
+    while (1) {
+      switch (_context69.prev = _context69.next) {
+        case 0:
+          _context69.t0 = res;
+          _context69.next = 3;
+          return regeneratorRuntime.awrap(UomDb.getUom());
+
+        case 3:
+          _context69.t1 = _context69.sent;
+
+          _context69.t0.json.call(_context69.t0, _context69.t1);
+
+        case 5:
+        case "end":
+          return _context69.stop();
+      }
+    }
+  });
+});
+router.post("/uom", function _callee70(req, res) {
+  var obj;
+  return regeneratorRuntime.async(function _callee70$(_context70) {
+    while (1) {
+      switch (_context70.prev = _context70.next) {
+        case 0:
+          obj = _objectSpread({}, req.body);
+          _context70.prev = 1;
+          _context70.t0 = res;
+          _context70.next = 5;
+          return regeneratorRuntime.awrap(UomDb.addUom(obj));
+
+        case 5:
+          _context70.t1 = _context70.sent;
+
+          _context70.t0.json.call(_context70.t0, _context70.t1);
+
+          _context70.next = 13;
+          break;
+
+        case 9:
+          _context70.prev = 9;
+          _context70.t2 = _context70["catch"](1);
+          console.error("Error while Adding", _context70.t2.message);
+          next(_context70.t2);
+
+        case 13:
+        case "end":
+          return _context70.stop();
+      }
+    }
+  }, null, null, [[1, 9]]);
+});
+router["delete"]("/uom/:id", function _callee71(req, res) {
+  return regeneratorRuntime.async(function _callee71$(_context71) {
+    while (1) {
+      switch (_context71.prev = _context71.next) {
+        case 0:
+          _context71.t0 = res;
+          _context71.next = 3;
+          return regeneratorRuntime.awrap(UomDb.deleteUom(req.params.id));
+
+        case 3:
+          _context71.t1 = _context71.sent;
+
+          _context71.t0.json.call(_context71.t0, _context71.t1);
+
+        case 5:
+        case "end":
+          return _context71.stop();
+      }
+    }
+  });
+});
+router.put("/uom/:id", function _callee72(req, res) {
+  var obj;
+  return regeneratorRuntime.async(function _callee72$(_context72) {
+    while (1) {
+      switch (_context72.prev = _context72.next) {
+        case 0:
+          obj = _objectSpread({}, req.body);
+          _context72.prev = 1;
+          _context72.t0 = res;
+          _context72.next = 5;
+          return regeneratorRuntime.awrap(UomDb.updateUom(req.params.id, obj));
+
+        case 5:
+          _context72.t1 = _context72.sent;
+
+          _context72.t0.json.call(_context72.t0, _context72.t1);
+
+          _context72.next = 13;
+          break;
+
+        case 9:
+          _context72.prev = 9;
+          _context72.t2 = _context72["catch"](1);
+          console.error("Error while Adding", _context72.t2.message);
+          next(_context72.t2);
+
+        case 13:
+        case "end":
+          return _context72.stop();
       }
     }
   }, null, null, [[1, 9]]);

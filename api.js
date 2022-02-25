@@ -2,7 +2,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-07 18:02:44
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-23 18:54:45
+ * @Last Modified time: 2022-02-24 16:49:19
  */
 
 var express = require("express");
@@ -127,7 +127,9 @@ router.get("/AdminLogin/:email/:password", async (req, res) => {
 // });
 
 router.get("/countries", async (req, res) => {
-  res.json(await CountryDb.getCountries());
+  await CountryDb.getCountries().then((data) => {
+    res.json(data);
+  });
 });
 
 router.route("/countries/:id").get(async (req, res) => {
@@ -146,7 +148,6 @@ router.route("/countries").post(async (req, res) => {
 
 router.route("/countries/:id").delete(async (req, res) => {
   await CountryDb.deleteCountry(req.params.id).then((data) => {
-    // console.log(data);
     res.json(data);
   });
 });
@@ -226,7 +227,7 @@ router.delete("/states/:id", async (req, res) => {
 
 router.route("/cities").get(async (req, res) => {
   let obj = { ...req.body };
-  CityDb.getCities(obj).then((data) => {
+  await CityDb.getCities(obj).then((data) => {
     res.status(201).json(data);
   });
 });
@@ -476,9 +477,22 @@ router.post("/importemps", async (req, res) => {
     next(err);
   }
 });
+router.put("/emps/:id", async (req, res, next) => {
+  let obj = { ...req.body };
+  try {
+    res.json(await EmpsDb.updateEmp(req.params.id, obj));
+  } catch (err) {
+    console.error(`Error while Updating`, err.message);
+    next(err);
+  }
+});
 
 router.delete("/emps/:id", async (req, res) => {
   res.json(await EmpsDb.deleteEmp(req.params.id));
+});
+
+router.delete("/DeleteEmpDocs/:id", async (req, res) => {
+  res.json(await EmpsDb.DeleteEmpDocs(req.params.id));
 });
 
 router.get("/empById/:id", async (req, res) => {
@@ -506,6 +520,34 @@ router.get("/GetEmployeeOtherDocs/:id", async (req, res) => {
   res.json(await EmpsDb.getDocsByEmpId(req.params.id));
 });
 
+router.get("/GetEmployeeCoveredAreasForEdit/:EmpId/:hqId", async (req, res) => {
+  res.json(
+    await EmpsDb.GetEmployeeCoveredAreasForEdit(
+      req.params.EmpId,
+      req.params.hqId
+    )
+  );
+});
+
+router.get("/getEmpCountriesInCoveredAreasForEdit/:EmpId", async (req, res) => {
+  res.json(await EmpsDb.getEmpCountriesInCoveredAreasForEdit(req.params.EmpId));
+});
+
+router.get("/getEmpStatesInCoveredAreasForEdit/:EmpId", async (req, res) => {
+  res.json(await EmpsDb.getEmpStatesInCoveredAreasForEdit(req.params.EmpId));
+});
+
+router.get("/getEmpCitiesInCoveredAreasForEdit/:EmpId", async (req, res) => {
+  res.json(await EmpsDb.getEmpCitiesInCoveredAreasForEdit(req.params.EmpId));
+});
+
+router.get("/getEmpAreasInCoveredAreasForEdit/:EmpId", async (req, res) => {
+  res.json(await EmpsDb.getEmpAreasInCoveredAreasForEdit(req.params.EmpId));
+});
+
+router.get("/getAllManagers", async (req, res) => {
+  res.json(await EmpsDb.getAllManagers());
+});
 
 // -------CUSTOMER Api's----------------------------------------------------//
 

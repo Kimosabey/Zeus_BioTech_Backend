@@ -4,7 +4,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-04 16:20:31
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-23 13:19:50
+ * @Last Modified time: 2022-02-24 17:01:33
  */
 var config = require("../dbconfig");
 
@@ -24,25 +24,24 @@ function getCountries() {
         case 4:
           pool = _context.sent;
           _context.next = 7;
-          return regeneratorRuntime.awrap(pool.request().query("SELECT TOP 1000 [COUNTRY_PKID] ,[COUNTRY_CODE] ,[COUNTRY_NAME] ,[COUNTRY_ACTIVE] FROM [COUNTRY_MASTER]"));
+          return regeneratorRuntime.awrap(pool.request().query("SELECT * FROM [COUNTRY_MASTER]"));
 
         case 7:
           result = _context.sent;
           pool.close();
-          console.log("result.recordsets[0]: ", result.recordsets[0]);
           return _context.abrupt("return", result.recordsets[0]);
 
-        case 13:
-          _context.prev = 13;
+        case 12:
+          _context.prev = 12;
           _context.t0 = _context["catch"](1);
-          console.log(_context.t0); // pool.close();
+          console.log("getCountries error--->", _context.t0); // pool.close();
 
-        case 16:
+        case 15:
         case "end":
           return _context.stop();
       }
     }
-  }, null, null, [[1, 13]]);
+  }, null, null, [[1, 12]]);
 }
 
 function getCountryById(countryId) {
@@ -58,7 +57,7 @@ function getCountryById(countryId) {
         case 3:
           pool = _context2.sent;
           _context2.next = 6;
-          return regeneratorRuntime.awrap(pool.request().input("input_parameter", countryId).query("SELECT * from COUNTRY_MASTER WHERE COUNTRY_PKID=@input_parameter"));
+          return regeneratorRuntime.awrap(pool.request().input("countryId", countryId).query("SELECT * from COUNTRY_MASTER WHERE COUNTRY_PKID=@countryId"));
 
         case 6:
           result = _context2.sent;
@@ -68,7 +67,7 @@ function getCountryById(countryId) {
         case 11:
           _context2.prev = 11;
           _context2.t0 = _context2["catch"](0);
-          console.log(_context2.t0); // pool.close();
+          console.log("getCountryById error--->", _context2.t0); // pool.close();
 
         case 14:
         case "end":
