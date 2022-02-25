@@ -2,7 +2,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-07 18:02:44
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-24 16:49:19
+ * @Last Modified time: 2022-02-25 18:34:00
  */
 
 var express = require("express");
@@ -458,7 +458,7 @@ router.get("/emps", async (req, res) => {
   res.json(await EmpsDb.getEmp());
 });
 
-router.post("/emps", async (req, res) => {
+router.post("/emps", async (req, res, next) => {
   let obj = { ...req.body };
   try {
     res.json(await EmpsDb.addEmp(obj));
@@ -467,8 +467,9 @@ router.post("/emps", async (req, res) => {
     next(err);
   }
 });
-router.post("/importemps", async (req, res) => {
+router.post("/importemps", async (req, res, next) => {
   let obj = { ...req.body };
+  console.log("obj: ", obj);
 
   try {
     res.json(await EmpsDb.importEmps(obj));
@@ -487,8 +488,13 @@ router.put("/emps/:id", async (req, res, next) => {
   }
 });
 
-router.delete("/emps/:id", async (req, res) => {
-  res.json(await EmpsDb.deleteEmp(req.params.id));
+router.put("/deletemps/:id", async (req, res, next) => {
+  try {
+    res.json(await EmpsDb.deleteEmp(req.params.id));
+  } catch (err) {
+    console.error(`Error while Updating`, err.message);
+    next(err);
+  }
 });
 
 router.delete("/DeleteEmpDocs/:id", async (req, res) => {
@@ -521,6 +527,11 @@ router.get("/GetEmployeeOtherDocs/:id", async (req, res) => {
 });
 
 router.get("/GetEmployeeCoveredAreasForEdit/:EmpId/:hqId", async (req, res) => {
+  console.log(
+    "req.params.EmpId-req.params.hqId:",
+    req.params.EmpId,
+    req.params.hqId
+  );
   res.json(
     await EmpsDb.GetEmployeeCoveredAreasForEdit(
       req.params.EmpId,
@@ -557,7 +568,6 @@ router.get("/custcat", async (req, res) => {
 
 router.post("/custcat", async (req, res) => {
   let obj = { ...req.body };
-
   try {
     res.json(await CustsDb.addCustomersCat(obj));
   } catch (err) {
@@ -569,11 +579,66 @@ router.delete("/custcat/:id", async (req, res) => {
   res.json(await CustsDb.deleteCustomersCat(req.params.id));
 });
 
-router.put("/custcat/:id", async (req, res) => {
+router.put("/custcat/:id", async (req, res, next) => {
   let obj = { ...req.body };
-
   try {
     res.json(await CustsDb.updateCustomersCat(req.params.id, obj));
+  } catch (err) {
+    console.error(`Error while Adding`, err.message);
+    next(err);
+  }
+});
+
+router.get("/custtype", async (req, res) => {
+  res.json(await CustsDb.getCustomersType());
+});
+
+router.post("/custtype", async (req, res) => {
+  let obj = { ...req.body };
+  try {
+    res.json(await CustsDb.addCustomersType(obj));
+  } catch (err) {
+    console.error(`Error while Adding`, err.message);
+  }
+});
+
+router.delete("/custtype/:id", async (req, res) => {
+  res.json(await CustsDb.deleteCustomersType(req.params.id));
+});
+
+router.put("/custtype/:id", async (req, res, next) => {
+  let obj = { ...req.body };
+  try {
+    res.json(await CustsDb.updateCustomersType(req.params.id, obj));
+  } catch (err) {
+    console.error(`Error while Adding`, err.message);
+    next(err);
+  }
+});
+
+router.get("/custsubtype", async (req, res) => {
+  res.json(await CustsDb.getCustomersSubType());
+});
+
+router.post("/custsubtype", async (req, res) => {
+  let obj = { ...req.body };
+  try {
+    res.json(await CustsDb.addCustomersSubType(obj));
+  } catch (err) {
+    console.error(`Error while Adding`, err.message);
+  }
+});
+
+router.delete("/custsubtype/:id", async (req, res) => {
+  res.json(await CustsDb.deleteCustomersSubType(req.params.id));
+});
+
+router.put("/custsubtype/:id", async (req, res, next) => {
+  let obj = { ...req.body };
+ 
+  try {
+    res.json(await CustsDb.updateCustomersSubType(req.params.id, obj));
+    
   } catch (err) {
     console.error(`Error while Adding`, err.message);
     next(err);
