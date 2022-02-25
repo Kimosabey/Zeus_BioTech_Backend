@@ -2,7 +2,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-08 12:20:30
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-25 15:33:24
+ * @Last Modified time: 2022-02-25 16:27:49
  */
 
 var config = require("../dbconfig");
@@ -632,6 +632,22 @@ async function getAllManagers() {
 }
 
 async function importEmps(obj) {
+  function ExcelDateToJSDate(serial) {
+    var utc_days = Math.floor(serial - 25569);
+    var utc_value = utc_days * 86400;
+    var date_info = new Date(utc_value * 1000);
+    var d = new Date(date_info),
+      month = "" + (d.getMonth() + 1),
+      day = "" + d.getDate(),
+      year = d.getFullYear();
+
+    if (month.length < 2) month = "0" + month;
+    if (day.length < 2) day = "0" + day;
+
+    return [year, month, day].join("-");
+  }
+
+  console.log(ExcelDateToJSDate(44599));
   var x = await obj.Employees;
   console.log("x: ", x.length);
 
@@ -659,14 +675,18 @@ async function importEmps(obj) {
           .input("EMPLOYEE_ALT_CONTACT", x[i].AlterNateNumber)
           .input("EMPLOYEE_DESIGNATION", x[i].Designation)
           .input("EMPLOYEE_QUALIFICATION", x[i].Qualification)
-          .input("EMPLOYEE_DOJ", sql.Date, x[i].JoiningDate)
-          .input("EMPLOYEE_DOB", sql.Date, x[i].DateofBirth)
+          .input("EMPLOYEE_DOJ", sql.Date, ExcelDateToJSDate(x[i].JoiningDate))
+          .input("EMPLOYEE_DOB", sql.Date, ExcelDateToJSDate(x[i].DateofBirth))
           .input("EMPLOYEE_REGION", x[i].Region)
           .input("EMPLOYEE_PASSWORD", x[i].password)
           .input("EMPLOYEE_GENDER", x[i].Gender)
           .input("EMPOLYEE_IS_MANAGER", x[i].Ismanager)
           .input("EMPLOYEE_SALARY", x[i].salary)
-          .input("EMPLOYEE_DOR", sql.Date, x[i].dateofreleaving)
+          .input(
+            "EMPLOYEE_DOR",
+            sql.Date,
+            ExcelDateToJSDate(x[i].dateofreleaving)
+          )
           .input("EMPLOYEE_ADDRESS1", x[i].address1)
           .input("EMPLOYEE_ADDRESS2", x[i].address2)
           .input("EMPLOYEE_ADDRESS3", x[i].address3)
