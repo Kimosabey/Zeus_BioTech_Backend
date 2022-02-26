@@ -2,7 +2,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-08 12:20:30
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-25 16:27:49
+ * @Last Modified time: 2022-02-26 15:33:12
  */
 
 var config = require("../dbconfig");
@@ -17,7 +17,7 @@ async function getEmpTypes() {
 
     return result.recordsets[0];
   } catch (error) {
-    console.log(error);
+    console.log("getEmpTypes-->", error);
     // pool.close();
   }
 }
@@ -96,7 +96,7 @@ async function deleteEmpType(empId) {
       return true;
     }
   } catch (error) {
-    console.log(error);
+    console.log("deleteEmpType-->", error);
     // pool.close();
   }
 }
@@ -114,7 +114,7 @@ async function getEmpSubTypes() {
 
     return result.recordsets[0];
   } catch (error) {
-    console.log(error);
+    console.log("getEmpSubTypes-->", error);
     // pool.close();
   }
 }
@@ -133,7 +133,7 @@ async function getEmpSubTypesById(EmpTypeId) {
 
     return result.recordsets[0];
   } catch (error) {
-    console.log(error);
+    console.log("getEmpSubTypesById-->", error);
     // pool.close();
   }
 }
@@ -192,32 +192,36 @@ async function deleteEmpSubType(empSubId) {
       return true;
     }
   } catch (error) {
-    console.log(error);
+    console.log("deleteEmpSubType-->", error);
     // pool.close();
   }
 }
 
 async function updateEmpSubType(empSubtypeId, obj) {
-  let pool = await sql.connect(config);
-  let result = await pool
-    .request()
-    .input("input_parameter", empSubtypeId)
-    .input("EmpTypeId", obj.EmpTypeId)
-    .input("EmpSubTypeName", obj.EmpSubTypeName)
-    .query(
-      `UPDATE EMPLOYEE_SUB_TYPE SET EMPLOYEE_SUB_TYPE_TYPE_FKID = @EmpTypeId,EMPLOYEE_SUB_TYPE_NAME=@EmpSubTypeName WHERE EMPLOYEE_SUB_TYPE_PKID =@input_parameter`
-    );
+  try {
+    let pool = await sql.connect(config);
+    let result = await pool
+      .request()
+      .input("input_parameter", empSubtypeId)
+      .input("EmpTypeId", obj.EmpTypeId)
+      .input("EmpSubTypeName", obj.EmpSubTypeName)
+      .query(
+        `UPDATE EMPLOYEE_SUB_TYPE SET EMPLOYEE_SUB_TYPE_TYPE_FKID = @EmpTypeId,EMPLOYEE_SUB_TYPE_NAME=@EmpSubTypeName WHERE EMPLOYEE_SUB_TYPE_PKID =@input_parameter`
+      );
 
-  pool.close();
-  let message = false;
+    pool.close();
+    let message = false;
 
-  if (result.rowsAffected) {
-    message = true;
+    if (result.rowsAffected) {
+      message = true;
+    }
+    pool.close();
+    // return { message };
+    // console.log(pool._connected);
+    return message;
+  } catch (error) {
+    console.log("updateEmpSubType-->", error);
   }
-  pool.close();
-  // return { message };
-  // console.log(pool._connected);
-  return message;
 }
 
 async function getEmp() {
@@ -230,7 +234,7 @@ async function getEmp() {
 
     return result.recordsets[0];
   } catch (error) {
-    console.log(error);
+    console.log("getEmp-->", error);
     // pool.close();
   }
 }
@@ -336,88 +340,81 @@ async function addEmp(obj) {
       return "0";
     }
   } catch (err) {
-    console.log(err);
+    console.log("addEmp-->", err);
   }
 }
 
 async function updateEmp(empId, obj) {
   let pkid = empId;
-  let pool = await sql.connect(config);
-  let result4 = await pool
-    .request()
-    .input("input_parameter", empId)
-    .input("EMPLOYEE_TYPE_FKID", obj.Emptype)
-    .input("EMPOYEE_SUB_TYPE_FKID", obj.EmpSubtype)
-    .input("EMPLOYEE_HQ_FKID", obj.EmpHQ)
-    .input("EMPLOYEE_COMPANY_FKID", obj.Company)
-    .input("EMPLOYEE_NAME", obj.Name)
-    .input("EMPLOYEE_PROFILE", obj.Profile)
-    .input("EMPLOYEE_EMAIL", obj.Email)
-    .input("EMPLOYEE_ALT_EMAIL", obj.Email2)
-    .input("EMPLOYEE_CONTACT", obj.PhoneNumber)
-    .input("EMPLOYEE_ALT_CONTACT", obj.AlterNateNumber)
-    .input("EMPLOYEE_DESIGNATION", obj.Designation)
-    .input("EMPLOYEE_QUALIFICATION", obj.Qualification)
-    .input("EMPLOYEE_DOJ", obj.JoiningDate)
-    .input("EMPLOYEE_DOB", obj.DateofBirth)
-    .input("EMPLOYEE_REGION", obj.Region)
-    .input("EMPLOYEE_PASSWORD", obj.password)
-    .input("EMPLOYEE_GENDER", obj.Gender)
-    .input("EMPLOYEE_REPORTING_TO", obj.ReportingTo)
-    .input("EMPOLYEE_IS_MANAGER", obj.Ismanager)
-    .input("EMPLOYEE_SALARY", obj.salary)
-    .input("EMPLOYEE_DOR", obj.dateofreleaving)
-    .input("EMPLOYEE_ADDRESS1", obj.address1)
-    .input("EMPLOYEE_ADDRESS2", obj.address2)
-    .input("EMPLOYEE_ADDRESS3", obj.address3)
-    .input("EMPLOYEE_ADDRESS_ZIP", obj.ZipCode)
-    .input("EMPLOYEE_ALT_ADDRESS1", obj.altaddress1)
-    .input("EMPLOYEE_ALT_ADDRESS2", obj.altaddress2)
-    .input("EMPLOYEE_ALT_ADDRESS3", obj.altaddress3)
-    .input("EMPLOYEE_ALT_ADDRESS_ZIP", obj.altZipCode)
-    .query(
-      `UPDATE EMPLOYEE_MASTER SET [EMPLOYEE_TYPE_FKID]=@EMPLOYEE_TYPE_FKID,[EMPOYEE_SUB_TYPE_FKID]=@EMPOYEE_SUB_TYPE_FKID ,[EMPLOYEE_HQ_FKID]=@EMPLOYEE_HQ_FKID ,[EMPLOYEE_COMPANY_FKID]=@EMPLOYEE_COMPANY_FKID ,[EMPLOYEE_NAME]=@EMPLOYEE_NAME ,[EMPLOYEE_EMAIL]=@EMPLOYEE_EMAIL ,[EMPLOYEE_ALT_EMAIL]=@EMPLOYEE_ALT_EMAIL ,[EMPLOYEE_CONTACT]=@EMPLOYEE_CONTACT ,[EMPLOYEE_ALT_CONTACT]=@EMPLOYEE_ALT_CONTACT ,[EMPLOYEE_DESIGNATION]=@EMPLOYEE_DESIGNATION ,[EMPLOYEE_QUALIFICATION]=@EMPLOYEE_QUALIFICATION ,[EMPLOYEE_DOJ]=@EMPLOYEE_DOJ ,[EMPLOYEE_DOB]=@EMPLOYEE_DOB ,[EMPLOYEE_REGION]=@EMPLOYEE_REGION ,[EMPLOYEE_GENDER]=@EMPLOYEE_GENDER ,[EMPLOYEE_REPORTING_TO]=@EMPLOYEE_REPORTING_TO ,[EMPLOYEE_PASSWORD]=@EMPLOYEE_PASSWORD ,[EMPLOYEE_PROFILE]=@EMPLOYEE_PROFILE ,[EMPOLYEE_IS_MANAGER]=@EMPOLYEE_IS_MANAGER ,[EMPLOYEE_SALARY]=@EMPLOYEE_SALARY ,[EMPLOYEE_DOR]=@EMPLOYEE_DOR ,[EMPLOYEE_ADDRESS1]=@EMPLOYEE_ADDRESS1 ,[EMPLOYEE_ADDRESS2]=@EMPLOYEE_ADDRESS2 ,[EMPLOYEE_ADDRESS3]=@EMPLOYEE_ADDRESS3 ,[EMPLOYEE_ADDRESS_ZIP]=@EMPLOYEE_ADDRESS_ZIP ,[EMPLOYEE_ALT_ADDRESS1]=@EMPLOYEE_ALT_ADDRESS1 ,[EMPLOYEE_ALT_ADDRESS2]=@EMPLOYEE_ALT_ADDRESS2 ,[EMPLOYEE_ALT_ADDRESS3]=@EMPLOYEE_ALT_ADDRESS3 ,[EMPLOYEE_ALT_ADDRESS_ZIP]=@EMPLOYEE_ALT_ADDRESS_ZIP ,[EMPLOYEE_ACTIVE]=1 WHERE EMPLOYEE_PKID =@input_parameter`
-    );
-
-  console.log("result4.rowsAffected: ", result4.rowsAffected);
-  if (result4.rowsAffected) {
-    //message = true;
-    let result = await pool
+  try {
+    let pool = await sql.connect(config);
+    let result4 = await pool
       .request()
-      .input("input_parameter", pkid)
+      .input("input_parameter", empId)
+      .input("EMPLOYEE_TYPE_FKID", obj.Emptype)
+      .input("EMPOYEE_SUB_TYPE_FKID", obj.EmpSubtype)
+      .input("EMPLOYEE_HQ_FKID", obj.EmpHQ)
+      .input("EMPLOYEE_COMPANY_FKID", obj.Company)
+      .input("EMPLOYEE_NAME", obj.Name)
+      .input("EMPLOYEE_PROFILE", obj.Profile)
+      .input("EMPLOYEE_EMAIL", obj.Email)
+      .input("EMPLOYEE_ALT_EMAIL", obj.Email2)
+      .input("EMPLOYEE_CONTACT", obj.PhoneNumber)
+      .input("EMPLOYEE_ALT_CONTACT", obj.AlterNateNumber)
+      .input("EMPLOYEE_DESIGNATION", obj.Designation)
+      .input("EMPLOYEE_QUALIFICATION", obj.Qualification)
+      .input("EMPLOYEE_DOJ", obj.JoiningDate)
+      .input("EMPLOYEE_DOB", obj.DateofBirth)
+      .input("EMPLOYEE_REGION", obj.Region)
+      .input("EMPLOYEE_PASSWORD", obj.password)
+      .input("EMPLOYEE_GENDER", obj.Gender)
+      .input("EMPLOYEE_REPORTING_TO", obj.ReportingTo)
+      .input("EMPOLYEE_IS_MANAGER", obj.Ismanager)
+      .input("EMPLOYEE_SALARY", obj.salary)
+      .input("EMPLOYEE_DOR", obj.dateofreleaving)
+      .input("EMPLOYEE_ADDRESS1", obj.address1)
+      .input("EMPLOYEE_ADDRESS2", obj.address2)
+      .input("EMPLOYEE_ADDRESS3", obj.address3)
+      .input("EMPLOYEE_ADDRESS_ZIP", obj.ZipCode)
+      .input("EMPLOYEE_ALT_ADDRESS1", obj.altaddress1)
+      .input("EMPLOYEE_ALT_ADDRESS2", obj.altaddress2)
+      .input("EMPLOYEE_ALT_ADDRESS3", obj.altaddress3)
+      .input("EMPLOYEE_ALT_ADDRESS_ZIP", obj.altZipCode)
       .query(
-        "DELETE FROM EMPLOYEE_DOCS WHERE EMPLOYEE_DOCS_EMP_FKID=@input_parameter"
+        `UPDATE EMPLOYEE_MASTER SET [EMPLOYEE_TYPE_FKID]=@EMPLOYEE_TYPE_FKID,[EMPOYEE_SUB_TYPE_FKID]=@EMPOYEE_SUB_TYPE_FKID ,[EMPLOYEE_HQ_FKID]=@EMPLOYEE_HQ_FKID ,[EMPLOYEE_COMPANY_FKID]=@EMPLOYEE_COMPANY_FKID ,[EMPLOYEE_NAME]=@EMPLOYEE_NAME ,[EMPLOYEE_EMAIL]=@EMPLOYEE_EMAIL ,[EMPLOYEE_ALT_EMAIL]=@EMPLOYEE_ALT_EMAIL ,[EMPLOYEE_CONTACT]=@EMPLOYEE_CONTACT ,[EMPLOYEE_ALT_CONTACT]=@EMPLOYEE_ALT_CONTACT ,[EMPLOYEE_DESIGNATION]=@EMPLOYEE_DESIGNATION ,[EMPLOYEE_QUALIFICATION]=@EMPLOYEE_QUALIFICATION ,[EMPLOYEE_DOJ]=@EMPLOYEE_DOJ ,[EMPLOYEE_DOB]=@EMPLOYEE_DOB ,[EMPLOYEE_REGION]=@EMPLOYEE_REGION ,[EMPLOYEE_GENDER]=@EMPLOYEE_GENDER ,[EMPLOYEE_REPORTING_TO]=@EMPLOYEE_REPORTING_TO ,[EMPLOYEE_PASSWORD]=@EMPLOYEE_PASSWORD ,[EMPLOYEE_PROFILE]=@EMPLOYEE_PROFILE ,[EMPOLYEE_IS_MANAGER]=@EMPOLYEE_IS_MANAGER ,[EMPLOYEE_SALARY]=@EMPLOYEE_SALARY ,[EMPLOYEE_DOR]=@EMPLOYEE_DOR ,[EMPLOYEE_ADDRESS1]=@EMPLOYEE_ADDRESS1 ,[EMPLOYEE_ADDRESS2]=@EMPLOYEE_ADDRESS2 ,[EMPLOYEE_ADDRESS3]=@EMPLOYEE_ADDRESS3 ,[EMPLOYEE_ADDRESS_ZIP]=@EMPLOYEE_ADDRESS_ZIP ,[EMPLOYEE_ALT_ADDRESS1]=@EMPLOYEE_ALT_ADDRESS1 ,[EMPLOYEE_ALT_ADDRESS2]=@EMPLOYEE_ALT_ADDRESS2 ,[EMPLOYEE_ALT_ADDRESS3]=@EMPLOYEE_ALT_ADDRESS3 ,[EMPLOYEE_ALT_ADDRESS_ZIP]=@EMPLOYEE_ALT_ADDRESS_ZIP ,[EMPLOYEE_ACTIVE]=1 WHERE EMPLOYEE_PKID =@input_parameter`
       );
 
-    let result2 = await pool
-      .request()
-      .input("input_parameter", pkid)
-      .query(
-        "DELETE FROM EMPLOYEE_COVERED_AREA WHERE EMPLOYEE_COVERED_AREA_EMP_FKID=@input_parameter"
+    console.log("result4.rowsAffected: ", result4.rowsAffected);
+    if (result4.rowsAffected) {
+      //message = true;
+      let result = await pool
+        .request()
+        .input("input_parameter", pkid)
+        .query(
+          "DELETE FROM EMPLOYEE_DOCS WHERE EMPLOYEE_DOCS_EMP_FKID=@input_parameter"
+        );
+
+      let result2 = await pool
+        .request()
+        .input("input_parameter", pkid)
+        .query(
+          "DELETE FROM EMPLOYEE_COVERED_AREA WHERE EMPLOYEE_COVERED_AREA_EMP_FKID=@input_parameter"
+        );
+
+      let result3 = await pool
+        .request()
+        .input("input_parameter", pkid)
+        .query(
+          "DELETE FROM EMPLOYEE_OTHER_COVERED_AREA WHERE EMPLOYEE_OTHER_COVERED_AREA_EMP_FKID=@input_parameter"
+        );
+
+      console.log(
+        result.rowsAffected[0],
+        result2.rowsAffected[0],
+        result3.rowsAffected[0]
       );
 
-    let result3 = await pool
-      .request()
-      .input("input_parameter", pkid)
-      .query(
-        "DELETE FROM EMPLOYEE_OTHER_COVERED_AREA WHERE EMPLOYEE_OTHER_COVERED_AREA_EMP_FKID=@input_parameter"
-      );
-
-    console.log(
-      result.rowsAffected[0],
-      result2.rowsAffected[0],
-      result3.rowsAffected[0]
-    );
-    if (
-      result.rowsAffected[0] == 0 &&
-      result2.rowsAffected[0] == 0 &&
-      result3.rowsAffected[0] == 0
-    ) {
-      pool.close();
-      return false;
-    } else {
       console.log("---- when its 1 ----");
-      let pool = await sql.connect(config);
 
       let insertProduct = await pool;
       obj.OtherDocs.map((i) => {
@@ -454,10 +451,12 @@ async function updateEmp(empId, obj) {
       });
 
       return true;
+    } else {
+      pool.close();
+      return false;
     }
-  } else {
-    pool.close();
-    return false;
+  } catch (err) {
+    console.log("updateEmp-->", err);
   }
 }
 
@@ -494,7 +493,7 @@ async function getEmpById(EmpId) {
 
     return result.recordsets[0];
   } catch (error) {
-    console.log(error);
+    console.log("getEmpById-->", error);
     // pool.close();
   }
 }
@@ -513,7 +512,7 @@ async function getAddressByEmpId(EmpId) {
 
     return result.recordsets[0];
   } catch (error) {
-    console.log(error);
+    console.log("getAddressByEmpId-->", error);
     // pool.close();
   }
 }
@@ -532,27 +531,32 @@ async function getCoveredAreaByEmpId(EmpId) {
 
     return result.recordsets[0];
   } catch (error) {
-    console.log(error);
+    console.log("getCoveredAreaByEmpId-->", error);
     // pool.close();
   }
 }
 async function GetEmployeeCoveredAreasForEdit(EmpId, hqId) {
-  try {
-    let pool = await sql.connect(config);
+  console.log("EmpId, hqId: ", EmpId, hqId);
+  if (hqId === "0") {
+    return [];
+  } else {
+    try {
+      let pool = await sql.connect(config);
 
-    let result = await pool
-      .request()
-      .input("hqId", hqId)
-      .input("EmpId", EmpId)
-      .query(
-        "SELECT a.*,isnull(e.EMPLOYEE_COVERED_AREA_ACTIVE, 0) as status FROM AREA_MASTER a JOIN HQ ON HQ_CITY_FKID=AREA_CITY_FKID left join EMPLOYEE_COVERED_AREA e on EMPLOYEE_COVERED_AREA_AREA_FKID = AREA_PKID and EMPLOYEE_COVERED_AREA_EMP_FKID = @EmpId WHERE HQ_PKID=@hqId"
-      );
-    pool.close();
-    // console.log(result.recordsets);
-    return result.recordsets[0];
-  } catch (error) {
-    console.log(error);
-    // pool.close();
+      let result = await pool
+        .request()
+        .input("hqId", hqId)
+        .input("EmpId", EmpId)
+        .query(
+          "SELECT a.*,isnull(e.EMPLOYEE_COVERED_AREA_ACTIVE, 0) as status FROM AREA_MASTER a JOIN HQ ON HQ_CITY_FKID=AREA_CITY_FKID left join EMPLOYEE_COVERED_AREA e on EMPLOYEE_COVERED_AREA_AREA_FKID = AREA_PKID and EMPLOYEE_COVERED_AREA_EMP_FKID = @EmpId WHERE HQ_PKID=@hqId"
+        );
+      pool.close();
+      // console.log(result.recordsets);
+      return result.recordsets[0];
+    } catch (error) {
+      console.log("GetEmployeeCoveredAreasForEdit-->", error);
+      // pool.close();
+    }
   }
 }
 
@@ -570,14 +574,13 @@ async function getOtherCoveredAreasByEmpId(EmpId) {
 
     return result.recordsets[0];
   } catch (error) {
-    console.log(error);
+    console.log("getOtherCoveredAreasByEmpId-->", error);
     // pool.close();
   }
 }
 async function getDocsByEmpId(EmpId) {
+  let pool = await sql.connect(config);
   try {
-    let pool = await sql.connect(config);
-
     let result = await pool
       .request()
       .input("EmpId", EmpId)
@@ -585,12 +588,11 @@ async function getDocsByEmpId(EmpId) {
         "SELECT EMPLOYEE_DOCS_FILE,EMPLOYEE_DOCS_PKID FROM [EMPLOYEE_DOCS] WHERE EMPLOYEE_DOCS_EMP_FKID=@EmpId AND EMPLOYEE_DOCS_ACTIVE=1"
       );
     pool.close();
-
     return result.recordsets[0];
   } catch (error) {
-    console.log(error);
-    // pool.close();
+    console.log("getDocsByEmpId-->", error);
   }
+  pool.close();
 }
 
 async function getEmpByIsManager(IsManager) {
@@ -607,7 +609,7 @@ async function getEmpByIsManager(IsManager) {
 
     return result.recordsets[0];
   } catch (error) {
-    console.log(error);
+    console.log("GetEmployeeCoveredAreasForEdit-->", error);
     // pool.close();
   }
 }
@@ -626,7 +628,7 @@ async function getAllManagers() {
 
     return result.recordsets[0];
   } catch (error) {
-    console.log(error);
+    console.log("getAllManagers-->", error);
     // pool.close();
   }
 }
@@ -649,7 +651,6 @@ async function importEmps(obj) {
 
   console.log(ExcelDateToJSDate(44599));
   var x = await obj.Employees;
-  console.log("x: ", x.length);
 
   try {
     for (var i = 0; i < x.length; i++) {
@@ -706,7 +707,7 @@ async function importEmps(obj) {
     }
     return true;
   } catch (error) {
-    console.log("error: ", error);
+    console.log("importEmps-->", error);
   }
 }
 
@@ -721,7 +722,7 @@ async function getEmpCountriesInCoveredAreasForEdit(empId) {
     pool.close();
     return result.recordsets[0];
   } catch (error) {
-    console.log(error);
+    console.log("getEmpCountriesInCoveredAreasForEdit-->", error);
     // pool.close();
   }
 }
@@ -737,7 +738,7 @@ async function getEmpStatesInCoveredAreasForEdit(empId) {
     pool.close();
     return result.recordsets[0];
   } catch (error) {
-    console.log(error);
+    console.log("getEmpStatesInCoveredAreasForEdit-->", error);
     // pool.close();
   }
 }
@@ -753,7 +754,7 @@ async function getEmpCitiesInCoveredAreasForEdit(empId) {
     pool.close();
     return result.recordsets[0];
   } catch (error) {
-    console.log(error);
+    console.log("getEmpCitiesInCoveredAreasForEdit-->", error);
     // pool.close();
   }
 }
@@ -769,13 +770,12 @@ async function getEmpAreasInCoveredAreasForEdit(empId) {
     pool.close();
     return result.recordsets[0];
   } catch (error) {
-    console.log(error);
+    console.log("getEmpAreasInCoveredAreasForEdit-->", error);
     // pool.close();
   }
 }
 
 async function DeleteEmpDocs(docId) {
-  console.log("DeleteEmpDocs: ", docId);
   try {
     let pool = await sql.connect(config);
     let result = await pool
@@ -794,7 +794,7 @@ async function DeleteEmpDocs(docId) {
       return true;
     }
   } catch (error) {
-    console.log(error);
+    console.log("DeleteEmpDocs-->", error);
   }
 }
 

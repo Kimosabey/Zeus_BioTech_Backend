@@ -2,17 +2,21 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-07 18:02:44
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-25 18:34:00
+ * @Last Modified time: 2022-02-26 18:20:00
  */
 
 var express = require("express");
 
 var bodyParser = require("body-parser");
 var cors = require("cors");
+const helmet = require("helmet");
+const morgan = require("morgan");
 var app = express();
+// using bodyParser to parse JSON bodies into JS objects
 app.use(bodyParser.json());
 
 var router = express.Router();
+// using bodyParser to parse JSON bodies into JS objects
 router.use(bodyParser.json());
 
 // -------Operations Files ----------
@@ -29,38 +33,97 @@ var UomDb = require("./apiOperations/uom");
 var AdmDb = require("./apiOperations/AdminLogin");
 var HqDb = require("./apiOperations/HeadQuarter");
 var CompDb = require("./apiOperations/company");
+var ProdDb = require("./apiOperations/products");
 
-// -------------------------------------//
-
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors());
-router.use(bodyParser.urlencoded({ extended: true }));
-router.use(cors());
-app.use("/api", router);
-
-// allow cross-origin requests
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
+// ----------------Building a Secure Node js REST API---------------------//
+app.use(express.static(__dirname + "/static"));
+app.get("/*", function (req, res, next) {
+  res.setHeader("Last-Modified", new Date().toUTCString());
   next();
 });
 
-//file Upload -----------------------
+// adding Helmet to enhance your Rest API's security
+app.use(helmet());
+// adding morgan to log HTTP requests
+app.use(morgan("combined"));
 
-global.__basedir = __dirname;
-var corsOptions = {
-  origin: "http://localhost:8081",
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors());
+app.options("*", cors());
+app.all("*", function (req, res, next) {
+  res.set("X-Frame-Options", "ALLOWALL");
+  res.set("Access-Control-Allow-Origin", "*");
+  res.set("Access-Control-Allow-Methods", "POST, GET, DELETE, PUT");
+  res.set(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  res.set("Cache-Control", "public, max-age=31557600");
+  next();
+});
+router.use(bodyParser.urlencoded({ extended: true }));
+router.use(cors());
+router.options("*", cors());
+router.all("*", function (req, res, next) {
+  res.set("X-Frame-Options", "ALLOWALL");
+  res.set("Access-Control-Allow-Origin", "*");
+  res.set("Access-Control-Allow-Methods", "POST, GET, DELETE, PUT");
+  res.set(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  res.set("Cache-Control", "public, max-age=1000");
+  next();
+});
+
+let setCache = function (req, res, next) {
+  // here you can define period in second, this one is 5 minutes
+  const period = 60 * 5;
+
+  // you only want to cache for GET requests
+  if (req.method == "GET") {
+    res.set("Cache-control", `public, max-age=${period}`);
+  } else {
+    // for the other requests set strict no caching parameters
+    res.set("Cache-control", `no-store`);
+  }
+
+  // remember to call next() to pass on the request
+  next();
 };
 
-app.use(cors(corsOptions));
+// now call the new middleware function in your app
+
+app.use(setCache);
+
+app.use("/api", router);
+
+// // allow cross-origin requests
+// app.use(function (req, res, next) {
+//   res.header("Access-Control-Allow-Origin", "*");
+//   res.header(
+//     "Access-Control-Allow-Headers",
+//     "Origin, X-Requested-With, Content-Type, Accept"
+//   );
+//   next();
+// });
+
+//file Upload -----------------------
+
+// global.__basedir = __dirname;
+
+// var corsOptions = {
+//   origin: "http://localhost:7760",
+//   optionsSuccessStatus: 200, // For legacy browser support
+//   methods: "GET, PUT, POST, DELETE",
+// };
+
+// app.use(cors(corsOptions));
 const initRoutes = require("./src/routes");
 // app.use(express.urlencoded({ extended: true }));
 initRoutes(app);
 
-// --------------------------------
+// ----------------Building a Secure Node js REST API---------------------//
 
 app.get("/", (req, res) => {
   var responseText =
@@ -119,14 +182,7 @@ router.get("/AdminLogin/:email/:password", async (req, res) => {
 
 // -----------Country Api's--------------- //
 
-// router.route("/countries").get((req, res) => {
-//   CountryDb.getCountries().then((data) => {
-//     // console.log("data: ", data[0]);
-//     res.json(data[0]);
-//   });
-// });
-
-router.get("/countries", async (req, res) => {
+router.get("/countries", async (req, res, next) => {
   await CountryDb.getCountries().then((data) => {
     res.json(data);
   });
@@ -181,15 +237,6 @@ router.route("/states").post(async (req, res) => {
     res.status(201).json(data);
   });
 });
-
-// router.route("/statesCheckBox").post(async (req, res) => {
-//   let obj = { ...req.body };
-//   // obj = obj.CountryId;
-//   console.log("statesCheckBox : ", obj);
-//   StateDb.getForCheckBoxStateByCountryId(obj).then((data) => {
-//     res.status(201).json(data);
-//   });
-// });
 
 router.post("/statesCheckBox", async (req, res) => {
   let obj = { ...req.body };
@@ -503,7 +550,6 @@ router.delete("/DeleteEmpDocs/:id", async (req, res) => {
 
 router.get("/empById/:id", async (req, res) => {
   res.json(await EmpsDb.getEmpById(req.params.id));
-  console.log("req.params.id: ", req.params.id);
 });
 
 router.get("/getEmpByIsManager/:id", async (req, res) => {
@@ -619,6 +665,9 @@ router.put("/custtype/:id", async (req, res, next) => {
 router.get("/custsubtype", async (req, res) => {
   res.json(await CustsDb.getCustomersSubType());
 });
+router.get("/custsubtypebytype/:id", async (req, res) => {
+  res.json(await CustsDb.getCustSubTypeByType(req.params.id));
+});
 
 router.post("/custsubtype", async (req, res) => {
   let obj = { ...req.body };
@@ -635,10 +684,102 @@ router.delete("/custsubtype/:id", async (req, res) => {
 
 router.put("/custsubtype/:id", async (req, res, next) => {
   let obj = { ...req.body };
- 
+
   try {
     res.json(await CustsDb.updateCustomersSubType(req.params.id, obj));
-    
+  } catch (err) {
+    console.error(`Error while Adding`, err.message);
+    next(err);
+  }
+});
+
+router.get("/customer", async (req, res) => {
+  res.json(await CustsDb.getCustomers());
+});
+router.get("/customerdocs/:id", async (req, res) => {
+  res.json(await CustsDb.getCustDocsById(req.params.id));
+});
+
+router.get("/customercontactpersons/:id", async (req, res) => {
+  res.json(await CustsDb.getCustContactPersons(req.params.id));
+});
+
+router.post("/customer", async (req, res) => {
+  let obj = { ...req.body };
+  try {
+    res.json(await CustsDb.addCustomers(obj));
+  } catch (err) {
+    console.error(`Error while Adding`, err.message);
+  }
+});
+
+router.put("/customer/:id", async (req, res) => {
+  res.json(await CustsDb.deleteCustomers(req.params.id));
+});
+
+router.put("/customer/:id", async (req, res, next) => {
+  let obj = { ...req.body };
+
+  try {
+    res.json(await CustsDb.updateCustomers(req.params.id, obj));
+  } catch (err) {
+    console.error(`Error while Adding`, err.message);
+    next(err);
+  }
+});
+
+router.get("/addresstype/:custId", async (req, res) => {
+  res.json(await CustsDb.getAddressType(req.params.custId));
+});
+
+router.post("/addresstype", async (req, res) => {
+  let obj = { ...req.body };
+  try {
+    res.json(await CustsDb.addAddressType(obj));
+  } catch (err) {
+    console.error(`Error while Adding`, err.message);
+  }
+});
+
+router.delete("/addresstype/:id", async (req, res) => {
+  res.json(await CustsDb.deleteAddressType(req.params.id));
+});
+
+router.put("/addresstype/:id", async (req, res, next) => {
+  let obj = { ...req.body };
+
+  try {
+    res.json(await CustsDb.updateAddressType(req.params.id, obj));
+  } catch (err) {
+    console.error(`Error while Adding`, err.message);
+    next(err);
+  }
+});
+
+// -------PRODUCT Api's----------------------------------------------------//
+
+router.get("/prodspecies", async (req, res) => {
+  res.json(await ProdDb.getProductSpecies());
+});
+
+router.post("/prodspecies", async (req, res) => {
+  let obj = { ...req.body };
+  try {
+    res.json(await ProdDb.addProductSpecies(obj));
+  } catch (err) {
+    console.error(`Error while Adding`, err.message);
+  }
+});
+
+router.delete("/prodspecies/:id", async (req, res) => {
+  res.json(await ProdDb.deleteProductSpecies(req.params.id));
+});
+
+router.put("/prodspecies/:id", async (req, res, next) => {
+  let obj = { ...req.body };
+
+  try {
+    res.json(await ProdDb.updateProductSpecies(req.params.id, obj));
   } catch (err) {
     console.error(`Error while Adding`, err.message);
     next(err);
@@ -679,5 +820,15 @@ router.put("/uom/:id", async (req, res) => {
 
 // -------END----------------------------------------------------//
 var port = process.env.PORT || 7760;
-app.listen(port);
-console.log("API is runnning at http://localhost:" + port);
+// app.listen(port);
+// console.log("API is runnning at http://localhost:" + port);
+
+const server = app.listen(port, () =>
+  console.log("API is runnning at http://localhost:" + port)
+);
+
+process.on("SIGTERM", () => {
+  server.close(() => {
+    console.log("Process terminated");
+  });
+});

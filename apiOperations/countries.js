@@ -2,13 +2,13 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-04 16:20:31
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-24 17:01:33
+ * @Last Modified time: 2022-02-25 17:15:44
  */
 var config = require("../dbconfig");
 const sql = require("mssql");
 
 async function getCountries() {
-  console.log("getCountries: ", getCountries);
+  console.log("getCountries: hit! ");
 
   try {
     let pool = await sql.connect(config);
@@ -18,7 +18,7 @@ async function getCountries() {
 
     return result.recordsets[0];
   } catch (error) {
-    console.log("getCountries error--->", error);
+    console.log("getCountries-->", error);
     // pool.close();
   }
 }
@@ -33,7 +33,7 @@ async function getCountryById(countryId) {
     pool.close();
     return result.recordsets[0];
   } catch (error) {
-    console.log("getCountryById error--->", error);
+    console.log("getCountryById-->", error);
     // pool.close();
   }
 }
@@ -66,7 +66,7 @@ async function addCountry(obj) {
       return "Already Existed!";
     }
   } catch (err) {
-    console.log(err);
+    console.log("addCountry-->", err);
   }
 }
 
@@ -87,32 +87,36 @@ async function deleteCountry(countryId) {
       return true;
     }
   } catch (error) {
-    console.log(error);
+    console.log("deleteCountry-->", error);
     // pool.close();
   }
 }
 
 async function updateCountry(countryId, obj) {
-  let pool = await sql.connect(config);
-  let result = await pool
-    .request()
-    .input("input_parameter", countryId)
-    .input("CountryName", obj.CountryName)
-    .input("CountryCode", obj.CountryCode)
-    .query(
-      `UPDATE COUNTRY_MASTER SET COUNTRY_CODE = @CountryCode, COUNTRY_NAME= @CountryName WHERE COUNTRY_PKID =@input_parameter`
-    );
+  try {
+    let pool = await sql.connect(config);
+    let result = await pool
+      .request()
+      .input("input_parameter", countryId)
+      .input("CountryName", obj.CountryName)
+      .input("CountryCode", obj.CountryCode)
+      .query(
+        `UPDATE COUNTRY_MASTER SET COUNTRY_CODE = @CountryCode, COUNTRY_NAME= @CountryName WHERE COUNTRY_PKID =@input_parameter`
+      );
 
-  pool.close();
-  let message = false;
+    pool.close();
+    let message = false;
 
-  if (result.rowsAffected) {
-    message = true;
+    if (result.rowsAffected) {
+      message = true;
+    }
+    pool.close();
+    // return { message };
+    // console.log(pool._connected);
+    return message;
+  } catch (error) {
+    console.log("updateCountry-->", error);
   }
-  pool.close();
-  // return { message };
-  // console.log(pool._connected);
-  return message;
 }
 
 module.exports = {
