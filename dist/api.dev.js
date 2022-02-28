@@ -10,7 +10,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
  * @Author: Hey Kimo here!
  * @Date: 2022-02-07 18:02:44
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-26 18:20:00
+ * @Last Modified time: 2022-02-28 19:50:07
  */
 var express = require("express");
 
@@ -75,7 +75,8 @@ app.all("*", function (req, res, next) {
   res.set("Access-Control-Allow-Origin", "*");
   res.set("Access-Control-Allow-Methods", "POST, GET, DELETE, PUT");
   res.set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  res.set("Cache-Control", "public, max-age=31557600");
+  res.set("Cache-Control", "public, max-age=31536000"); // max-age=31557600
+
   next();
 });
 router.use(bodyParser.urlencoded({
@@ -88,27 +89,24 @@ router.all("*", function (req, res, next) {
   res.set("Access-Control-Allow-Origin", "*");
   res.set("Access-Control-Allow-Methods", "POST, GET, DELETE, PUT");
   res.set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  res.set("Cache-Control", "public, max-age=1000");
+  res.set("Cache-Control", "public, max-age=31536000");
   next();
-});
+}); // let setCache = function (req, res, next) {
+//   // here you can define period in second, this one is 5 minutes
+//   const period = 60 * 5;
+//   // you only want to cache for GET requests
+//   if (req.method == "GET") {
+//     res.set("Cache-control", `public, max-age=${period}`);
+//   } else {
+//     // for the other requests set strict no caching parameters
+//     res.set("Cache-control", `no-store`);
+//   }
+//   // remember to call next() to pass on the request
+//   next();
+// };
+// now call the new middleware function in your app
+// app.use(setCache);
 
-var setCache = function setCache(req, res, next) {
-  // here you can define period in second, this one is 5 minutes
-  var period = 60 * 5; // you only want to cache for GET requests
-
-  if (req.method == "GET") {
-    res.set("Cache-control", "public, max-age=".concat(period));
-  } else {
-    // for the other requests set strict no caching parameters
-    res.set("Cache-control", "no-store");
-  } // remember to call next() to pass on the request
-
-
-  next();
-}; // now call the new middleware function in your app
-
-
-app.use(setCache);
 app.use("/api", router); // // allow cross-origin requests
 // app.use(function (req, res, next) {
 //   res.header("Access-Control-Allow-Origin", "*");
@@ -118,19 +116,19 @@ app.use("/api", router); // // allow cross-origin requests
 //   );
 //   next();
 // });
-//file Upload -----------------------
-// global.__basedir = __dirname;
-// var corsOptions = {
-//   origin: "http://localhost:7760",
-//   optionsSuccessStatus: 200, // For legacy browser support
-//   methods: "GET, PUT, POST, DELETE",
-// };
-// app.use(cors(corsOptions));
+// file Upload -----------------------
+
+global.__basedir = __dirname;
+var corsOptions = {
+  origin: "http://localhost:8081"
+};
+app.use(cors(corsOptions));
 
 var initRoutes = require("./src/routes"); // app.use(express.urlencoded({ extended: true }));
 
 
-initRoutes(app); // ----------------Building a Secure Node js REST API---------------------//
+initRoutes(app); // file Upload --------------------------------
+// ----------------Building a Secure Node js REST API---------------------//
 
 app.get("/", function (req, res) {
   var responseText = '<h1 style="color:green;">Hello Kimo Restful Api Using Nodejs is Working!!!</h1>';
@@ -2432,16 +2430,15 @@ router.put("/prodspecies/:id", function _callee91(req, res, next) {
       }
     }
   }, null, null, [[1, 9]]);
-}); // -------UOM Api's----------------------------------------------------//
-
-router.get("/uom", function _callee92(req, res) {
+});
+router.get("/prod", function _callee92(req, res) {
   return regeneratorRuntime.async(function _callee92$(_context92) {
     while (1) {
       switch (_context92.prev = _context92.next) {
         case 0:
           _context92.t0 = res;
           _context92.next = 3;
-          return regeneratorRuntime.awrap(UomDb.getUom());
+          return regeneratorRuntime.awrap(ProdDb.getProducts());
 
         case 3:
           _context92.t1 = _context92.sent;
@@ -2455,7 +2452,7 @@ router.get("/uom", function _callee92(req, res) {
     }
   });
 });
-router.post("/uom", function _callee93(req, res) {
+router.post("/prod", function _callee93(req, res) {
   var obj;
   return regeneratorRuntime.async(function _callee93$(_context93) {
     while (1) {
@@ -2465,37 +2462,36 @@ router.post("/uom", function _callee93(req, res) {
           _context93.prev = 1;
           _context93.t0 = res;
           _context93.next = 5;
-          return regeneratorRuntime.awrap(UomDb.addUom(obj));
+          return regeneratorRuntime.awrap(ProdDb.addProducts(obj));
 
         case 5:
           _context93.t1 = _context93.sent;
 
           _context93.t0.json.call(_context93.t0, _context93.t1);
 
-          _context93.next = 13;
+          _context93.next = 12;
           break;
 
         case 9:
           _context93.prev = 9;
           _context93.t2 = _context93["catch"](1);
           console.error("Error while Adding", _context93.t2.message);
-          next(_context93.t2);
 
-        case 13:
+        case 12:
         case "end":
           return _context93.stop();
       }
     }
   }, null, null, [[1, 9]]);
 });
-router["delete"]("/uom/:id", function _callee94(req, res) {
+router["delete"]("/prod/:id", function _callee94(req, res) {
   return regeneratorRuntime.async(function _callee94$(_context94) {
     while (1) {
       switch (_context94.prev = _context94.next) {
         case 0:
           _context94.t0 = res;
           _context94.next = 3;
-          return regeneratorRuntime.awrap(UomDb.deleteUom(req.params.id));
+          return regeneratorRuntime.awrap(ProdDb.deleteProducts(req.params.id));
 
         case 3:
           _context94.t1 = _context94.sent;
@@ -2509,7 +2505,7 @@ router["delete"]("/uom/:id", function _callee94(req, res) {
     }
   });
 });
-router.put("/uom/:id", function _callee95(req, res) {
+router.put("/prod/:id", function _callee95(req, res, next) {
   var obj;
   return regeneratorRuntime.async(function _callee95$(_context95) {
     while (1) {
@@ -2519,7 +2515,7 @@ router.put("/uom/:id", function _callee95(req, res) {
           _context95.prev = 1;
           _context95.t0 = res;
           _context95.next = 5;
-          return regeneratorRuntime.awrap(UomDb.updateUom(req.params.id, obj));
+          return regeneratorRuntime.awrap(ProdDb.updateProducts(req.params.id, obj));
 
         case 5:
           _context95.t1 = _context95.sent;
@@ -2541,6 +2537,116 @@ router.put("/uom/:id", function _callee95(req, res) {
       }
     }
   }, null, null, [[1, 9]]);
+}); // -------UOM Api's----------------------------------------------------//
+
+router.get("/uom", function _callee96(req, res) {
+  return regeneratorRuntime.async(function _callee96$(_context96) {
+    while (1) {
+      switch (_context96.prev = _context96.next) {
+        case 0:
+          _context96.t0 = res;
+          _context96.next = 3;
+          return regeneratorRuntime.awrap(UomDb.getUom());
+
+        case 3:
+          _context96.t1 = _context96.sent;
+
+          _context96.t0.json.call(_context96.t0, _context96.t1);
+
+        case 5:
+        case "end":
+          return _context96.stop();
+      }
+    }
+  });
+});
+router.post("/uom", function _callee97(req, res) {
+  var obj;
+  return regeneratorRuntime.async(function _callee97$(_context97) {
+    while (1) {
+      switch (_context97.prev = _context97.next) {
+        case 0:
+          obj = _objectSpread({}, req.body);
+          _context97.prev = 1;
+          _context97.t0 = res;
+          _context97.next = 5;
+          return regeneratorRuntime.awrap(UomDb.addUom(obj));
+
+        case 5:
+          _context97.t1 = _context97.sent;
+
+          _context97.t0.json.call(_context97.t0, _context97.t1);
+
+          _context97.next = 13;
+          break;
+
+        case 9:
+          _context97.prev = 9;
+          _context97.t2 = _context97["catch"](1);
+          console.error("Error while Adding", _context97.t2.message);
+          next(_context97.t2);
+
+        case 13:
+        case "end":
+          return _context97.stop();
+      }
+    }
+  }, null, null, [[1, 9]]);
+});
+router["delete"]("/uom/:id", function _callee98(req, res) {
+  return regeneratorRuntime.async(function _callee98$(_context98) {
+    while (1) {
+      switch (_context98.prev = _context98.next) {
+        case 0:
+          _context98.t0 = res;
+          _context98.next = 3;
+          return regeneratorRuntime.awrap(UomDb.deleteUom(req.params.id));
+
+        case 3:
+          _context98.t1 = _context98.sent;
+
+          _context98.t0.json.call(_context98.t0, _context98.t1);
+
+        case 5:
+        case "end":
+          return _context98.stop();
+      }
+    }
+  });
+});
+router.put("/uom/:id", function _callee99(req, res, next) {
+  var obj;
+  return regeneratorRuntime.async(function _callee99$(_context99) {
+    while (1) {
+      switch (_context99.prev = _context99.next) {
+        case 0:
+          obj = _objectSpread({}, req.body);
+          console.log("req.body obj: ", obj);
+          _context99.prev = 2;
+          _context99.t0 = res;
+          _context99.next = 6;
+          return regeneratorRuntime.awrap(UomDb.updateUom(req.params.id, obj));
+
+        case 6:
+          _context99.t1 = _context99.sent;
+
+          _context99.t0.json.call(_context99.t0, _context99.t1);
+
+          _context99.next = 14;
+          break;
+
+        case 10:
+          _context99.prev = 10;
+          _context99.t2 = _context99["catch"](2);
+          console.error("Error while Adding", _context99.t2.message);
+          next(_context99.t2);
+
+        case 14:
+        case "end":
+          return _context99.stop();
+      }
+    }
+  }, null, null, [[2, 10]]);
 }); // -------END----------------------------------------------------//
 
 var port = process.env.PORT || 7760; // app.listen(port);

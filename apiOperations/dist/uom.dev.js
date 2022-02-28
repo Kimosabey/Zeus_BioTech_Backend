@@ -4,7 +4,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-14 10:29:23
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-21 18:28:03
+ * @Last Modified time: 2022-02-28 13:30:58
  */
 var config = require("../dbconfig");
 
@@ -67,7 +67,7 @@ function addUom(obj) {
           }
 
           _context2.next = 10;
-          return regeneratorRuntime.awrap(pool.request().input("UomName", sql.NVarChar, obj.UomName).input("UomKey", sql.NVarChar, obj.UomKey).query("insert into UNIT_OF_MEASUREMENT ([UNIT_OF_MEASUREMENT_SHORT_KEY] ,[UNIT_OF_MEASUREMENT_NAME] ,[UNIT_OF_MEASUREMENT_ACTIVE])  values(@UomKey,@UomName,1)"));
+          return regeneratorRuntime.awrap(pool.request().input("UomName", obj.UomName).input("UomKey", obj.UomKey).query("insert into UNIT_OF_MEASUREMENT ([UNIT_OF_MEASUREMENT_SHORT_KEY] ,[UNIT_OF_MEASUREMENT_NAME] ,[UNIT_OF_MEASUREMENT_ACTIVE])  values(@UomKey,@UomName,1)"));
 
         case 10:
           insertInto = _context2.sent;
@@ -90,7 +90,7 @@ function addUom(obj) {
 
         case 20:
           pool.close();
-          return _context2.abrupt("return", "Already Existed!");
+          return _context2.abrupt("return", "0");
 
         case 22:
           _context2.next = 27;
@@ -163,15 +163,16 @@ function updateUom(UomId, obj) {
     while (1) {
       switch (_context4.prev = _context4.next) {
         case 0:
-          _context4.next = 2;
+          console.log('UomId, obj: ', UomId, obj);
+          _context4.next = 3;
           return regeneratorRuntime.awrap(sql.connect(config));
 
-        case 2:
+        case 3:
           pool = _context4.sent;
-          _context4.next = 5;
+          _context4.next = 6;
           return regeneratorRuntime.awrap(pool.request().input("input_parameter", UomId).input("UomName", obj.UomName).input("UomKey", obj.UomKey).query("UPDATE UNIT_OF_MEASUREMENT SET UNIT_OF_MEASUREMENT_NAME  = @UomName,UNIT_OF_MEASUREMENT_SHORT_KEY=@UomKey WHERE UNIT_OF_MEASUREMENT_PKID =@input_parameter"));
 
-        case 5:
+        case 6:
           result = _context4.sent;
           pool.close();
           message = false;
@@ -185,7 +186,7 @@ function updateUom(UomId, obj) {
 
           return _context4.abrupt("return", message);
 
-        case 11:
+        case 12:
         case "end":
           return _context4.stop();
       }

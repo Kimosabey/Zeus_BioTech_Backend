@@ -2,7 +2,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-14 10:29:23
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-21 18:28:03
+ * @Last Modified time: 2022-02-28 13:30:58
  */
 
 var config = require("../dbconfig");
@@ -20,11 +20,12 @@ async function getUom() {
     return result.recordsets[0];
   } catch (error) {
     console.log(error);
-   // pool.close();
+    // pool.close();
   }
 }
 
 async function addUom(obj) {
+ 
   try {
     let pool = await sql.connect(config);
     let result = await pool
@@ -36,8 +37,8 @@ async function addUom(obj) {
     if (result.rowsAffected[0] == 0) {
       let insertInto = await pool
         .request()
-        .input("UomName", sql.NVarChar, obj.UomName)
-        .input("UomKey", sql.NVarChar, obj.UomKey)
+        .input("UomName", obj.UomName)
+        .input("UomKey", obj.UomKey)
         .query(
           "insert into UNIT_OF_MEASUREMENT ([UNIT_OF_MEASUREMENT_SHORT_KEY] ,[UNIT_OF_MEASUREMENT_NAME] ,[UNIT_OF_MEASUREMENT_ACTIVE])  values(@UomKey,@UomName,1)"
         );
@@ -51,7 +52,7 @@ async function addUom(obj) {
       }
     } else {
       pool.close();
-      return "Already Existed!";
+      return "0";
     }
   } catch (err) {
     console.log(err);
@@ -78,11 +79,12 @@ async function deleteUom(UomId) {
     }
   } catch (error) {
     console.log(error);
-   // pool.close();
+    // pool.close();
   }
 }
 
 async function updateUom(UomId, obj) {
+  console.log('UomId, obj: ', UomId, obj);
   let pool = await sql.connect(config);
   let result = await pool
     .request()

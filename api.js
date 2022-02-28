@@ -2,7 +2,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-07 18:02:44
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-26 18:20:00
+ * @Last Modified time: 2022-02-28 19:50:07
  */
 
 var express = require("express");
@@ -58,7 +58,8 @@ app.all("*", function (req, res, next) {
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"
   );
-  res.set("Cache-Control", "public, max-age=31557600");
+  res.set("Cache-Control", "public, max-age=31536000");
+  // max-age=31557600
   next();
 });
 router.use(bodyParser.urlencoded({ extended: true }));
@@ -72,29 +73,29 @@ router.all("*", function (req, res, next) {
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"
   );
-  res.set("Cache-Control", "public, max-age=1000");
+  res.set("Cache-Control", "public, max-age=31536000");
   next();
 });
 
-let setCache = function (req, res, next) {
-  // here you can define period in second, this one is 5 minutes
-  const period = 60 * 5;
+// let setCache = function (req, res, next) {
+//   // here you can define period in second, this one is 5 minutes
+//   const period = 60 * 5;
 
-  // you only want to cache for GET requests
-  if (req.method == "GET") {
-    res.set("Cache-control", `public, max-age=${period}`);
-  } else {
-    // for the other requests set strict no caching parameters
-    res.set("Cache-control", `no-store`);
-  }
+//   // you only want to cache for GET requests
+//   if (req.method == "GET") {
+//     res.set("Cache-control", `public, max-age=${period}`);
+//   } else {
+//     // for the other requests set strict no caching parameters
+//     res.set("Cache-control", `no-store`);
+//   }
 
-  // remember to call next() to pass on the request
-  next();
-};
+//   // remember to call next() to pass on the request
+//   next();
+// };
 
 // now call the new middleware function in your app
 
-app.use(setCache);
+// app.use(setCache);
 
 app.use("/api", router);
 
@@ -108,20 +109,17 @@ app.use("/api", router);
 //   next();
 // });
 
-//file Upload -----------------------
+// file Upload -----------------------
+global.__basedir = __dirname;
+var corsOptions = {
+  origin: "http://localhost:8081",
+};
 
-// global.__basedir = __dirname;
-
-// var corsOptions = {
-//   origin: "http://localhost:7760",
-//   optionsSuccessStatus: 200, // For legacy browser support
-//   methods: "GET, PUT, POST, DELETE",
-// };
-
-// app.use(cors(corsOptions));
+app.use(cors(corsOptions));
 const initRoutes = require("./src/routes");
 // app.use(express.urlencoded({ extended: true }));
 initRoutes(app);
+// file Upload --------------------------------
 
 // ----------------Building a Secure Node js REST API---------------------//
 
@@ -534,7 +532,7 @@ router.put("/emps/:id", async (req, res, next) => {
     next(err);
   }
 });
-
+ 
 router.put("/deletemps/:id", async (req, res, next) => {
   try {
     res.json(await EmpsDb.deleteEmp(req.params.id));
@@ -786,6 +784,34 @@ router.put("/prodspecies/:id", async (req, res, next) => {
   }
 });
 
+router.get("/prod", async (req, res) => {
+  res.json(await ProdDb.getProducts());
+});
+
+router.post("/prod", async (req, res) => {
+  let obj = { ...req.body };
+  try {
+    res.json(await ProdDb.addProducts(obj));
+  } catch (err) {
+    console.error(`Error while Adding`, err.message);
+  }
+});
+
+router.delete("/prod/:id", async (req, res) => {
+  res.json(await ProdDb.deleteProducts(req.params.id));
+});
+
+router.put("/prod/:id", async (req, res, next) => {
+  let obj = { ...req.body };
+
+  try {
+    res.json(await ProdDb.updateProducts(req.params.id, obj));
+  } catch (err) {
+    console.error(`Error while Adding`, err.message);
+    next(err);
+  }
+});
+
 // -------UOM Api's----------------------------------------------------//
 
 router.get("/uom", async (req, res) => {
@@ -807,8 +833,9 @@ router.delete("/uom/:id", async (req, res) => {
   res.json(await UomDb.deleteUom(req.params.id));
 });
 
-router.put("/uom/:id", async (req, res) => {
+router.put("/uom/:id", async (req, res, next) => {
   let obj = { ...req.body };
+  console.log("req.body obj: ", obj);
 
   try {
     res.json(await UomDb.updateUom(req.params.id, obj));
