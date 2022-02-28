@@ -1,3 +1,6 @@
+
+
+
 1) After authentication -> Will Get token for valid user -> Token will be sent to Lyf Server as part of header request -> How Lyf Server uses this token will 
 it interact with IDP(Identity Server) to make sure if the token is valid or not please provide this detail.
  
