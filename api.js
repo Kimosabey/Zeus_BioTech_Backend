@@ -2,7 +2,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-07 18:02:44
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-28 19:50:07
+ * @Last Modified time: 2022-03-02 12:49:46
  */
 
 var express = require("express");
@@ -58,7 +58,7 @@ app.all("*", function (req, res, next) {
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"
   );
-  res.set("Cache-Control", "public, max-age=31536000");
+  res.set("Cache-Control", "public, max-age=1000");
   // max-age=31557600
   next();
 });
@@ -73,7 +73,7 @@ router.all("*", function (req, res, next) {
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"
   );
-  res.set("Cache-Control", "public, max-age=31536000");
+  res.set("Cache-Control", "public, max-age=1000.");
   next();
 });
 
@@ -769,7 +769,7 @@ router.post("/prodspecies", async (req, res) => {
   }
 });
 
-router.delete("/prodspecies/:id", async (req, res) => {
+router.put("/deleteprodspecies/:id", async (req, res) => {
   res.json(await ProdDb.deleteProductSpecies(req.params.id));
 });
 
@@ -835,7 +835,7 @@ router.delete("/uom/:id", async (req, res) => {
 
 router.put("/uom/:id", async (req, res, next) => {
   let obj = { ...req.body };
-  console.log("req.body obj: ", obj);
+ 
 
   try {
     res.json(await UomDb.updateUom(req.params.id, obj));
