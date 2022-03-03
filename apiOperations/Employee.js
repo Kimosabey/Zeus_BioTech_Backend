@@ -2,7 +2,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-08 12:20:30
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-26 15:33:12
+ * @Last Modified time: 2022-03-03 15:32:03
  */
 
 var config = require("../dbconfig");
@@ -798,6 +798,131 @@ async function DeleteEmpDocs(docId) {
   }
 }
 
+async function getEmpIncentives() {
+  try {
+    let pool = await sql.connect(config);
+
+    let result = await pool
+      .request()
+      .query(
+        "SELECT INCENTIVE_PKID,INCENTIVE_EMPLOYEE_FKID,INCENTIVE_AMOUNT,INCENTIVE_MONTH,INCENTIVE_DESCRIPTION,EMPLOYEE_NAME,INCENTIVE_ISACTIVE,(SELECT DATENAME(MONTH, INCENTIVE_MONTH) +' '+CAST(YEAR(INCENTIVE_MONTH) AS VARCHAR(4))) as Month FROM INCENTIVE JOIN EMPLOYEE_MASTER ON EMPLOYEE_PKID=INCENTIVE_EMPLOYEE_FKID WHERE INCENTIVE_ISACTIVE=1"
+      );
+    pool.close();
+
+    return result.recordsets[0];
+  } catch (error) {
+    console.log("EmpIncentives-->", error);
+    // pool.close();
+  }
+}
+
+async function addEmpIncentives(obj) {
+  try {
+    let pool = await sql.connect(config);
+    let result = await pool
+      .request()
+      .input("INCENTIVE_MONTH", obj.INCENTIVE_MONTH)
+      .input("INCENTIVE_EMPLOYEE_FKID", obj.INCENTIVE_EMPLOYEE_FKID)
+      .query(
+        `SELECT *  from INCENTIVE WHERE INCENTIVE_MONTH=@INCENTIVE_MONTH AND INCENTIVE_EMPLOYEE_FKID=@INCENTIVE_EMPLOYEE_FKID AND INCENTIVE_ISACTIVE=1`
+      );
+    if (result.rowsAffected[0] == 0) {
+      let insertInto = await pool
+        .request()
+        .input("INCENTIVE_EMPLOYEE_FKID", obj.INCENTIVE_EMPLOYEE_FKID)
+        .input("INCENTIVE_AMOUNT", obj.INCENTIVE_AMOUNT)
+        .input("INCENTIVE_DESCRIPTION", obj.INCENTIVE_DESCRIPTION)
+        .input("INCENTIVE_MONTH", obj.INCENTIVE_MONTH)
+        .input("INCENTIVE_ISACTIVE", "1")
+        .query(
+          "INSERT INTO INCENTIVE (INCENTIVE_EMPLOYEE_FKID,INCENTIVE_AMOUNT,INCENTIVE_DESCRIPTION,INCENTIVE_ISACTIVE,INCENTIVE_MONTH) VALUES(@INCENTIVE_EMPLOYEE_FKID,@INCENTIVE_AMOUNT,@INCENTIVE_DESCRIPTION,@INCENTIVE_ISACTIVE,@INCENTIVE_MONTH)"
+        );
+
+      if (insertInto.rowsAffected == 1) {
+        pool.close();
+        return true;
+      } else {
+        pool.close();
+        return false;
+      }
+    } else {
+      pool.close();
+      return "0";
+    }
+  } catch (err) {
+    console.log("addEmpIncentives-->", err);
+  }
+}
+
+async function DeleteEmpIncentives(IncId) {
+  try {
+    let pool = await sql.connect(config);
+    let result = await pool
+      .request()
+      .input("IncId", IncId)
+      .query(
+        `UPDATE INCENTIVE SET INCENTIVE_ISACTIVE = 0 WHERE INCENTIVE_PKID=@IncId`
+      );
+
+    pool.close();
+    let message = false;
+
+    if (result.rowsAffected) {
+      message = true;
+    }
+    pool.close();
+
+    return message;
+  } catch (error) {}
+  console.log("DeleteEmpIncentives-->", error);
+}
+
+async function updateEmpIncentives(IncId, obj) {
+  try {
+    let pool = await sql.connect(config);
+    let result = await pool
+      .request()
+      .input("IncId", IncId)
+      .input("INCENTIVE_EMPLOYEE_FKID", obj.INCENTIVE_EMPLOYEE_FKID)
+      .input("INCENTIVE_AMOUNT", obj.INCENTIVE_AMOUNT)
+      .input("INCENTIVE_DESCRIPTION", obj.INCENTIVE_DESCRIPTION)
+      .input("INCENTIVE_MONTH", obj.INCENTIVE_MONTH)
+      .query(
+        `UPDATE INCENTIVE SET INCENTIVE_EMPLOYEE_FKID = @INCENTIVE_EMPLOYEE_FKID,INCENTIVE_AMOUNT=@INCENTIVE_AMOUNT,INCENTIVE_DESCRIPTION=@INCENTIVE_DESCRIPTION,INCENTIVE_MONTH=@INCENTIVE_MONTH WHERE INCENTIVE_PKID =@IncId`
+      );
+
+    pool.close();
+    let message = false;
+
+    if (result.rowsAffected) {
+      message = true;
+    }
+    pool.close();
+    // return { message };
+    // console.log(pool._connected);
+    return message;
+  } catch (error) {
+    console.log("updateEmpIncentives-->", error);
+  }
+}
+
+async function getEmpLeaves() {
+  try {
+    let pool = await sql.connect(config);
+
+    let result = await pool
+      .request()
+      .query(
+        "SELECT [LEAVE_PKID] ,[LEAVE_EMPLOYEE_FKID] ,[LEAVE_FROM_DATE] ,[LEAVE_TO_DATE] ,[LEAVE_FILE] ,[LEAVE_REASON] ,[LEAVE_ISACTIVE], EMPLOYEE_NAME FROM [EMPLOYEE_LEAVE] JOIN [EMPLOYEE_MASTER] ON [EMPLOYEE_PKID]=[LEAVE_EMPLOYEE_FKID] WHERE LEAVE_ISACTIVE=1"
+      );
+    pool.close();
+
+    return result.recordsets[0];
+  } catch (error) {
+    console.log("getEmpLeaves-->", error);
+  }
+}
+
 module.exports = {
   getEmpTypes: getEmpTypes,
   addEmpType: addEmpType,
@@ -826,4 +951,9 @@ module.exports = {
   getEmpCitiesInCoveredAreasForEdit: getEmpCitiesInCoveredAreasForEdit,
   getEmpAreasInCoveredAreasForEdit: getEmpAreasInCoveredAreasForEdit,
   DeleteEmpDocs: DeleteEmpDocs,
+  getEmpIncentives: getEmpIncentives,
+  addEmpIncentives: addEmpIncentives,
+  DeleteEmpIncentives: DeleteEmpIncentives,
+  updateEmpIncentives: updateEmpIncentives,
+  getEmpLeaves: getEmpLeaves,
 };

@@ -2,7 +2,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-07 18:02:44
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-02 12:49:46
+ * @Last Modified time: 2022-03-03 15:30:51
  */
 
 var express = require("express");
@@ -512,6 +512,7 @@ router.post("/emps", async (req, res, next) => {
     next(err);
   }
 });
+
 router.post("/importemps", async (req, res, next) => {
   let obj = { ...req.body };
   console.log("obj: ", obj);
@@ -523,6 +524,7 @@ router.post("/importemps", async (req, res, next) => {
     next(err);
   }
 });
+
 router.put("/emps/:id", async (req, res, next) => {
   let obj = { ...req.body };
   try {
@@ -532,7 +534,7 @@ router.put("/emps/:id", async (req, res, next) => {
     next(err);
   }
 });
- 
+
 router.put("/deletemps/:id", async (req, res, next) => {
   try {
     res.json(await EmpsDb.deleteEmp(req.params.id));
@@ -602,6 +604,44 @@ router.get("/getEmpAreasInCoveredAreasForEdit/:EmpId", async (req, res) => {
 
 router.get("/getAllManagers", async (req, res) => {
   res.json(await EmpsDb.getAllManagers());
+});
+
+router.get("/incentives", async (req, res) => {
+  res.json(await EmpsDb.getEmpIncentives());
+});
+
+router.post("/incentives", async (req, res, next) => {
+  let obj = { ...req.body };
+  try {
+    res.json(await EmpsDb.addEmpIncentives(obj));
+  } catch (err) {
+    console.error(`Error while Adding`, err.message);
+    next(err);
+  }
+});
+
+router.put("/deleteincentives/:id", async (req, res, next) => {
+  let obj = { ...req.body };
+  try {
+    res.json(await EmpsDb.DeleteEmpIncentives(req.params.id));
+  } catch (err) {
+    console.error(`Error while Adding`, err.message);
+    next(err);
+  }
+});
+
+router.put("/incentives/:id", async (req, res, next) => {
+  let obj = { ...req.body };
+  try {
+    res.json(await EmpsDb.updateEmpIncentives(req.params.id, obj));
+  } catch (err) {
+    console.error(`Error while Updating`, err.message);
+    next(err);
+  }
+});
+
+router.get("/leaves", async (req, res) => {
+  res.json(await EmpsDb.getEmpLeaves());
 });
 
 // -------CUSTOMER Api's----------------------------------------------------//
@@ -694,6 +734,7 @@ router.put("/custsubtype/:id", async (req, res, next) => {
 router.get("/customer", async (req, res) => {
   res.json(await CustsDb.getCustomers());
 });
+
 router.get("/customerdocs/:id", async (req, res) => {
   res.json(await CustsDb.getCustDocsById(req.params.id));
 });
@@ -754,6 +795,36 @@ router.put("/addresstype/:id", async (req, res, next) => {
   }
 });
 
+router.get("/custdeletereq", async (req, res) => {
+  res.json(await CustsDb.getCustDeleteNewRequest());
+});
+
+router.put("/custdeleteacceptreq/:reqid/:custid", async (req, res, next) => {
+  console.log("hit");
+  console.log(
+    "req.params.reqid,req.params.custid: ",
+    req.params.reqid,
+    req.params.custid
+  );
+  try {
+    res.json(
+      await CustsDb.AcceptDeleteRequest(req.params.reqid, req.params.custid)
+    );
+  } catch (err) {
+    console.error(`Error while Adding`, err.message);
+    next(err);
+  }
+});
+
+router.put("/custdeleterejectreq/:id", async (req, res, next) => {
+  try {
+    res.json(await CustsDb.RejectDeleteRequest(req.params.id));
+  } catch (err) {
+    console.error(`Error while Adding`, err.message);
+    next(err);
+  }
+});
+
 // -------PRODUCT Api's----------------------------------------------------//
 
 router.get("/prodspecies", async (req, res) => {
@@ -797,12 +868,13 @@ router.post("/prod", async (req, res) => {
   }
 });
 
-router.delete("/prod/:id", async (req, res) => {
+router.put("/deleteprod/:id", async (req, res) => {
   res.json(await ProdDb.deleteProducts(req.params.id));
 });
 
 router.put("/prod/:id", async (req, res, next) => {
   let obj = { ...req.body };
+  console.log("req.params.id, obj: ", req.params.id, obj);
 
   try {
     res.json(await ProdDb.updateProducts(req.params.id, obj));
@@ -835,7 +907,6 @@ router.delete("/uom/:id", async (req, res) => {
 
 router.put("/uom/:id", async (req, res, next) => {
   let obj = { ...req.body };
- 
 
   try {
     res.json(await UomDb.updateUom(req.params.id, obj));
