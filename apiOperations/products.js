@@ -2,7 +2,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-14 14:39:09
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-28 19:27:55
+ * @Last Modified time: 2022-03-03 12:42:53
  */
 
 var config = require("../dbconfig");
@@ -60,6 +60,8 @@ async function addProductSpecies(obj) {
 }
 
 async function deleteProductSpecies(specId) {
+  console.log("specId: ", specId);
+
   try {
     let pool = await sql.connect(config);
     let result = await pool
@@ -82,7 +84,6 @@ async function deleteProductSpecies(specId) {
 }
 
 async function updateProductSpecies(specId, obj) {
-  console.log("specId, obj: ", specId, obj);
   try {
     let pool = await sql.connect(config);
     let result = await pool
@@ -100,7 +101,7 @@ async function updateProductSpecies(specId, obj) {
       message = true;
     }
     pool.close();
-
+    console.log("message: ", message);
     return message;
   } catch (error) {
     console.log("updateProductSpecies-->", error);
@@ -113,7 +114,9 @@ async function getProducts() {
 
     let result = await pool
       .request()
-      .query("SELECT * FROM PRODUCT_MASTER WHERE [PRODUCT_ISACTIVE ]=1");
+      .query(
+        "SELECT [PRODUCT_PKID] ,[PRODUCT_COMPANY_FKID] ,PRODUCT_SPECIES_FKID,[PRODUCT_NAME] ,[PRODUCT_UOM_FKID] ,[PRODUCT_UNIT],[PRODUCT_CODE] ,[PRODUCT_BAR_CODE] ,[PRODUCT_WHOLESALE_PRICE] ,[PRODUCT_DEALER_PRICE] ,[PRODUCT_MRP] ,[PRODUCT_IMAGE] ,[PRODUCT_CATALOGUE] ,[PRODUCT_ISACTIVE] ,UNIT_OF_MEASUREMENT_NAME,UNIT_OF_MEASUREMENT_SHORT_KEY,COMPANY_NAME,PRODUCT_SPECIES_NAME FROM PRODUCT_MASTER JOIN PRODUCT_SPECIES ON PRODUCT_SPECIES_PKID=PRODUCT_SPECIES_FKID JOIN UNIT_OF_MEASUREMENT ON UNIT_OF_MEASUREMENT_PKID=PRODUCT_UOM_FKID JOIN COMPANY ON COMPANY_PKID=PRODUCT_COMPANY_FKID  WHERE [PRODUCT_ISACTIVE]=1"
+      );
     pool.close();
 
     return result.recordsets[0];
@@ -127,14 +130,16 @@ async function addProducts(obj) {
     let pool = await sql.connect(config);
     let result = await pool
       .request()
-      .input("PRODUCT_NAME", obj.PRODUCT_NAME)
-      .query("SELECT * FROM PRODUCT_MASTER WHERE PRODUCT_NAME=@PRODUCT_NAME");
+      .input("PRODUCT_CODE", obj.PRODUCT_CODE)
+      .query("SELECT * FROM PRODUCT_MASTER WHERE PRODUCT_CODE=@PRODUCT_CODE");
     if (result.rowsAffected[0] == 0) {
       let insertInto = await pool
         .request()
         .input("PRODUCT_COMPANY_FKID", obj.PRODUCT_COMPANY_FKID)
+        .input("PRODUCT_SPECIES_FKID", obj.PRODUCT_SPECIES_FKID)
         .input("PRODUCT_NAME", obj.PRODUCT_NAME)
         .input("PRODUCT_UOM_FKID", obj.PRODUCT_UOM_FKID)
+        .input("PRODUCT_UNIT", obj.PRODUCT_UNIT)
         .input("PRODUCT_CODE", obj.PRODUCT_CODE)
         .input("PRODUCT_BAR_CODE", obj.PRODUCT_BAR_CODE)
         .input("PRODUCT_WHOLESALE_PRICE", obj.PRODUCT_WHOLESALE_PRICE)
@@ -144,7 +149,7 @@ async function addProducts(obj) {
         .input("PRODUCT_CATALOGUE", obj.PRODUCT_CATALOGUE)
         .input("PRODUCT_ISACTIVE", "1")
         .query(
-          "insert into PRODUCT_MASTER ([PRODUCT_COMPANY_FKID] ,[PRODUCT_NAME] ,[PRODUCT_UOM_FKID] ,[PRODUCT_CODE] ,[PRODUCT_BAR_CODE] ,[PRODUCT_WHOLESALE_PRICE] ,[PRODUCT_DEALER_PRICE] ,[PRODUCT_MRP] ,[PRODUCT_IMAGE] ,[PRODUCT_CATALOGUE] ,[PRODUCT_ISACTIVE] )  values(@PRODUCT_COMPANY_FKID ,@PRODUCT_NAME ,@PRODUCT_UOM_FKID ,@PRODUCT_CODE ,@PRODUCT_BAR_CODE ,@PRODUCT_WHOLESALE_PRICE ,@PRODUCT_DEALER_PRICE ,@PRODUCT_MRP ,@PRODUCT_IMAGE ,@PRODUCT_CATALOGUE ,@PRODUCT_ISACTIVE)"
+          "insert into PRODUCT_MASTER ([PRODUCT_COMPANY_FKID] ,PRODUCT_SPECIES_FKID,[PRODUCT_NAME] ,[PRODUCT_UOM_FKID] ,[PRODUCT_UNIT],[PRODUCT_CODE] ,[PRODUCT_BAR_CODE] ,[PRODUCT_WHOLESALE_PRICE] ,[PRODUCT_DEALER_PRICE] ,[PRODUCT_MRP] ,[PRODUCT_IMAGE] ,[PRODUCT_CATALOGUE] ,[PRODUCT_ISACTIVE] )  values(@PRODUCT_COMPANY_FKID,@PRODUCT_SPECIES_FKID,@PRODUCT_NAME ,@PRODUCT_UOM_FKID ,@PRODUCT_UNIT,@PRODUCT_CODE ,@PRODUCT_BAR_CODE ,@PRODUCT_WHOLESALE_PRICE ,@PRODUCT_DEALER_PRICE ,@PRODUCT_MRP ,@PRODUCT_IMAGE ,@PRODUCT_CATALOGUE ,@PRODUCT_ISACTIVE)"
         );
 
       if (insertInto.rowsAffected == 1) {
@@ -193,8 +198,10 @@ async function updateProducts(prodId, obj) {
       .request()
       .input("PRODUCT_PKID", prodId)
       .input("PRODUCT_COMPANY_FKID", obj.PRODUCT_COMPANY_FKID)
+      .input("PRODUCT_SPECIES_FKID", obj.PRODUCT_SPECIES_FKID)
       .input("PRODUCT_NAME", obj.PRODUCT_NAME)
       .input("PRODUCT_UOM_FKID", obj.PRODUCT_UOM_FKID)
+      .input("PRODUCT_UNIT", obj.PRODUCT_UNIT)
       .input("PRODUCT_CODE", obj.PRODUCT_CODE)
       .input("PRODUCT_BAR_CODE", obj.PRODUCT_BAR_CODE)
       .input("PRODUCT_WHOLESALE_PRICE", obj.PRODUCT_WHOLESALE_PRICE)
@@ -202,9 +209,8 @@ async function updateProducts(prodId, obj) {
       .input("PRODUCT_MRP", obj.PRODUCT_MRP)
       .input("PRODUCT_IMAGE", obj.PRODUCT_IMAGE)
       .input("PRODUCT_CATALOGUE", obj.PRODUCT_CATALOGUE)
-      .input("PRODUCT_ISACTIVE", obj.PRODUCT_ISACTIVE)
       .query(
-        `UPDATE PRODUCT_MASTER SET PRODUCT_COMPANY_FKID=@PRODUCT_COMPANY_FKID, PRODUCT_NAME=@PRODUCT_NAME,PRODUCT_UOM_FKID=@PRODUCT_UOM_FKID,PRODUCT_CODE=@PRODUCT_CODE, PRODUCT_BAR_CODE=@PRODUCT_BAR_CODE,PRODUCT_WHOLESALE_PRICE=@PRODUCT_WHOLESALE_PRICE, PRODUCT_DEALER_PRICE=@PRODUCT_DEALER_PRICE,PRODUCT_MRP=@PRODUCT_MRP, PRODUCT_IMAGE=@PRODUCT_IMAGE,PRODUCT_CATALOGUE=@PRODUCT_CATALOGUE, PRODUCT_ISACTIVE=@PRODUCT_ISACTIVE WHERE PRODUCT_PKID=@PRODUCT_PKID`
+        `UPDATE PRODUCT_MASTER SET PRODUCT_COMPANY_FKID=@PRODUCT_COMPANY_FKID, PRODUCT_SPECIES_FKID=@PRODUCT_SPECIES_FKID, PRODUCT_NAME=@PRODUCT_NAME,PRODUCT_UOM_FKID=@PRODUCT_UOM_FKID, PRODUCT_UNIT=@PRODUCT_UNIT, PRODUCT_CODE=@PRODUCT_CODE, PRODUCT_BAR_CODE=@PRODUCT_BAR_CODE, PRODUCT_WHOLESALE_PRICE=@PRODUCT_WHOLESALE_PRICE, PRODUCT_DEALER_PRICE=@PRODUCT_DEALER_PRICE, PRODUCT_MRP=@PRODUCT_MRP, PRODUCT_IMAGE=@PRODUCT_IMAGE, PRODUCT_CATALOGUE=@PRODUCT_CATALOGUE WHERE PRODUCT_PKID=@PRODUCT_PKID`
       );
 
     pool.close();
@@ -227,7 +233,7 @@ module.exports = {
   updateProductSpecies: updateProductSpecies,
   deleteProductSpecies: deleteProductSpecies,
   addProducts: addProducts,
-  deleteProducts: deleteProductSpecies,
+  deleteProducts: deleteProducts,
   updateProducts: updateProducts,
   getProducts: getProducts,
 };

@@ -2,7 +2,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-08 12:20:30
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-03 15:32:03
+ * @Last Modified time: 2022-03-03 18:15:48
  */
 
 var config = require("../dbconfig");
@@ -13,6 +13,7 @@ async function getEmpTypes() {
     let pool = await sql.connect(config);
 
     let result = await pool.request().query("SELECT * FROM [EMPLOYEE_TYPE]");
+
     pool.close();
 
     return result.recordsets[0];
@@ -235,15 +236,10 @@ async function getEmp() {
     return result.recordsets[0];
   } catch (error) {
     console.log("getEmp-->", error);
-    // pool.close();
   }
 }
 
 async function addEmp(obj) {
-  // console.log("OtherDocs: ", obj.OtherDocs);
-  // console.log("CoveredArea: ", obj.CoveredArea);
-  // console.log("OtherCoveredArea: ", obj.OtherCoveredArea);
-
   try {
     let pool = await sql.connect(config);
     let result = await pool
@@ -913,7 +909,7 @@ async function getEmpLeaves() {
     let result = await pool
       .request()
       .query(
-        "SELECT [LEAVE_PKID] ,[LEAVE_EMPLOYEE_FKID] ,[LEAVE_FROM_DATE] ,[LEAVE_TO_DATE] ,[LEAVE_FILE] ,[LEAVE_REASON] ,[LEAVE_ISACTIVE], EMPLOYEE_NAME FROM [EMPLOYEE_LEAVE] JOIN [EMPLOYEE_MASTER] ON [EMPLOYEE_PKID]=[LEAVE_EMPLOYEE_FKID] WHERE LEAVE_ISACTIVE=1"
+        "select el.*,EMPLOYEE_NAME,[EMPOLYEE_IS_MANAGER],(select count(*) from [dbo].[EMPLOYEE_LEAVE] where [LEAVE_EMPLOYEE_FKID] = el.LEAVE_EMPLOYEE_FKID and LEAVE_ISACTIVE = 1) as LeaveCount from [dbo].[EMPLOYEE_LEAVE] as el join [dbo].[EMPLOYEE_MASTER] on [EMPLOYEE_PKID] = el.LEAVE_EMPLOYEE_FKID where [LEAVE_ISACTIVE] = 0"
       );
     pool.close();
 
@@ -923,6 +919,106 @@ async function getEmpLeaves() {
   }
 }
 
+async function AcceptLeaves(reqId) {
+  try {
+    let pool = await sql.connect(config);
+    let result = await pool
+      .request()
+      .input("LEAVE_PKID", reqId)
+      .query(
+        `UPDATE EMPLOYEE_LEAVE SET LEAVE_ISACTIVE =1 WHERE LEAVE_PKID=@LEAVE_PKID`
+      );
+
+    pool.close();
+    let message = false;
+
+    if (result.rowsAffected) {
+      message = true;
+    }
+    pool.close();
+
+    return message;
+  } catch (error) {
+    console.log("AcceptLeaves-->", error);
+  }
+}
+
+async function RejectLeaves(reqId) {
+  try {
+    let pool = await sql.connect(config);
+    let result = await pool
+      .request()
+      .input("LEAVE_PKID", reqId)
+      .query(
+        `UPDATE EMPLOYEE_LEAVE SET LEAVE_ISACTIVE =2 WHERE LEAVE_PKID=@LEAVE_PKID`
+      );
+
+    pool.close();
+    let message = false;
+
+    if (result.rowsAffected) {
+      message = true;
+    }
+    pool.close();
+
+    return message;
+  } catch (error) {
+    console.log("RejectLeaves-->", error);
+  }
+}
+
+async function getReasonForLeave(reqId) {
+  try {
+    let pool = await sql.connect(config);
+
+    let result = await pool
+      .request()
+      .input("LEAVE_PKID", reqId)
+      .query(
+        "SELECT LEAVE_REASON FROM [EMPLOYEE_LEAVE] WHERE LEAVE_PKID=@LEAVE_PKID"
+      );
+    pool.close();
+
+    return result.recordsets[0];
+  } catch (error) {
+    console.log("getReasonForLeave-->", error);
+  }
+}
+
+async function getAllLeavesForEmployee(empId) {
+  try {
+    let pool = await sql.connect(config);
+
+    let result = await pool
+      .request()
+      .input("LEAVE_EMPLOYEE_FKID", empId)
+      .query(
+        "SELECT * FROM [EMPLOYEE_LEAVE] WHERE LEAVE_EMPLOYEE_FKID=@LEAVE_EMPLOYEE_FKID"
+      );
+    pool.close();
+
+    return result.recordsets[0];
+  } catch (error) {
+    console.log("getAllLeavesForEmployee-->", error);
+  }
+}
+
+async function getAllEmployeeLeaves() {
+  try {
+    let pool = await sql.connect(config);
+
+    let result = await pool
+      .request()
+      .query(
+        "select distinct [EMPLOYEE_PKID] as LEAVE_EMPLOYEE_FKID,[EMPLOYEE_TYPE_NAME],[EMPLOYEE_SUB_TYPE_NAME],[HQ_NAME],[COMPANY_NAME],[EMPLOYEE_NAME],[EMPOLYEE_IS_MANAGER],(select count(*) from [dbo].[EMPLOYEE_LEAVE] where [LEAVE_EMPLOYEE_FKID] = EMPLOYEE_PKID) as LeaveCount from [EMPLOYEE_MASTER] JOIN [dbo].[EMPLOYEE_TYPE] ON [EMPLOYEE_TYPE_PKID]=[EMPLOYEE_TYPE_FKID] JOIN [dbo].[EMPLOYEE_SUB_TYPE] ON [EMPLOYEE_SUB_TYPE_PKID]=[EMPOYEE_SUB_TYPE_FKID] JOIN [dbo].[HQ] ON [HQ_PKID]=[EMPLOYEE_HQ_FKID] JOIN [dbo].[COMPANY] ON [COMPANY_PKID]=[EMPLOYEE_COMPANY_FKID] JOIN [dbo].[EMPLOYEE_LEAVE] as el ON [LEAVE_EMPLOYEE_FKID]=[EMPLOYEE_PKID]"
+      );
+    pool.close();
+
+    return result.recordsets[0];
+  } catch (error) {
+    console.log("getAllEmployeeLeaves-->", error);
+  }
+}
 module.exports = {
   getEmpTypes: getEmpTypes,
   addEmpType: addEmpType,
@@ -956,4 +1052,9 @@ module.exports = {
   DeleteEmpIncentives: DeleteEmpIncentives,
   updateEmpIncentives: updateEmpIncentives,
   getEmpLeaves: getEmpLeaves,
+  AcceptLeaves: AcceptLeaves,
+  RejectLeaves: RejectLeaves,
+  getReasonForLeave: getReasonForLeave,
+  getAllLeavesForEmployee: getAllLeavesForEmployee,
+  getAllEmployeeLeaves: getAllEmployeeLeaves,
 };

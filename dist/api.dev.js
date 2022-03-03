@@ -10,7 +10,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
  * @Author: Hey Kimo here!
  * @Date: 2022-02-07 18:02:44
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-28 19:50:07
+ * @Last Modified time: 2022-03-03 19:14:29
  */
 var express = require("express");
 
@@ -75,7 +75,7 @@ app.all("*", function (req, res, next) {
   res.set("Access-Control-Allow-Origin", "*");
   res.set("Access-Control-Allow-Methods", "POST, GET, DELETE, PUT");
   res.set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  res.set("Cache-Control", "public, max-age=31536000"); // max-age=31557600
+  res.set("Cache-Control", "public, max-age=1000"); // max-age=31557600
 
   next();
 });
@@ -89,7 +89,7 @@ router.all("*", function (req, res, next) {
   res.set("Access-Control-Allow-Origin", "*");
   res.set("Access-Control-Allow-Methods", "POST, GET, DELETE, PUT");
   res.set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  res.set("Cache-Control", "public, max-age=31536000");
+  res.set("Cache-Control", "public, max-age=1000.");
   next();
 }); // let setCache = function (req, res, next) {
 //   // here you can define period in second, this one is 5 minutes
@@ -1723,16 +1723,15 @@ router.get("/getAllManagers", function _callee64(req, res) {
       }
     }
   });
-}); // -------CUSTOMER Api's----------------------------------------------------//
-
-router.get("/custcat", function _callee65(req, res) {
+});
+router.get("/incentives", function _callee65(req, res) {
   return regeneratorRuntime.async(function _callee65$(_context65) {
     while (1) {
       switch (_context65.prev = _context65.next) {
         case 0:
           _context65.t0 = res;
           _context65.next = 3;
-          return regeneratorRuntime.awrap(CustsDb.getCustomersCat());
+          return regeneratorRuntime.awrap(EmpsDb.getEmpIncentives());
 
         case 3:
           _context65.t1 = _context65.sent;
@@ -1746,7 +1745,7 @@ router.get("/custcat", function _callee65(req, res) {
     }
   });
 });
-router.post("/custcat", function _callee66(req, res) {
+router.post("/incentives", function _callee66(req, res, next) {
   var obj;
   return regeneratorRuntime.async(function _callee66$(_context66) {
     while (1) {
@@ -1756,50 +1755,63 @@ router.post("/custcat", function _callee66(req, res) {
           _context66.prev = 1;
           _context66.t0 = res;
           _context66.next = 5;
-          return regeneratorRuntime.awrap(CustsDb.addCustomersCat(obj));
+          return regeneratorRuntime.awrap(EmpsDb.addEmpIncentives(obj));
 
         case 5:
           _context66.t1 = _context66.sent;
 
           _context66.t0.json.call(_context66.t0, _context66.t1);
 
-          _context66.next = 12;
+          _context66.next = 13;
           break;
 
         case 9:
           _context66.prev = 9;
           _context66.t2 = _context66["catch"](1);
           console.error("Error while Adding", _context66.t2.message);
+          next(_context66.t2);
 
-        case 12:
+        case 13:
         case "end":
           return _context66.stop();
       }
     }
   }, null, null, [[1, 9]]);
 });
-router["delete"]("/custcat/:id", function _callee67(req, res) {
+router.put("/deleteincentives/:id", function _callee67(req, res, next) {
+  var obj;
   return regeneratorRuntime.async(function _callee67$(_context67) {
     while (1) {
       switch (_context67.prev = _context67.next) {
         case 0:
+          obj = _objectSpread({}, req.body);
+          _context67.prev = 1;
           _context67.t0 = res;
-          _context67.next = 3;
-          return regeneratorRuntime.awrap(CustsDb.deleteCustomersCat(req.params.id));
+          _context67.next = 5;
+          return regeneratorRuntime.awrap(EmpsDb.DeleteEmpIncentives(req.params.id));
 
-        case 3:
+        case 5:
           _context67.t1 = _context67.sent;
 
           _context67.t0.json.call(_context67.t0, _context67.t1);
 
-        case 5:
+          _context67.next = 13;
+          break;
+
+        case 9:
+          _context67.prev = 9;
+          _context67.t2 = _context67["catch"](1);
+          console.error("Error while Adding", _context67.t2.message);
+          next(_context67.t2);
+
+        case 13:
         case "end":
           return _context67.stop();
       }
     }
-  });
+  }, null, null, [[1, 9]]);
 });
-router.put("/custcat/:id", function _callee68(req, res, next) {
+router.put("/incentives/:id", function _callee68(req, res, next) {
   var obj;
   return regeneratorRuntime.async(function _callee68$(_context68) {
     while (1) {
@@ -1809,7 +1821,7 @@ router.put("/custcat/:id", function _callee68(req, res, next) {
           _context68.prev = 1;
           _context68.t0 = res;
           _context68.next = 5;
-          return regeneratorRuntime.awrap(CustsDb.updateCustomersCat(req.params.id, obj));
+          return regeneratorRuntime.awrap(EmpsDb.updateEmpIncentives(req.params.id, obj));
 
         case 5:
           _context68.t1 = _context68.sent;
@@ -1822,7 +1834,7 @@ router.put("/custcat/:id", function _callee68(req, res, next) {
         case 9:
           _context68.prev = 9;
           _context68.t2 = _context68["catch"](1);
-          console.error("Error while Adding", _context68.t2.message);
+          console.error("Error while Updating", _context68.t2.message);
           next(_context68.t2);
 
         case 13:
@@ -1832,14 +1844,14 @@ router.put("/custcat/:id", function _callee68(req, res, next) {
     }
   }, null, null, [[1, 9]]);
 });
-router.get("/custtype", function _callee69(req, res) {
+router.get("/leaves", function _callee69(req, res) {
   return regeneratorRuntime.async(function _callee69$(_context69) {
     while (1) {
       switch (_context69.prev = _context69.next) {
         case 0:
           _context69.t0 = res;
           _context69.next = 3;
-          return regeneratorRuntime.awrap(CustsDb.getCustomersType());
+          return regeneratorRuntime.awrap(EmpsDb.getEmpLeaves());
 
         case 3:
           _context69.t1 = _context69.sent;
@@ -1853,46 +1865,35 @@ router.get("/custtype", function _callee69(req, res) {
     }
   });
 });
-router.post("/custtype", function _callee70(req, res) {
-  var obj;
+router.get("/leavereason/:id", function _callee70(req, res) {
   return regeneratorRuntime.async(function _callee70$(_context70) {
     while (1) {
       switch (_context70.prev = _context70.next) {
         case 0:
-          obj = _objectSpread({}, req.body);
-          _context70.prev = 1;
           _context70.t0 = res;
-          _context70.next = 5;
-          return regeneratorRuntime.awrap(CustsDb.addCustomersType(obj));
+          _context70.next = 3;
+          return regeneratorRuntime.awrap(EmpsDb.getReasonForLeave(req.params.id));
 
-        case 5:
+        case 3:
           _context70.t1 = _context70.sent;
 
           _context70.t0.json.call(_context70.t0, _context70.t1);
 
-          _context70.next = 12;
-          break;
-
-        case 9:
-          _context70.prev = 9;
-          _context70.t2 = _context70["catch"](1);
-          console.error("Error while Adding", _context70.t2.message);
-
-        case 12:
+        case 5:
         case "end":
           return _context70.stop();
       }
     }
-  }, null, null, [[1, 9]]);
+  });
 });
-router["delete"]("/custtype/:id", function _callee71(req, res) {
+router.get("/leavesbyemp/:id", function _callee71(req, res) {
   return regeneratorRuntime.async(function _callee71$(_context71) {
     while (1) {
       switch (_context71.prev = _context71.next) {
         case 0:
           _context71.t0 = res;
           _context71.next = 3;
-          return regeneratorRuntime.awrap(CustsDb.deleteCustomersType(req.params.id));
+          return regeneratorRuntime.awrap(EmpsDb.getAllLeavesForEmployee(req.params.id));
 
         case 3:
           _context71.t1 = _context71.sent;
@@ -1906,68 +1907,76 @@ router["delete"]("/custtype/:id", function _callee71(req, res) {
     }
   });
 });
-router.put("/custtype/:id", function _callee72(req, res, next) {
-  var obj;
+router.put("/acceptleaves/:id", function _callee72(req, res, next) {
   return regeneratorRuntime.async(function _callee72$(_context72) {
     while (1) {
       switch (_context72.prev = _context72.next) {
         case 0:
-          obj = _objectSpread({}, req.body);
-          _context72.prev = 1;
+          _context72.prev = 0;
           _context72.t0 = res;
-          _context72.next = 5;
-          return regeneratorRuntime.awrap(CustsDb.updateCustomersType(req.params.id, obj));
+          _context72.next = 4;
+          return regeneratorRuntime.awrap(EmpsDb.AcceptLeaves(req.params.id));
 
-        case 5:
+        case 4:
           _context72.t1 = _context72.sent;
 
           _context72.t0.json.call(_context72.t0, _context72.t1);
 
-          _context72.next = 13;
+          _context72.next = 12;
           break;
 
-        case 9:
-          _context72.prev = 9;
-          _context72.t2 = _context72["catch"](1);
-          console.error("Error while Adding", _context72.t2.message);
+        case 8:
+          _context72.prev = 8;
+          _context72.t2 = _context72["catch"](0);
+          console.error("Error while Updating", _context72.t2.message);
           next(_context72.t2);
 
-        case 13:
+        case 12:
         case "end":
           return _context72.stop();
       }
     }
-  }, null, null, [[1, 9]]);
+  }, null, null, [[0, 8]]);
 });
-router.get("/custsubtype", function _callee73(req, res) {
+router.put("/rejectleaves/:id", function _callee73(req, res, next) {
   return regeneratorRuntime.async(function _callee73$(_context73) {
     while (1) {
       switch (_context73.prev = _context73.next) {
         case 0:
+          _context73.prev = 0;
           _context73.t0 = res;
-          _context73.next = 3;
-          return regeneratorRuntime.awrap(CustsDb.getCustomersSubType());
+          _context73.next = 4;
+          return regeneratorRuntime.awrap(EmpsDb.RejectLeaves(req.params.id));
 
-        case 3:
+        case 4:
           _context73.t1 = _context73.sent;
 
           _context73.t0.json.call(_context73.t0, _context73.t1);
 
-        case 5:
+          _context73.next = 12;
+          break;
+
+        case 8:
+          _context73.prev = 8;
+          _context73.t2 = _context73["catch"](0);
+          console.error("Error while Updating", _context73.t2.message);
+          next(_context73.t2);
+
+        case 12:
         case "end":
           return _context73.stop();
       }
     }
-  });
+  }, null, null, [[0, 8]]);
 });
-router.get("/custsubtypebytype/:id", function _callee74(req, res) {
+router.get("/leavesforallemps", function _callee74(req, res) {
   return regeneratorRuntime.async(function _callee74$(_context74) {
     while (1) {
       switch (_context74.prev = _context74.next) {
         case 0:
           _context74.t0 = res;
           _context74.next = 3;
-          return regeneratorRuntime.awrap(CustsDb.getCustSubTypeByType(req.params.id));
+          return regeneratorRuntime.awrap(EmpsDb.getAllEmployeeLeaves());
 
         case 3:
           _context74.t1 = _context74.sent;
@@ -1980,122 +1989,123 @@ router.get("/custsubtypebytype/:id", function _callee74(req, res) {
       }
     }
   });
-});
-router.post("/custsubtype", function _callee75(req, res) {
-  var obj;
+}); // -------CUSTOMER Api's----------------------------------------------------//
+
+router.get("/custcat", function _callee75(req, res) {
   return regeneratorRuntime.async(function _callee75$(_context75) {
     while (1) {
       switch (_context75.prev = _context75.next) {
         case 0:
-          obj = _objectSpread({}, req.body);
-          _context75.prev = 1;
           _context75.t0 = res;
-          _context75.next = 5;
-          return regeneratorRuntime.awrap(CustsDb.addCustomersSubType(obj));
+          _context75.next = 3;
+          return regeneratorRuntime.awrap(CustsDb.getCustomersCat());
 
-        case 5:
+        case 3:
           _context75.t1 = _context75.sent;
 
           _context75.t0.json.call(_context75.t0, _context75.t1);
 
-          _context75.next = 12;
-          break;
-
-        case 9:
-          _context75.prev = 9;
-          _context75.t2 = _context75["catch"](1);
-          console.error("Error while Adding", _context75.t2.message);
-
-        case 12:
+        case 5:
         case "end":
           return _context75.stop();
       }
     }
-  }, null, null, [[1, 9]]);
+  });
 });
-router["delete"]("/custsubtype/:id", function _callee76(req, res) {
+router.post("/custcat", function _callee76(req, res) {
+  var obj;
   return regeneratorRuntime.async(function _callee76$(_context76) {
     while (1) {
       switch (_context76.prev = _context76.next) {
         case 0:
+          obj = _objectSpread({}, req.body);
+          _context76.prev = 1;
           _context76.t0 = res;
-          _context76.next = 3;
-          return regeneratorRuntime.awrap(CustsDb.deleteCustomersSubType(req.params.id));
+          _context76.next = 5;
+          return regeneratorRuntime.awrap(CustsDb.addCustomersCat(obj));
 
-        case 3:
+        case 5:
           _context76.t1 = _context76.sent;
 
           _context76.t0.json.call(_context76.t0, _context76.t1);
 
-        case 5:
+          _context76.next = 12;
+          break;
+
+        case 9:
+          _context76.prev = 9;
+          _context76.t2 = _context76["catch"](1);
+          console.error("Error while Adding", _context76.t2.message);
+
+        case 12:
         case "end":
           return _context76.stop();
       }
     }
-  });
+  }, null, null, [[1, 9]]);
 });
-router.put("/custsubtype/:id", function _callee77(req, res, next) {
-  var obj;
+router["delete"]("/custcat/:id", function _callee77(req, res) {
   return regeneratorRuntime.async(function _callee77$(_context77) {
     while (1) {
       switch (_context77.prev = _context77.next) {
         case 0:
-          obj = _objectSpread({}, req.body);
-          _context77.prev = 1;
           _context77.t0 = res;
-          _context77.next = 5;
-          return regeneratorRuntime.awrap(CustsDb.updateCustomersSubType(req.params.id, obj));
+          _context77.next = 3;
+          return regeneratorRuntime.awrap(CustsDb.deleteCustomersCat(req.params.id));
 
-        case 5:
+        case 3:
           _context77.t1 = _context77.sent;
 
           _context77.t0.json.call(_context77.t0, _context77.t1);
 
-          _context77.next = 13;
-          break;
-
-        case 9:
-          _context77.prev = 9;
-          _context77.t2 = _context77["catch"](1);
-          console.error("Error while Adding", _context77.t2.message);
-          next(_context77.t2);
-
-        case 13:
+        case 5:
         case "end":
           return _context77.stop();
       }
     }
-  }, null, null, [[1, 9]]);
+  });
 });
-router.get("/customer", function _callee78(req, res) {
+router.put("/custcat/:id", function _callee78(req, res, next) {
+  var obj;
   return regeneratorRuntime.async(function _callee78$(_context78) {
     while (1) {
       switch (_context78.prev = _context78.next) {
         case 0:
+          obj = _objectSpread({}, req.body);
+          _context78.prev = 1;
           _context78.t0 = res;
-          _context78.next = 3;
-          return regeneratorRuntime.awrap(CustsDb.getCustomers());
+          _context78.next = 5;
+          return regeneratorRuntime.awrap(CustsDb.updateCustomersCat(req.params.id, obj));
 
-        case 3:
+        case 5:
           _context78.t1 = _context78.sent;
 
           _context78.t0.json.call(_context78.t0, _context78.t1);
 
-        case 5:
+          _context78.next = 13;
+          break;
+
+        case 9:
+          _context78.prev = 9;
+          _context78.t2 = _context78["catch"](1);
+          console.error("Error while Adding", _context78.t2.message);
+          next(_context78.t2);
+
+        case 13:
         case "end":
           return _context78.stop();
       }
     }
-  });
+  }, null, null, [[1, 9]]);
 });
-router.get("/customerdocs/:id", function _callee79(req, res) {
+router.get("/custtype", function _callee79(req, res) {
   return regeneratorRuntime.async(function _callee79$(_context79) {
     while (1) {
       switch (_context79.prev = _context79.next) {
         case 0:
           _context79.t0 = res;
           _context79.next = 3;
-          return regeneratorRuntime.awrap(CustsDb.getCustDocsById(req.params.id));
+          return regeneratorRuntime.awrap(CustsDb.getCustomersType());
 
         case 3:
           _context79.t1 = _context79.sent;
@@ -2109,121 +2119,121 @@ router.get("/customerdocs/:id", function _callee79(req, res) {
     }
   });
 });
-router.get("/customercontactpersons/:id", function _callee80(req, res) {
+router.post("/custtype", function _callee80(req, res) {
+  var obj;
   return regeneratorRuntime.async(function _callee80$(_context80) {
     while (1) {
       switch (_context80.prev = _context80.next) {
         case 0:
+          obj = _objectSpread({}, req.body);
+          _context80.prev = 1;
           _context80.t0 = res;
-          _context80.next = 3;
-          return regeneratorRuntime.awrap(CustsDb.getCustContactPersons(req.params.id));
+          _context80.next = 5;
+          return regeneratorRuntime.awrap(CustsDb.addCustomersType(obj));
 
-        case 3:
+        case 5:
           _context80.t1 = _context80.sent;
 
           _context80.t0.json.call(_context80.t0, _context80.t1);
 
-        case 5:
+          _context80.next = 12;
+          break;
+
+        case 9:
+          _context80.prev = 9;
+          _context80.t2 = _context80["catch"](1);
+          console.error("Error while Adding", _context80.t2.message);
+
+        case 12:
         case "end":
           return _context80.stop();
       }
     }
-  });
+  }, null, null, [[1, 9]]);
 });
-router.post("/customer", function _callee81(req, res) {
-  var obj;
+router["delete"]("/custtype/:id", function _callee81(req, res) {
   return regeneratorRuntime.async(function _callee81$(_context81) {
     while (1) {
       switch (_context81.prev = _context81.next) {
         case 0:
-          obj = _objectSpread({}, req.body);
-          _context81.prev = 1;
           _context81.t0 = res;
-          _context81.next = 5;
-          return regeneratorRuntime.awrap(CustsDb.addCustomers(obj));
+          _context81.next = 3;
+          return regeneratorRuntime.awrap(CustsDb.deleteCustomersType(req.params.id));
 
-        case 5:
+        case 3:
           _context81.t1 = _context81.sent;
 
           _context81.t0.json.call(_context81.t0, _context81.t1);
 
-          _context81.next = 12;
-          break;
-
-        case 9:
-          _context81.prev = 9;
-          _context81.t2 = _context81["catch"](1);
-          console.error("Error while Adding", _context81.t2.message);
-
-        case 12:
+        case 5:
         case "end":
           return _context81.stop();
       }
     }
-  }, null, null, [[1, 9]]);
+  });
 });
-router.put("/customer/:id", function _callee82(req, res) {
+router.put("/custtype/:id", function _callee82(req, res, next) {
+  var obj;
   return regeneratorRuntime.async(function _callee82$(_context82) {
     while (1) {
       switch (_context82.prev = _context82.next) {
         case 0:
+          obj = _objectSpread({}, req.body);
+          _context82.prev = 1;
           _context82.t0 = res;
-          _context82.next = 3;
-          return regeneratorRuntime.awrap(CustsDb.deleteCustomers(req.params.id));
+          _context82.next = 5;
+          return regeneratorRuntime.awrap(CustsDb.updateCustomersType(req.params.id, obj));
 
-        case 3:
+        case 5:
           _context82.t1 = _context82.sent;
 
           _context82.t0.json.call(_context82.t0, _context82.t1);
 
-        case 5:
+          _context82.next = 13;
+          break;
+
+        case 9:
+          _context82.prev = 9;
+          _context82.t2 = _context82["catch"](1);
+          console.error("Error while Adding", _context82.t2.message);
+          next(_context82.t2);
+
+        case 13:
         case "end":
           return _context82.stop();
       }
     }
-  });
+  }, null, null, [[1, 9]]);
 });
-router.put("/customer/:id", function _callee83(req, res, next) {
-  var obj;
+router.get("/custsubtype", function _callee83(req, res) {
   return regeneratorRuntime.async(function _callee83$(_context83) {
     while (1) {
       switch (_context83.prev = _context83.next) {
         case 0:
-          obj = _objectSpread({}, req.body);
-          _context83.prev = 1;
           _context83.t0 = res;
-          _context83.next = 5;
-          return regeneratorRuntime.awrap(CustsDb.updateCustomers(req.params.id, obj));
+          _context83.next = 3;
+          return regeneratorRuntime.awrap(CustsDb.getCustomersSubType());
 
-        case 5:
+        case 3:
           _context83.t1 = _context83.sent;
 
           _context83.t0.json.call(_context83.t0, _context83.t1);
 
-          _context83.next = 13;
-          break;
-
-        case 9:
-          _context83.prev = 9;
-          _context83.t2 = _context83["catch"](1);
-          console.error("Error while Adding", _context83.t2.message);
-          next(_context83.t2);
-
-        case 13:
+        case 5:
         case "end":
           return _context83.stop();
       }
     }
-  }, null, null, [[1, 9]]);
+  });
 });
-router.get("/addresstype/:custId", function _callee84(req, res) {
+router.get("/custsubtypebytype/:id", function _callee84(req, res) {
   return regeneratorRuntime.async(function _callee84$(_context84) {
     while (1) {
       switch (_context84.prev = _context84.next) {
         case 0:
           _context84.t0 = res;
           _context84.next = 3;
-          return regeneratorRuntime.awrap(CustsDb.getAddressType(req.params.custId));
+          return regeneratorRuntime.awrap(CustsDb.getCustSubTypeByType(req.params.id));
 
         case 3:
           _context84.t1 = _context84.sent;
@@ -2237,7 +2247,7 @@ router.get("/addresstype/:custId", function _callee84(req, res) {
     }
   });
 });
-router.post("/addresstype", function _callee85(req, res) {
+router.post("/custsubtype", function _callee85(req, res) {
   var obj;
   return regeneratorRuntime.async(function _callee85$(_context85) {
     while (1) {
@@ -2247,7 +2257,7 @@ router.post("/addresstype", function _callee85(req, res) {
           _context85.prev = 1;
           _context85.t0 = res;
           _context85.next = 5;
-          return regeneratorRuntime.awrap(CustsDb.addAddressType(obj));
+          return regeneratorRuntime.awrap(CustsDb.addCustomersSubType(obj));
 
         case 5:
           _context85.t1 = _context85.sent;
@@ -2269,14 +2279,14 @@ router.post("/addresstype", function _callee85(req, res) {
     }
   }, null, null, [[1, 9]]);
 });
-router["delete"]("/addresstype/:id", function _callee86(req, res) {
+router["delete"]("/custsubtype/:id", function _callee86(req, res) {
   return regeneratorRuntime.async(function _callee86$(_context86) {
     while (1) {
       switch (_context86.prev = _context86.next) {
         case 0:
           _context86.t0 = res;
           _context86.next = 3;
-          return regeneratorRuntime.awrap(CustsDb.deleteAddressType(req.params.id));
+          return regeneratorRuntime.awrap(CustsDb.deleteCustomersSubType(req.params.id));
 
         case 3:
           _context86.t1 = _context86.sent;
@@ -2290,7 +2300,7 @@ router["delete"]("/addresstype/:id", function _callee86(req, res) {
     }
   });
 });
-router.put("/addresstype/:id", function _callee87(req, res, next) {
+router.put("/custsubtype/:id", function _callee87(req, res, next) {
   var obj;
   return regeneratorRuntime.async(function _callee87$(_context87) {
     while (1) {
@@ -2300,7 +2310,7 @@ router.put("/addresstype/:id", function _callee87(req, res, next) {
           _context87.prev = 1;
           _context87.t0 = res;
           _context87.next = 5;
-          return regeneratorRuntime.awrap(CustsDb.updateAddressType(req.params.id, obj));
+          return regeneratorRuntime.awrap(CustsDb.updateCustomersSubType(req.params.id, obj));
 
         case 5:
           _context87.t1 = _context87.sent;
@@ -2322,16 +2332,15 @@ router.put("/addresstype/:id", function _callee87(req, res, next) {
       }
     }
   }, null, null, [[1, 9]]);
-}); // -------PRODUCT Api's----------------------------------------------------//
-
-router.get("/prodspecies", function _callee88(req, res) {
+});
+router.get("/customer", function _callee88(req, res) {
   return regeneratorRuntime.async(function _callee88$(_context88) {
     while (1) {
       switch (_context88.prev = _context88.next) {
         case 0:
           _context88.t0 = res;
           _context88.next = 3;
-          return regeneratorRuntime.awrap(ProdDb.getProductSpecies());
+          return regeneratorRuntime.awrap(CustsDb.getCustomers());
 
         case 3:
           _context88.t1 = _context88.sent;
@@ -2345,46 +2354,35 @@ router.get("/prodspecies", function _callee88(req, res) {
     }
   });
 });
-router.post("/prodspecies", function _callee89(req, res) {
-  var obj;
+router.get("/customerdocs/:id", function _callee89(req, res) {
   return regeneratorRuntime.async(function _callee89$(_context89) {
     while (1) {
       switch (_context89.prev = _context89.next) {
         case 0:
-          obj = _objectSpread({}, req.body);
-          _context89.prev = 1;
           _context89.t0 = res;
-          _context89.next = 5;
-          return regeneratorRuntime.awrap(ProdDb.addProductSpecies(obj));
+          _context89.next = 3;
+          return regeneratorRuntime.awrap(CustsDb.getCustDocsById(req.params.id));
 
-        case 5:
+        case 3:
           _context89.t1 = _context89.sent;
 
           _context89.t0.json.call(_context89.t0, _context89.t1);
 
-          _context89.next = 12;
-          break;
-
-        case 9:
-          _context89.prev = 9;
-          _context89.t2 = _context89["catch"](1);
-          console.error("Error while Adding", _context89.t2.message);
-
-        case 12:
+        case 5:
         case "end":
           return _context89.stop();
       }
     }
-  }, null, null, [[1, 9]]);
+  });
 });
-router["delete"]("/prodspecies/:id", function _callee90(req, res) {
+router.get("/customercontactpersons/:id", function _callee90(req, res) {
   return regeneratorRuntime.async(function _callee90$(_context90) {
     while (1) {
       switch (_context90.prev = _context90.next) {
         case 0:
           _context90.t0 = res;
           _context90.next = 3;
-          return regeneratorRuntime.awrap(ProdDb.deleteProductSpecies(req.params.id));
+          return regeneratorRuntime.awrap(CustsDb.getCustContactPersons(req.params.id));
 
         case 3:
           _context90.t1 = _context90.sent;
@@ -2398,255 +2396,629 @@ router["delete"]("/prodspecies/:id", function _callee90(req, res) {
     }
   });
 });
-router.put("/prodspecies/:id", function _callee91(req, res, next) {
-  var obj;
+router.get("/customerreaoson/:id", function _callee91(req, res) {
   return regeneratorRuntime.async(function _callee91$(_context91) {
     while (1) {
       switch (_context91.prev = _context91.next) {
         case 0:
-          obj = _objectSpread({}, req.body);
-          _context91.prev = 1;
           _context91.t0 = res;
-          _context91.next = 5;
-          return regeneratorRuntime.awrap(ProdDb.updateProductSpecies(req.params.id, obj));
+          _context91.next = 3;
+          return regeneratorRuntime.awrap(CustsDb.getCustReasonForDelete(req.params.id));
 
-        case 5:
+        case 3:
           _context91.t1 = _context91.sent;
 
           _context91.t0.json.call(_context91.t0, _context91.t1);
 
-          _context91.next = 13;
-          break;
-
-        case 9:
-          _context91.prev = 9;
-          _context91.t2 = _context91["catch"](1);
-          console.error("Error while Adding", _context91.t2.message);
-          next(_context91.t2);
-
-        case 13:
+        case 5:
         case "end":
           return _context91.stop();
       }
     }
-  }, null, null, [[1, 9]]);
+  });
 });
-router.get("/prod", function _callee92(req, res) {
+router.post("/customer", function _callee92(req, res) {
+  var obj;
   return regeneratorRuntime.async(function _callee92$(_context92) {
     while (1) {
       switch (_context92.prev = _context92.next) {
         case 0:
+          obj = _objectSpread({}, req.body);
+          _context92.prev = 1;
           _context92.t0 = res;
-          _context92.next = 3;
-          return regeneratorRuntime.awrap(ProdDb.getProducts());
+          _context92.next = 5;
+          return regeneratorRuntime.awrap(CustsDb.addCustomers(obj));
 
-        case 3:
+        case 5:
           _context92.t1 = _context92.sent;
 
           _context92.t0.json.call(_context92.t0, _context92.t1);
 
-        case 5:
+          _context92.next = 12;
+          break;
+
+        case 9:
+          _context92.prev = 9;
+          _context92.t2 = _context92["catch"](1);
+          console.error("Error while Adding", _context92.t2.message);
+
+        case 12:
         case "end":
           return _context92.stop();
       }
     }
-  });
+  }, null, null, [[1, 9]]);
 });
-router.post("/prod", function _callee93(req, res) {
-  var obj;
+router.put("/customer/:id", function _callee93(req, res) {
   return regeneratorRuntime.async(function _callee93$(_context93) {
     while (1) {
       switch (_context93.prev = _context93.next) {
         case 0:
-          obj = _objectSpread({}, req.body);
-          _context93.prev = 1;
           _context93.t0 = res;
-          _context93.next = 5;
-          return regeneratorRuntime.awrap(ProdDb.addProducts(obj));
+          _context93.next = 3;
+          return regeneratorRuntime.awrap(CustsDb.deleteCustomers(req.params.id));
 
-        case 5:
+        case 3:
           _context93.t1 = _context93.sent;
 
           _context93.t0.json.call(_context93.t0, _context93.t1);
 
-          _context93.next = 12;
-          break;
-
-        case 9:
-          _context93.prev = 9;
-          _context93.t2 = _context93["catch"](1);
-          console.error("Error while Adding", _context93.t2.message);
-
-        case 12:
+        case 5:
         case "end":
           return _context93.stop();
       }
     }
-  }, null, null, [[1, 9]]);
+  });
 });
-router["delete"]("/prod/:id", function _callee94(req, res) {
+router.put("/customer/:id", function _callee94(req, res, next) {
+  var obj;
   return regeneratorRuntime.async(function _callee94$(_context94) {
     while (1) {
       switch (_context94.prev = _context94.next) {
         case 0:
+          obj = _objectSpread({}, req.body);
+          _context94.prev = 1;
           _context94.t0 = res;
-          _context94.next = 3;
-          return regeneratorRuntime.awrap(ProdDb.deleteProducts(req.params.id));
+          _context94.next = 5;
+          return regeneratorRuntime.awrap(CustsDb.updateCustomers(req.params.id, obj));
 
-        case 3:
+        case 5:
           _context94.t1 = _context94.sent;
 
           _context94.t0.json.call(_context94.t0, _context94.t1);
 
-        case 5:
+          _context94.next = 13;
+          break;
+
+        case 9:
+          _context94.prev = 9;
+          _context94.t2 = _context94["catch"](1);
+          console.error("Error while Adding", _context94.t2.message);
+          next(_context94.t2);
+
+        case 13:
         case "end":
           return _context94.stop();
       }
     }
-  });
+  }, null, null, [[1, 9]]);
 });
-router.put("/prod/:id", function _callee95(req, res, next) {
-  var obj;
+router.get("/addresstype/:custId", function _callee95(req, res) {
   return regeneratorRuntime.async(function _callee95$(_context95) {
     while (1) {
       switch (_context95.prev = _context95.next) {
         case 0:
-          obj = _objectSpread({}, req.body);
-          _context95.prev = 1;
           _context95.t0 = res;
-          _context95.next = 5;
-          return regeneratorRuntime.awrap(ProdDb.updateProducts(req.params.id, obj));
+          _context95.next = 3;
+          return regeneratorRuntime.awrap(CustsDb.getAddressType(req.params.custId));
 
-        case 5:
+        case 3:
           _context95.t1 = _context95.sent;
 
           _context95.t0.json.call(_context95.t0, _context95.t1);
 
-          _context95.next = 13;
-          break;
-
-        case 9:
-          _context95.prev = 9;
-          _context95.t2 = _context95["catch"](1);
-          console.error("Error while Adding", _context95.t2.message);
-          next(_context95.t2);
-
-        case 13:
+        case 5:
         case "end":
           return _context95.stop();
       }
     }
-  }, null, null, [[1, 9]]);
-}); // -------UOM Api's----------------------------------------------------//
-
-router.get("/uom", function _callee96(req, res) {
+  });
+});
+router.post("/addresstype", function _callee96(req, res) {
+  var obj;
   return regeneratorRuntime.async(function _callee96$(_context96) {
     while (1) {
       switch (_context96.prev = _context96.next) {
         case 0:
+          obj = _objectSpread({}, req.body);
+          _context96.prev = 1;
           _context96.t0 = res;
-          _context96.next = 3;
-          return regeneratorRuntime.awrap(UomDb.getUom());
+          _context96.next = 5;
+          return regeneratorRuntime.awrap(CustsDb.addAddressType(obj));
 
-        case 3:
+        case 5:
           _context96.t1 = _context96.sent;
 
           _context96.t0.json.call(_context96.t0, _context96.t1);
 
-        case 5:
+          _context96.next = 12;
+          break;
+
+        case 9:
+          _context96.prev = 9;
+          _context96.t2 = _context96["catch"](1);
+          console.error("Error while Adding", _context96.t2.message);
+
+        case 12:
         case "end":
           return _context96.stop();
       }
     }
-  });
+  }, null, null, [[1, 9]]);
 });
-router.post("/uom", function _callee97(req, res) {
-  var obj;
+router["delete"]("/addresstype/:id", function _callee97(req, res) {
   return regeneratorRuntime.async(function _callee97$(_context97) {
     while (1) {
       switch (_context97.prev = _context97.next) {
         case 0:
-          obj = _objectSpread({}, req.body);
-          _context97.prev = 1;
           _context97.t0 = res;
-          _context97.next = 5;
-          return regeneratorRuntime.awrap(UomDb.addUom(obj));
+          _context97.next = 3;
+          return regeneratorRuntime.awrap(CustsDb.deleteAddressType(req.params.id));
 
-        case 5:
+        case 3:
           _context97.t1 = _context97.sent;
 
           _context97.t0.json.call(_context97.t0, _context97.t1);
 
-          _context97.next = 13;
-          break;
-
-        case 9:
-          _context97.prev = 9;
-          _context97.t2 = _context97["catch"](1);
-          console.error("Error while Adding", _context97.t2.message);
-          next(_context97.t2);
-
-        case 13:
+        case 5:
         case "end":
           return _context97.stop();
       }
     }
-  }, null, null, [[1, 9]]);
+  });
 });
-router["delete"]("/uom/:id", function _callee98(req, res) {
+router.put("/addresstype/:id", function _callee98(req, res, next) {
+  var obj;
   return regeneratorRuntime.async(function _callee98$(_context98) {
     while (1) {
       switch (_context98.prev = _context98.next) {
         case 0:
+          obj = _objectSpread({}, req.body);
+          _context98.prev = 1;
           _context98.t0 = res;
-          _context98.next = 3;
-          return regeneratorRuntime.awrap(UomDb.deleteUom(req.params.id));
+          _context98.next = 5;
+          return regeneratorRuntime.awrap(CustsDb.updateAddressType(req.params.id, obj));
 
-        case 3:
+        case 5:
           _context98.t1 = _context98.sent;
 
           _context98.t0.json.call(_context98.t0, _context98.t1);
 
-        case 5:
+          _context98.next = 13;
+          break;
+
+        case 9:
+          _context98.prev = 9;
+          _context98.t2 = _context98["catch"](1);
+          console.error("Error while Adding", _context98.t2.message);
+          next(_context98.t2);
+
+        case 13:
         case "end":
           return _context98.stop();
       }
     }
-  });
+  }, null, null, [[1, 9]]);
 });
-router.put("/uom/:id", function _callee99(req, res, next) {
-  var obj;
+router.get("/custdeletereq", function _callee99(req, res) {
   return regeneratorRuntime.async(function _callee99$(_context99) {
     while (1) {
       switch (_context99.prev = _context99.next) {
         case 0:
-          obj = _objectSpread({}, req.body);
-          console.log("req.body obj: ", obj);
-          _context99.prev = 2;
           _context99.t0 = res;
-          _context99.next = 6;
-          return regeneratorRuntime.awrap(UomDb.updateUom(req.params.id, obj));
+          _context99.next = 3;
+          return regeneratorRuntime.awrap(CustsDb.getCustDeleteNewRequest());
 
-        case 6:
+        case 3:
           _context99.t1 = _context99.sent;
 
           _context99.t0.json.call(_context99.t0, _context99.t1);
 
-          _context99.next = 14;
-          break;
-
-        case 10:
-          _context99.prev = 10;
-          _context99.t2 = _context99["catch"](2);
-          console.error("Error while Adding", _context99.t2.message);
-          next(_context99.t2);
-
-        case 14:
+        case 5:
         case "end":
           return _context99.stop();
       }
     }
+  });
+});
+router.put("/custdeleteacceptreq/:reqid/:custid", function _callee100(req, res, next) {
+  return regeneratorRuntime.async(function _callee100$(_context100) {
+    while (1) {
+      switch (_context100.prev = _context100.next) {
+        case 0:
+          console.log("hit");
+          console.log("req.params.reqid,req.params.custid: ", req.params.reqid, req.params.custid);
+          _context100.prev = 2;
+          _context100.t0 = res;
+          _context100.next = 6;
+          return regeneratorRuntime.awrap(CustsDb.AcceptDeleteRequest(req.params.reqid, req.params.custid));
+
+        case 6:
+          _context100.t1 = _context100.sent;
+
+          _context100.t0.json.call(_context100.t0, _context100.t1);
+
+          _context100.next = 14;
+          break;
+
+        case 10:
+          _context100.prev = 10;
+          _context100.t2 = _context100["catch"](2);
+          console.error("Error while Adding", _context100.t2.message);
+          next(_context100.t2);
+
+        case 14:
+        case "end":
+          return _context100.stop();
+      }
+    }
   }, null, null, [[2, 10]]);
+});
+router.put("/custdeleterejectreq/:id", function _callee101(req, res, next) {
+  return regeneratorRuntime.async(function _callee101$(_context101) {
+    while (1) {
+      switch (_context101.prev = _context101.next) {
+        case 0:
+          _context101.prev = 0;
+          _context101.t0 = res;
+          _context101.next = 4;
+          return regeneratorRuntime.awrap(CustsDb.RejectDeleteRequest(req.params.id));
+
+        case 4:
+          _context101.t1 = _context101.sent;
+
+          _context101.t0.json.call(_context101.t0, _context101.t1);
+
+          _context101.next = 12;
+          break;
+
+        case 8:
+          _context101.prev = 8;
+          _context101.t2 = _context101["catch"](0);
+          console.error("Error while Adding", _context101.t2.message);
+          next(_context101.t2);
+
+        case 12:
+        case "end":
+          return _context101.stop();
+      }
+    }
+  }, null, null, [[0, 8]]);
+}); // -------PRODUCT Api's----------------------------------------------------//
+
+router.get("/prodspecies", function _callee102(req, res) {
+  return regeneratorRuntime.async(function _callee102$(_context102) {
+    while (1) {
+      switch (_context102.prev = _context102.next) {
+        case 0:
+          _context102.t0 = res;
+          _context102.next = 3;
+          return regeneratorRuntime.awrap(ProdDb.getProductSpecies());
+
+        case 3:
+          _context102.t1 = _context102.sent;
+
+          _context102.t0.json.call(_context102.t0, _context102.t1);
+
+        case 5:
+        case "end":
+          return _context102.stop();
+      }
+    }
+  });
+});
+router.post("/prodspecies", function _callee103(req, res) {
+  var obj;
+  return regeneratorRuntime.async(function _callee103$(_context103) {
+    while (1) {
+      switch (_context103.prev = _context103.next) {
+        case 0:
+          obj = _objectSpread({}, req.body);
+          _context103.prev = 1;
+          _context103.t0 = res;
+          _context103.next = 5;
+          return regeneratorRuntime.awrap(ProdDb.addProductSpecies(obj));
+
+        case 5:
+          _context103.t1 = _context103.sent;
+
+          _context103.t0.json.call(_context103.t0, _context103.t1);
+
+          _context103.next = 12;
+          break;
+
+        case 9:
+          _context103.prev = 9;
+          _context103.t2 = _context103["catch"](1);
+          console.error("Error while Adding", _context103.t2.message);
+
+        case 12:
+        case "end":
+          return _context103.stop();
+      }
+    }
+  }, null, null, [[1, 9]]);
+});
+router.put("/deleteprodspecies/:id", function _callee104(req, res) {
+  return regeneratorRuntime.async(function _callee104$(_context104) {
+    while (1) {
+      switch (_context104.prev = _context104.next) {
+        case 0:
+          _context104.t0 = res;
+          _context104.next = 3;
+          return regeneratorRuntime.awrap(ProdDb.deleteProductSpecies(req.params.id));
+
+        case 3:
+          _context104.t1 = _context104.sent;
+
+          _context104.t0.json.call(_context104.t0, _context104.t1);
+
+        case 5:
+        case "end":
+          return _context104.stop();
+      }
+    }
+  });
+});
+router.put("/prodspecies/:id", function _callee105(req, res, next) {
+  var obj;
+  return regeneratorRuntime.async(function _callee105$(_context105) {
+    while (1) {
+      switch (_context105.prev = _context105.next) {
+        case 0:
+          obj = _objectSpread({}, req.body);
+          _context105.prev = 1;
+          _context105.t0 = res;
+          _context105.next = 5;
+          return regeneratorRuntime.awrap(ProdDb.updateProductSpecies(req.params.id, obj));
+
+        case 5:
+          _context105.t1 = _context105.sent;
+
+          _context105.t0.json.call(_context105.t0, _context105.t1);
+
+          _context105.next = 13;
+          break;
+
+        case 9:
+          _context105.prev = 9;
+          _context105.t2 = _context105["catch"](1);
+          console.error("Error while Adding", _context105.t2.message);
+          next(_context105.t2);
+
+        case 13:
+        case "end":
+          return _context105.stop();
+      }
+    }
+  }, null, null, [[1, 9]]);
+});
+router.get("/prod", function _callee106(req, res) {
+  return regeneratorRuntime.async(function _callee106$(_context106) {
+    while (1) {
+      switch (_context106.prev = _context106.next) {
+        case 0:
+          _context106.t0 = res;
+          _context106.next = 3;
+          return regeneratorRuntime.awrap(ProdDb.getProducts());
+
+        case 3:
+          _context106.t1 = _context106.sent;
+
+          _context106.t0.json.call(_context106.t0, _context106.t1);
+
+        case 5:
+        case "end":
+          return _context106.stop();
+      }
+    }
+  });
+});
+router.post("/prod", function _callee107(req, res) {
+  var obj;
+  return regeneratorRuntime.async(function _callee107$(_context107) {
+    while (1) {
+      switch (_context107.prev = _context107.next) {
+        case 0:
+          obj = _objectSpread({}, req.body);
+          _context107.prev = 1;
+          _context107.t0 = res;
+          _context107.next = 5;
+          return regeneratorRuntime.awrap(ProdDb.addProducts(obj));
+
+        case 5:
+          _context107.t1 = _context107.sent;
+
+          _context107.t0.json.call(_context107.t0, _context107.t1);
+
+          _context107.next = 12;
+          break;
+
+        case 9:
+          _context107.prev = 9;
+          _context107.t2 = _context107["catch"](1);
+          console.error("Error while Adding", _context107.t2.message);
+
+        case 12:
+        case "end":
+          return _context107.stop();
+      }
+    }
+  }, null, null, [[1, 9]]);
+});
+router.put("/deleteprod/:id", function _callee108(req, res) {
+  return regeneratorRuntime.async(function _callee108$(_context108) {
+    while (1) {
+      switch (_context108.prev = _context108.next) {
+        case 0:
+          _context108.t0 = res;
+          _context108.next = 3;
+          return regeneratorRuntime.awrap(ProdDb.deleteProducts(req.params.id));
+
+        case 3:
+          _context108.t1 = _context108.sent;
+
+          _context108.t0.json.call(_context108.t0, _context108.t1);
+
+        case 5:
+        case "end":
+          return _context108.stop();
+      }
+    }
+  });
+});
+router.put("/prod/:id", function _callee109(req, res, next) {
+  var obj;
+  return regeneratorRuntime.async(function _callee109$(_context109) {
+    while (1) {
+      switch (_context109.prev = _context109.next) {
+        case 0:
+          obj = _objectSpread({}, req.body);
+          console.log("req.params.id, obj: ", req.params.id, obj);
+          _context109.prev = 2;
+          _context109.t0 = res;
+          _context109.next = 6;
+          return regeneratorRuntime.awrap(ProdDb.updateProducts(req.params.id, obj));
+
+        case 6:
+          _context109.t1 = _context109.sent;
+
+          _context109.t0.json.call(_context109.t0, _context109.t1);
+
+          _context109.next = 14;
+          break;
+
+        case 10:
+          _context109.prev = 10;
+          _context109.t2 = _context109["catch"](2);
+          console.error("Error while Adding", _context109.t2.message);
+          next(_context109.t2);
+
+        case 14:
+        case "end":
+          return _context109.stop();
+      }
+    }
+  }, null, null, [[2, 10]]);
+}); // -------UOM Api's----------------------------------------------------//
+
+router.get("/uom", function _callee110(req, res) {
+  return regeneratorRuntime.async(function _callee110$(_context110) {
+    while (1) {
+      switch (_context110.prev = _context110.next) {
+        case 0:
+          _context110.t0 = res;
+          _context110.next = 3;
+          return regeneratorRuntime.awrap(UomDb.getUom());
+
+        case 3:
+          _context110.t1 = _context110.sent;
+
+          _context110.t0.json.call(_context110.t0, _context110.t1);
+
+        case 5:
+        case "end":
+          return _context110.stop();
+      }
+    }
+  });
+});
+router.post("/uom", function _callee111(req, res) {
+  var obj;
+  return regeneratorRuntime.async(function _callee111$(_context111) {
+    while (1) {
+      switch (_context111.prev = _context111.next) {
+        case 0:
+          obj = _objectSpread({}, req.body);
+          _context111.prev = 1;
+          _context111.t0 = res;
+          _context111.next = 5;
+          return regeneratorRuntime.awrap(UomDb.addUom(obj));
+
+        case 5:
+          _context111.t1 = _context111.sent;
+
+          _context111.t0.json.call(_context111.t0, _context111.t1);
+
+          _context111.next = 13;
+          break;
+
+        case 9:
+          _context111.prev = 9;
+          _context111.t2 = _context111["catch"](1);
+          console.error("Error while Adding", _context111.t2.message);
+          next(_context111.t2);
+
+        case 13:
+        case "end":
+          return _context111.stop();
+      }
+    }
+  }, null, null, [[1, 9]]);
+});
+router["delete"]("/uom/:id", function _callee112(req, res) {
+  return regeneratorRuntime.async(function _callee112$(_context112) {
+    while (1) {
+      switch (_context112.prev = _context112.next) {
+        case 0:
+          _context112.t0 = res;
+          _context112.next = 3;
+          return regeneratorRuntime.awrap(UomDb.deleteUom(req.params.id));
+
+        case 3:
+          _context112.t1 = _context112.sent;
+
+          _context112.t0.json.call(_context112.t0, _context112.t1);
+
+        case 5:
+        case "end":
+          return _context112.stop();
+      }
+    }
+  });
+});
+router.put("/uom/:id", function _callee113(req, res, next) {
+  var obj;
+  return regeneratorRuntime.async(function _callee113$(_context113) {
+    while (1) {
+      switch (_context113.prev = _context113.next) {
+        case 0:
+          obj = _objectSpread({}, req.body);
+          _context113.prev = 1;
+          _context113.t0 = res;
+          _context113.next = 5;
+          return regeneratorRuntime.awrap(UomDb.updateUom(req.params.id, obj));
+
+        case 5:
+          _context113.t1 = _context113.sent;
+
+          _context113.t0.json.call(_context113.t0, _context113.t1);
+
+          _context113.next = 13;
+          break;
+
+        case 9:
+          _context113.prev = 9;
+          _context113.t2 = _context113["catch"](1);
+          console.error("Error while Adding", _context113.t2.message);
+          next(_context113.t2);
+
+        case 13:
+        case "end":
+          return _context113.stop();
+      }
+    }
+  }, null, null, [[1, 9]]);
 }); // -------END----------------------------------------------------//
 
 var port = process.env.PORT || 7760; // app.listen(port);

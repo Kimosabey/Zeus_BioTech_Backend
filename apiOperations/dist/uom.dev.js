@@ -4,7 +4,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-14 10:29:23
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-28 13:30:58
+ * @Last Modified time: 2022-03-02 13:52:21
  */
 var config = require("../dbconfig");
 
@@ -163,16 +163,15 @@ function updateUom(UomId, obj) {
     while (1) {
       switch (_context4.prev = _context4.next) {
         case 0:
-          console.log('UomId, obj: ', UomId, obj);
-          _context4.next = 3;
+          _context4.next = 2;
           return regeneratorRuntime.awrap(sql.connect(config));
 
-        case 3:
+        case 2:
           pool = _context4.sent;
-          _context4.next = 6;
+          _context4.next = 5;
           return regeneratorRuntime.awrap(pool.request().input("input_parameter", UomId).input("UomName", obj.UomName).input("UomKey", obj.UomKey).query("UPDATE UNIT_OF_MEASUREMENT SET UNIT_OF_MEASUREMENT_NAME  = @UomName,UNIT_OF_MEASUREMENT_SHORT_KEY=@UomKey WHERE UNIT_OF_MEASUREMENT_PKID =@input_parameter"));
 
-        case 6:
+        case 5:
           result = _context4.sent;
           pool.close();
           message = false;
@@ -186,7 +185,7 @@ function updateUom(UomId, obj) {
 
           return _context4.abrupt("return", message);
 
-        case 12:
+        case 11:
         case "end":
           return _context4.stop();
       }

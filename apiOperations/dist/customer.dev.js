@@ -4,7 +4,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-12 18:47:46
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-26 17:11:34
+ * @Last Modified time: 2022-03-03 19:17:09
  */
 var config = require("../dbconfig");
 
@@ -853,7 +853,7 @@ function getAddressType(custId) {
     while (1) {
       switch (_context20.prev = _context20.next) {
         case 0:
-          console.log('custId: ', custId);
+          console.log("custId: ", custId);
           _context20.prev = 1;
           _context20.next = 4;
           return regeneratorRuntime.awrap(sql.connect(config));
@@ -1015,6 +1015,158 @@ function deleteAddressType(TypeId) {
   }, null, null, [[0, 16]]);
 }
 
+function getCustDeleteNewRequest() {
+  var pool, result;
+  return regeneratorRuntime.async(function getCustDeleteNewRequest$(_context24) {
+    while (1) {
+      switch (_context24.prev = _context24.next) {
+        case 0:
+          _context24.prev = 0;
+          _context24.next = 3;
+          return regeneratorRuntime.awrap(sql.connect(config));
+
+        case 3:
+          pool = _context24.sent;
+          _context24.next = 6;
+          return regeneratorRuntime.awrap(pool.request().query("SELECT [CUSTOMER_DELETE_REQ_PKID],[CUSTOMER_DELETE_REQ_CUST_FKID] , [CUSTOMER_DELETE_REQ_EMP_FKID] ,[CUSTOMER_DELETE_REQ_DATE] , [CUSTOMER_DELETE_REQ_ACTIVE] ,[CUSTOMER_DELETE_REQ_REASON] ,CUSTOMER_NAME,EMPLOYEE_NAME,EMPLOYEE_TYPE_NAME,[EMPLOYEE_SUB_TYPE_NAME],CUSTOMER_CATEGORY_NAME,CUSTOMER_TYPE_NAME,CUSTOMER_SUBTYPE_NAME,CUSTOMER_EMAIL,CUSTOMER_MOBILE FROM CUSTOMER_DELETE_REQ JOIN CUSTOMER_MASTER ON CUSTOMER_PKID=CUSTOMER_DELETE_REQ_CUST_FKID JOIN EMPLOYEE_MASTER ON [EMPLOYEE_PKID]=[CUSTOMER_DELETE_REQ_EMP_FKID] JOIN EMPLOYEE_TYPE ON EMPLOYEE_TYPE_PKID=[EMPLOYEE_TYPE_FKID] JOIN EMPLOYEE_SUB_TYPE ON [EMPLOYEE_SUB_TYPE_TYPE_FKID]=EMPLOYEE_TYPE_PKID JOIN CUSTOMER_CATEGORY ON [CUSTOMER_CATEGORY_PKID]=[CUSTOMER_CATEGORY_FKID] JOIN CUSTOMER_TYPE ON CUSTOMER_TYPE_PKID=[CUSTOMER_TYPE_FKID] JOIN [dbo].[CUSTOMER_SUBTYPE] ON [CUSTOMER_SUBTYPE_PKID]=[CUSTOMER_SUBTYPE_FKID]"));
+
+        case 6:
+          result = _context24.sent;
+          pool.close();
+          return _context24.abrupt("return", result.recordsets[0]);
+
+        case 11:
+          _context24.prev = 11;
+          _context24.t0 = _context24["catch"](0);
+          console.log(_context24.t0);
+
+        case 14:
+        case "end":
+          return _context24.stop();
+      }
+    }
+  }, null, null, [[0, 11]]);
+}
+
+function AcceptDeleteRequest(reqId, custId) {
+  var pool, result, result2, message;
+  return regeneratorRuntime.async(function AcceptDeleteRequest$(_context25) {
+    while (1) {
+      switch (_context25.prev = _context25.next) {
+        case 0:
+          console.log("reqId, custId: ", reqId, custId);
+          _context25.prev = 1;
+          _context25.next = 4;
+          return regeneratorRuntime.awrap(sql.connect(config));
+
+        case 4:
+          pool = _context25.sent;
+          _context25.next = 7;
+          return regeneratorRuntime.awrap(pool.request().input("CUSTOMER_DELETE_REQ_PKID", reqId).query("UPDATE CUSTOMER_DELETE_REQ SET CUSTOMER_DELETE_REQ_ACTIVE =1 WHERE CUSTOMER_DELETE_REQ_PKID=@CUSTOMER_DELETE_REQ_PKID"));
+
+        case 7:
+          result = _context25.sent;
+          _context25.next = 10;
+          return regeneratorRuntime.awrap(pool.request().input("CUSTOMER_DELETE_REQ_CUST_FKID", custId).query("UPDATE CUSTOMER_MASTER SET CUSTOMER_ISACTIVE = 0 WHERE CUSTOMER_PKID=@CUSTOMER_DELETE_REQ_CUST_FKID"));
+
+        case 10:
+          result2 = _context25.sent;
+          pool.close();
+          message = false;
+
+          if (result.rowsAffected && result2.rowsAffected) {
+            message = true;
+          }
+
+          pool.close();
+          return _context25.abrupt("return", message);
+
+        case 18:
+          _context25.prev = 18;
+          _context25.t0 = _context25["catch"](1);
+          console.log("AcceptDeleteRequest-->", _context25.t0);
+
+        case 21:
+        case "end":
+          return _context25.stop();
+      }
+    }
+  }, null, null, [[1, 18]]);
+}
+
+function RejectDeleteRequest(reqId) {
+  var pool, result, message;
+  return regeneratorRuntime.async(function RejectDeleteRequest$(_context26) {
+    while (1) {
+      switch (_context26.prev = _context26.next) {
+        case 0:
+          _context26.prev = 0;
+          _context26.next = 3;
+          return regeneratorRuntime.awrap(sql.connect(config));
+
+        case 3:
+          pool = _context26.sent;
+          _context26.next = 6;
+          return regeneratorRuntime.awrap(pool.request().input("CUSTOMER_DELETE_REQ_PKID", reqId).query("UPDATE CUSTOMER_DELETE_REQ SET CUSTOMER_DELETE_REQ_ACTIVE =2 WHERE CUSTOMER_DELETE_REQ_PKID=@CUSTOMER_DELETE_REQ_PKID"));
+
+        case 6:
+          result = _context26.sent;
+          pool.close();
+          message = false;
+
+          if (result.rowsAffected) {
+            message = true;
+          }
+
+          pool.close();
+          return _context26.abrupt("return", message);
+
+        case 14:
+          _context26.prev = 14;
+          _context26.t0 = _context26["catch"](0);
+          console.log("RejectDeleteRequest-->", _context26.t0);
+
+        case 17:
+        case "end":
+          return _context26.stop();
+      }
+    }
+  }, null, null, [[0, 14]]);
+}
+
+function getCustReasonForDelete(delreqId) {
+  var pool, result;
+  return regeneratorRuntime.async(function getCustReasonForDelete$(_context27) {
+    while (1) {
+      switch (_context27.prev = _context27.next) {
+        case 0:
+          _context27.prev = 0;
+          _context27.next = 3;
+          return regeneratorRuntime.awrap(sql.connect(config));
+
+        case 3:
+          pool = _context27.sent;
+          _context27.next = 6;
+          return regeneratorRuntime.awrap(pool.request().input("CUSTOMER_DELETE_REQ_PKID", delreqId).query("SELECT [CUSTOMER_DELETE_REQ_PKID],[CUSTOMER_DELETE_REQ_REASON]  FROM CUSTOMER_DELETE_REQ JOIN CUSTOMER_MASTER ON CUSTOMER_PKID=CUSTOMER_DELETE_REQ_CUST_FKID JOIN EMPLOYEE_MASTER ON [EMPLOYEE_PKID]=[CUSTOMER_DELETE_REQ_EMP_FKID] JOIN EMPLOYEE_TYPE ON EMPLOYEE_TYPE_PKID=[EMPLOYEE_TYPE_FKID] JOIN EMPLOYEE_SUB_TYPE ON [EMPLOYEE_SUB_TYPE_TYPE_FKID]=EMPLOYEE_TYPE_PKID JOIN CUSTOMER_CATEGORY ON [CUSTOMER_CATEGORY_PKID]=[CUSTOMER_CATEGORY_FKID] JOIN CUSTOMER_TYPE ON CUSTOMER_TYPE_PKID=[CUSTOMER_TYPE_FKID] JOIN [dbo].[CUSTOMER_SUBTYPE] ON [CUSTOMER_SUBTYPE_PKID]=[CUSTOMER_SUBTYPE_FKID] WHERE CUSTOMER_DELETE_REQ_PKID=@CUSTOMER_DELETE_REQ_PKID"));
+
+        case 6:
+          result = _context27.sent;
+          pool.close();
+          return _context27.abrupt("return", result.recordsets[0]);
+
+        case 11:
+          _context27.prev = 11;
+          _context27.t0 = _context27["catch"](0);
+          console.log(_context27.t0);
+
+        case 14:
+        case "end":
+          return _context27.stop();
+      }
+    }
+  }, null, null, [[0, 11]]);
+}
+
 module.exports = {
   getCustomersCat: getCustomersCat,
   deleteCustomersCat: deleteCustomersCat,
@@ -1038,5 +1190,9 @@ module.exports = {
   getAddressType: getAddressType,
   addAddressType: addAddressType,
   deleteAddressType: deleteAddressType,
-  updateAddressType: updateAddressType
+  updateAddressType: updateAddressType,
+  getCustDeleteNewRequest: getCustDeleteNewRequest,
+  AcceptDeleteRequest: AcceptDeleteRequest,
+  RejectDeleteRequest: RejectDeleteRequest,
+  getCustReasonForDelete: getCustReasonForDelete
 };

@@ -4,7 +4,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-14 14:39:09
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-28 19:27:55
+ * @Last Modified time: 2022-03-03 12:42:53
  */
 var config = require("../dbconfig");
 
@@ -115,45 +115,46 @@ function deleteProductSpecies(specId) {
     while (1) {
       switch (_context3.prev = _context3.next) {
         case 0:
-          _context3.prev = 0;
-          _context3.next = 3;
+          console.log("specId: ", specId);
+          _context3.prev = 1;
+          _context3.next = 4;
           return regeneratorRuntime.awrap(sql.connect(config));
 
-        case 3:
+        case 4:
           pool = _context3.sent;
-          _context3.next = 6;
+          _context3.next = 7;
           return regeneratorRuntime.awrap(pool.request().input("PRODUCT_SPECIES_PKID", specId).query("UPDATE PRODUCT_SPECIES SET PRODUCT_SPECIES_ISACTIVE=0 WHERE PRODUCT_SPECIES_PKID=@PRODUCT_SPECIES_PKID"));
 
-        case 6:
+        case 7:
           result = _context3.sent;
 
           if (!(result.rowsAffected[0] == 0)) {
-            _context3.next = 12;
+            _context3.next = 13;
             break;
           }
 
           pool.close();
           return _context3.abrupt("return", false);
 
-        case 12:
+        case 13:
           pool.close();
           return _context3.abrupt("return", true);
 
-        case 14:
-          _context3.next = 19;
+        case 15:
+          _context3.next = 20;
           break;
 
-        case 16:
-          _context3.prev = 16;
-          _context3.t0 = _context3["catch"](0);
+        case 17:
+          _context3.prev = 17;
+          _context3.t0 = _context3["catch"](1);
           console.log("deleteProductSpecies-->", _context3.t0);
 
-        case 19:
+        case 20:
         case "end":
           return _context3.stop();
       }
     }
-  }, null, null, [[0, 16]]);
+  }, null, null, [[1, 17]]);
 }
 
 function updateProductSpecies(specId, obj) {
@@ -162,17 +163,16 @@ function updateProductSpecies(specId, obj) {
     while (1) {
       switch (_context4.prev = _context4.next) {
         case 0:
-          console.log("specId, obj: ", specId, obj);
-          _context4.prev = 1;
-          _context4.next = 4;
+          _context4.prev = 0;
+          _context4.next = 3;
           return regeneratorRuntime.awrap(sql.connect(config));
 
-        case 4:
+        case 3:
           pool = _context4.sent;
-          _context4.next = 7;
+          _context4.next = 6;
           return regeneratorRuntime.awrap(pool.request().input("PRODUCT_SPECIES_PKID", specId).input("PRODUCT_SPECIES_NAME", obj.PRODUCT_SPECIES_NAME).query("UPDATE PRODUCT_SPECIES SET PRODUCT_SPECIES_NAME = @PRODUCT_SPECIES_NAME WHERE PRODUCT_SPECIES_PKID =@PRODUCT_SPECIES_PKID"));
 
-        case 7:
+        case 6:
           result = _context4.sent;
           pool.close();
           message = false;
@@ -182,11 +182,12 @@ function updateProductSpecies(specId, obj) {
           }
 
           pool.close();
+          console.log("message: ", message);
           return _context4.abrupt("return", message);
 
         case 15:
           _context4.prev = 15;
-          _context4.t0 = _context4["catch"](1);
+          _context4.t0 = _context4["catch"](0);
           console.log("updateProductSpecies-->", _context4.t0);
 
         case 18:
@@ -194,7 +195,7 @@ function updateProductSpecies(specId, obj) {
           return _context4.stop();
       }
     }
-  }, null, null, [[1, 15]]);
+  }, null, null, [[0, 15]]);
 }
 
 function getProducts() {
@@ -210,7 +211,7 @@ function getProducts() {
         case 3:
           pool = _context5.sent;
           _context5.next = 6;
-          return regeneratorRuntime.awrap(pool.request().query("SELECT * FROM PRODUCT_MASTER WHERE [PRODUCT_ISACTIVE ]=1"));
+          return regeneratorRuntime.awrap(pool.request().query("SELECT [PRODUCT_PKID] ,[PRODUCT_COMPANY_FKID] ,PRODUCT_SPECIES_FKID,[PRODUCT_NAME] ,[PRODUCT_UOM_FKID] ,[PRODUCT_UNIT],[PRODUCT_CODE] ,[PRODUCT_BAR_CODE] ,[PRODUCT_WHOLESALE_PRICE] ,[PRODUCT_DEALER_PRICE] ,[PRODUCT_MRP] ,[PRODUCT_IMAGE] ,[PRODUCT_CATALOGUE] ,[PRODUCT_ISACTIVE] ,UNIT_OF_MEASUREMENT_NAME,UNIT_OF_MEASUREMENT_SHORT_KEY,COMPANY_NAME,PRODUCT_SPECIES_NAME FROM PRODUCT_MASTER JOIN PRODUCT_SPECIES ON PRODUCT_SPECIES_PKID=PRODUCT_SPECIES_FKID JOIN UNIT_OF_MEASUREMENT ON UNIT_OF_MEASUREMENT_PKID=PRODUCT_UOM_FKID JOIN COMPANY ON COMPANY_PKID=PRODUCT_COMPANY_FKID  WHERE [PRODUCT_ISACTIVE]=1"));
 
         case 6:
           result = _context5.sent;
@@ -243,7 +244,7 @@ function addProducts(obj) {
         case 3:
           pool = _context6.sent;
           _context6.next = 6;
-          return regeneratorRuntime.awrap(pool.request().input("PRODUCT_NAME", obj.PRODUCT_NAME).query("SELECT * FROM PRODUCT_MASTER WHERE PRODUCT_NAME=@PRODUCT_NAME"));
+          return regeneratorRuntime.awrap(pool.request().input("PRODUCT_CODE", obj.PRODUCT_CODE).query("SELECT * FROM PRODUCT_MASTER WHERE PRODUCT_CODE=@PRODUCT_CODE"));
 
         case 6:
           result = _context6.sent;
@@ -254,7 +255,7 @@ function addProducts(obj) {
           }
 
           _context6.next = 10;
-          return regeneratorRuntime.awrap(pool.request().input("PRODUCT_COMPANY_FKID", obj.PRODUCT_COMPANY_FKID).input("PRODUCT_NAME", obj.PRODUCT_NAME).input("PRODUCT_UOM_FKID", obj.PRODUCT_UOM_FKID).input("PRODUCT_CODE", obj.PRODUCT_CODE).input("PRODUCT_BAR_CODE", obj.PRODUCT_BAR_CODE).input("PRODUCT_WHOLESALE_PRICE", obj.PRODUCT_WHOLESALE_PRICE).input("PRODUCT_DEALER_PRICE", obj.PRODUCT_DEALER_PRICE).input("PRODUCT_MRP", obj.PRODUCT_MRP).input("PRODUCT_IMAGE", obj.PRODUCT_IMAGE).input("PRODUCT_CATALOGUE", obj.PRODUCT_CATALOGUE).input("PRODUCT_ISACTIVE", "1").query("insert into PRODUCT_MASTER ([PRODUCT_COMPANY_FKID] ,[PRODUCT_NAME] ,[PRODUCT_UOM_FKID] ,[PRODUCT_CODE] ,[PRODUCT_BAR_CODE] ,[PRODUCT_WHOLESALE_PRICE] ,[PRODUCT_DEALER_PRICE] ,[PRODUCT_MRP] ,[PRODUCT_IMAGE] ,[PRODUCT_CATALOGUE] ,[PRODUCT_ISACTIVE] )  values(@PRODUCT_COMPANY_FKID ,@PRODUCT_NAME ,@PRODUCT_UOM_FKID ,@PRODUCT_CODE ,@PRODUCT_BAR_CODE ,@PRODUCT_WHOLESALE_PRICE ,@PRODUCT_DEALER_PRICE ,@PRODUCT_MRP ,@PRODUCT_IMAGE ,@PRODUCT_CATALOGUE ,@PRODUCT_ISACTIVE)"));
+          return regeneratorRuntime.awrap(pool.request().input("PRODUCT_COMPANY_FKID", obj.PRODUCT_COMPANY_FKID).input("PRODUCT_SPECIES_FKID", obj.PRODUCT_SPECIES_FKID).input("PRODUCT_NAME", obj.PRODUCT_NAME).input("PRODUCT_UOM_FKID", obj.PRODUCT_UOM_FKID).input("PRODUCT_UNIT", obj.PRODUCT_UNIT).input("PRODUCT_CODE", obj.PRODUCT_CODE).input("PRODUCT_BAR_CODE", obj.PRODUCT_BAR_CODE).input("PRODUCT_WHOLESALE_PRICE", obj.PRODUCT_WHOLESALE_PRICE).input("PRODUCT_DEALER_PRICE", obj.PRODUCT_DEALER_PRICE).input("PRODUCT_MRP", obj.PRODUCT_MRP).input("PRODUCT_IMAGE", obj.PRODUCT_IMAGE).input("PRODUCT_CATALOGUE", obj.PRODUCT_CATALOGUE).input("PRODUCT_ISACTIVE", "1").query("insert into PRODUCT_MASTER ([PRODUCT_COMPANY_FKID] ,PRODUCT_SPECIES_FKID,[PRODUCT_NAME] ,[PRODUCT_UOM_FKID] ,[PRODUCT_UNIT],[PRODUCT_CODE] ,[PRODUCT_BAR_CODE] ,[PRODUCT_WHOLESALE_PRICE] ,[PRODUCT_DEALER_PRICE] ,[PRODUCT_MRP] ,[PRODUCT_IMAGE] ,[PRODUCT_CATALOGUE] ,[PRODUCT_ISACTIVE] )  values(@PRODUCT_COMPANY_FKID,@PRODUCT_SPECIES_FKID,@PRODUCT_NAME ,@PRODUCT_UOM_FKID ,@PRODUCT_UNIT,@PRODUCT_CODE ,@PRODUCT_BAR_CODE ,@PRODUCT_WHOLESALE_PRICE ,@PRODUCT_DEALER_PRICE ,@PRODUCT_MRP ,@PRODUCT_IMAGE ,@PRODUCT_CATALOGUE ,@PRODUCT_ISACTIVE)"));
 
         case 10:
           insertInto = _context6.sent;
@@ -357,7 +358,7 @@ function updateProducts(prodId, obj) {
         case 4:
           pool = _context8.sent;
           _context8.next = 7;
-          return regeneratorRuntime.awrap(pool.request().input("PRODUCT_PKID", prodId).input("PRODUCT_COMPANY_FKID", obj.PRODUCT_COMPANY_FKID).input("PRODUCT_NAME", obj.PRODUCT_NAME).input("PRODUCT_UOM_FKID", obj.PRODUCT_UOM_FKID).input("PRODUCT_CODE", obj.PRODUCT_CODE).input("PRODUCT_BAR_CODE", obj.PRODUCT_BAR_CODE).input("PRODUCT_WHOLESALE_PRICE", obj.PRODUCT_WHOLESALE_PRICE).input("PRODUCT_DEALER_PRICE", obj.PRODUCT_DEALER_PRICE).input("PRODUCT_MRP", obj.PRODUCT_MRP).input("PRODUCT_IMAGE", obj.PRODUCT_IMAGE).input("PRODUCT_CATALOGUE", obj.PRODUCT_CATALOGUE).input("PRODUCT_ISACTIVE", obj.PRODUCT_ISACTIVE).query("UPDATE PRODUCT_MASTER SET PRODUCT_COMPANY_FKID=@PRODUCT_COMPANY_FKID, PRODUCT_NAME=@PRODUCT_NAME,PRODUCT_UOM_FKID=@PRODUCT_UOM_FKID,PRODUCT_CODE=@PRODUCT_CODE, PRODUCT_BAR_CODE=@PRODUCT_BAR_CODE,PRODUCT_WHOLESALE_PRICE=@PRODUCT_WHOLESALE_PRICE, PRODUCT_DEALER_PRICE=@PRODUCT_DEALER_PRICE,PRODUCT_MRP=@PRODUCT_MRP, PRODUCT_IMAGE=@PRODUCT_IMAGE,PRODUCT_CATALOGUE=@PRODUCT_CATALOGUE, PRODUCT_ISACTIVE=@PRODUCT_ISACTIVE WHERE PRODUCT_PKID=@PRODUCT_PKID"));
+          return regeneratorRuntime.awrap(pool.request().input("PRODUCT_PKID", prodId).input("PRODUCT_COMPANY_FKID", obj.PRODUCT_COMPANY_FKID).input("PRODUCT_SPECIES_FKID", obj.PRODUCT_SPECIES_FKID).input("PRODUCT_NAME", obj.PRODUCT_NAME).input("PRODUCT_UOM_FKID", obj.PRODUCT_UOM_FKID).input("PRODUCT_UNIT", obj.PRODUCT_UNIT).input("PRODUCT_CODE", obj.PRODUCT_CODE).input("PRODUCT_BAR_CODE", obj.PRODUCT_BAR_CODE).input("PRODUCT_WHOLESALE_PRICE", obj.PRODUCT_WHOLESALE_PRICE).input("PRODUCT_DEALER_PRICE", obj.PRODUCT_DEALER_PRICE).input("PRODUCT_MRP", obj.PRODUCT_MRP).input("PRODUCT_IMAGE", obj.PRODUCT_IMAGE).input("PRODUCT_CATALOGUE", obj.PRODUCT_CATALOGUE).query("UPDATE PRODUCT_MASTER SET PRODUCT_COMPANY_FKID=@PRODUCT_COMPANY_FKID, PRODUCT_SPECIES_FKID=@PRODUCT_SPECIES_FKID, PRODUCT_NAME=@PRODUCT_NAME,PRODUCT_UOM_FKID=@PRODUCT_UOM_FKID, PRODUCT_UNIT=@PRODUCT_UNIT, PRODUCT_CODE=@PRODUCT_CODE, PRODUCT_BAR_CODE=@PRODUCT_BAR_CODE, PRODUCT_WHOLESALE_PRICE=@PRODUCT_WHOLESALE_PRICE, PRODUCT_DEALER_PRICE=@PRODUCT_DEALER_PRICE, PRODUCT_MRP=@PRODUCT_MRP, PRODUCT_IMAGE=@PRODUCT_IMAGE, PRODUCT_CATALOGUE=@PRODUCT_CATALOGUE WHERE PRODUCT_PKID=@PRODUCT_PKID"));
 
         case 7:
           result = _context8.sent;
@@ -390,7 +391,7 @@ module.exports = {
   updateProductSpecies: updateProductSpecies,
   deleteProductSpecies: deleteProductSpecies,
   addProducts: addProducts,
-  deleteProducts: deleteProductSpecies,
+  deleteProducts: deleteProducts,
   updateProducts: updateProducts,
   getProducts: getProducts
 };

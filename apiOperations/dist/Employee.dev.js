@@ -4,7 +4,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-08 12:20:30
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-26 15:33:12
+ * @Last Modified time: 2022-03-03 18:15:48
  */
 var config = require("../dbconfig");
 
@@ -438,7 +438,7 @@ function getEmp() {
         case 11:
           _context10.prev = 11;
           _context10.t0 = _context10["catch"](0);
-          console.log("getEmp-->", _context10.t0); // pool.close();
+          console.log("getEmp-->", _context10.t0);
 
         case 14:
         case "end":
@@ -1236,6 +1236,401 @@ function DeleteEmpDocs(docId) {
   }, null, null, [[0, 18]]);
 }
 
+function getEmpIncentives() {
+  var pool, result;
+  return regeneratorRuntime.async(function getEmpIncentives$(_context28) {
+    while (1) {
+      switch (_context28.prev = _context28.next) {
+        case 0:
+          _context28.prev = 0;
+          _context28.next = 3;
+          return regeneratorRuntime.awrap(sql.connect(config));
+
+        case 3:
+          pool = _context28.sent;
+          _context28.next = 6;
+          return regeneratorRuntime.awrap(pool.request().query("SELECT INCENTIVE_PKID,INCENTIVE_EMPLOYEE_FKID,INCENTIVE_AMOUNT,INCENTIVE_MONTH,INCENTIVE_DESCRIPTION,EMPLOYEE_NAME,INCENTIVE_ISACTIVE,(SELECT DATENAME(MONTH, INCENTIVE_MONTH) +' '+CAST(YEAR(INCENTIVE_MONTH) AS VARCHAR(4))) as Month FROM INCENTIVE JOIN EMPLOYEE_MASTER ON EMPLOYEE_PKID=INCENTIVE_EMPLOYEE_FKID WHERE INCENTIVE_ISACTIVE=1"));
+
+        case 6:
+          result = _context28.sent;
+          pool.close();
+          return _context28.abrupt("return", result.recordsets[0]);
+
+        case 11:
+          _context28.prev = 11;
+          _context28.t0 = _context28["catch"](0);
+          console.log("EmpIncentives-->", _context28.t0); // pool.close();
+
+        case 14:
+        case "end":
+          return _context28.stop();
+      }
+    }
+  }, null, null, [[0, 11]]);
+}
+
+function addEmpIncentives(obj) {
+  var pool, result, insertInto;
+  return regeneratorRuntime.async(function addEmpIncentives$(_context29) {
+    while (1) {
+      switch (_context29.prev = _context29.next) {
+        case 0:
+          _context29.prev = 0;
+          _context29.next = 3;
+          return regeneratorRuntime.awrap(sql.connect(config));
+
+        case 3:
+          pool = _context29.sent;
+          _context29.next = 6;
+          return regeneratorRuntime.awrap(pool.request().input("INCENTIVE_MONTH", obj.INCENTIVE_MONTH).input("INCENTIVE_EMPLOYEE_FKID", obj.INCENTIVE_EMPLOYEE_FKID).query("SELECT *  from INCENTIVE WHERE INCENTIVE_MONTH=@INCENTIVE_MONTH AND INCENTIVE_EMPLOYEE_FKID=@INCENTIVE_EMPLOYEE_FKID AND INCENTIVE_ISACTIVE=1"));
+
+        case 6:
+          result = _context29.sent;
+
+          if (!(result.rowsAffected[0] == 0)) {
+            _context29.next = 20;
+            break;
+          }
+
+          _context29.next = 10;
+          return regeneratorRuntime.awrap(pool.request().input("INCENTIVE_EMPLOYEE_FKID", obj.INCENTIVE_EMPLOYEE_FKID).input("INCENTIVE_AMOUNT", obj.INCENTIVE_AMOUNT).input("INCENTIVE_DESCRIPTION", obj.INCENTIVE_DESCRIPTION).input("INCENTIVE_MONTH", obj.INCENTIVE_MONTH).input("INCENTIVE_ISACTIVE", "1").query("INSERT INTO INCENTIVE (INCENTIVE_EMPLOYEE_FKID,INCENTIVE_AMOUNT,INCENTIVE_DESCRIPTION,INCENTIVE_ISACTIVE,INCENTIVE_MONTH) VALUES(@INCENTIVE_EMPLOYEE_FKID,@INCENTIVE_AMOUNT,@INCENTIVE_DESCRIPTION,@INCENTIVE_ISACTIVE,@INCENTIVE_MONTH)"));
+
+        case 10:
+          insertInto = _context29.sent;
+
+          if (!(insertInto.rowsAffected == 1)) {
+            _context29.next = 16;
+            break;
+          }
+
+          pool.close();
+          return _context29.abrupt("return", true);
+
+        case 16:
+          pool.close();
+          return _context29.abrupt("return", false);
+
+        case 18:
+          _context29.next = 22;
+          break;
+
+        case 20:
+          pool.close();
+          return _context29.abrupt("return", "0");
+
+        case 22:
+          _context29.next = 27;
+          break;
+
+        case 24:
+          _context29.prev = 24;
+          _context29.t0 = _context29["catch"](0);
+          console.log("addEmpIncentives-->", _context29.t0);
+
+        case 27:
+        case "end":
+          return _context29.stop();
+      }
+    }
+  }, null, null, [[0, 24]]);
+}
+
+function DeleteEmpIncentives(IncId) {
+  var pool, result, message;
+  return regeneratorRuntime.async(function DeleteEmpIncentives$(_context30) {
+    while (1) {
+      switch (_context30.prev = _context30.next) {
+        case 0:
+          _context30.prev = 0;
+          _context30.next = 3;
+          return regeneratorRuntime.awrap(sql.connect(config));
+
+        case 3:
+          pool = _context30.sent;
+          _context30.next = 6;
+          return regeneratorRuntime.awrap(pool.request().input("IncId", IncId).query("UPDATE INCENTIVE SET INCENTIVE_ISACTIVE = 0 WHERE INCENTIVE_PKID=@IncId"));
+
+        case 6:
+          result = _context30.sent;
+          pool.close();
+          message = false;
+
+          if (result.rowsAffected) {
+            message = true;
+          }
+
+          pool.close();
+          return _context30.abrupt("return", message);
+
+        case 14:
+          _context30.prev = 14;
+          _context30.t0 = _context30["catch"](0);
+
+        case 16:
+          console.log("DeleteEmpIncentives-->", error);
+
+        case 17:
+        case "end":
+          return _context30.stop();
+      }
+    }
+  }, null, null, [[0, 14]]);
+}
+
+function updateEmpIncentives(IncId, obj) {
+  var pool, result, message;
+  return regeneratorRuntime.async(function updateEmpIncentives$(_context31) {
+    while (1) {
+      switch (_context31.prev = _context31.next) {
+        case 0:
+          _context31.prev = 0;
+          _context31.next = 3;
+          return regeneratorRuntime.awrap(sql.connect(config));
+
+        case 3:
+          pool = _context31.sent;
+          _context31.next = 6;
+          return regeneratorRuntime.awrap(pool.request().input("IncId", IncId).input("INCENTIVE_EMPLOYEE_FKID", obj.INCENTIVE_EMPLOYEE_FKID).input("INCENTIVE_AMOUNT", obj.INCENTIVE_AMOUNT).input("INCENTIVE_DESCRIPTION", obj.INCENTIVE_DESCRIPTION).input("INCENTIVE_MONTH", obj.INCENTIVE_MONTH).query("UPDATE INCENTIVE SET INCENTIVE_EMPLOYEE_FKID = @INCENTIVE_EMPLOYEE_FKID,INCENTIVE_AMOUNT=@INCENTIVE_AMOUNT,INCENTIVE_DESCRIPTION=@INCENTIVE_DESCRIPTION,INCENTIVE_MONTH=@INCENTIVE_MONTH WHERE INCENTIVE_PKID =@IncId"));
+
+        case 6:
+          result = _context31.sent;
+          pool.close();
+          message = false;
+
+          if (result.rowsAffected) {
+            message = true;
+          }
+
+          pool.close(); // return { message };
+          // console.log(pool._connected);
+
+          return _context31.abrupt("return", message);
+
+        case 14:
+          _context31.prev = 14;
+          _context31.t0 = _context31["catch"](0);
+          console.log("updateEmpIncentives-->", _context31.t0);
+
+        case 17:
+        case "end":
+          return _context31.stop();
+      }
+    }
+  }, null, null, [[0, 14]]);
+}
+
+function getEmpLeaves() {
+  var pool, result;
+  return regeneratorRuntime.async(function getEmpLeaves$(_context32) {
+    while (1) {
+      switch (_context32.prev = _context32.next) {
+        case 0:
+          _context32.prev = 0;
+          _context32.next = 3;
+          return regeneratorRuntime.awrap(sql.connect(config));
+
+        case 3:
+          pool = _context32.sent;
+          _context32.next = 6;
+          return regeneratorRuntime.awrap(pool.request().query("select el.*,EMPLOYEE_NAME,[EMPOLYEE_IS_MANAGER],(select count(*) from [dbo].[EMPLOYEE_LEAVE] where [LEAVE_EMPLOYEE_FKID] = el.LEAVE_EMPLOYEE_FKID and LEAVE_ISACTIVE = 1) as LeaveCount from [dbo].[EMPLOYEE_LEAVE] as el join [dbo].[EMPLOYEE_MASTER] on [EMPLOYEE_PKID] = el.LEAVE_EMPLOYEE_FKID where [LEAVE_ISACTIVE] = 0"));
+
+        case 6:
+          result = _context32.sent;
+          pool.close();
+          return _context32.abrupt("return", result.recordsets[0]);
+
+        case 11:
+          _context32.prev = 11;
+          _context32.t0 = _context32["catch"](0);
+          console.log("getEmpLeaves-->", _context32.t0);
+
+        case 14:
+        case "end":
+          return _context32.stop();
+      }
+    }
+  }, null, null, [[0, 11]]);
+}
+
+function AcceptLeaves(reqId) {
+  var pool, result, message;
+  return regeneratorRuntime.async(function AcceptLeaves$(_context33) {
+    while (1) {
+      switch (_context33.prev = _context33.next) {
+        case 0:
+          _context33.prev = 0;
+          _context33.next = 3;
+          return regeneratorRuntime.awrap(sql.connect(config));
+
+        case 3:
+          pool = _context33.sent;
+          _context33.next = 6;
+          return regeneratorRuntime.awrap(pool.request().input("LEAVE_PKID", reqId).query("UPDATE EMPLOYEE_LEAVE SET LEAVE_ISACTIVE =1 WHERE LEAVE_PKID=@LEAVE_PKID"));
+
+        case 6:
+          result = _context33.sent;
+          pool.close();
+          message = false;
+
+          if (result.rowsAffected) {
+            message = true;
+          }
+
+          pool.close();
+          return _context33.abrupt("return", message);
+
+        case 14:
+          _context33.prev = 14;
+          _context33.t0 = _context33["catch"](0);
+          console.log("AcceptLeaves-->", _context33.t0);
+
+        case 17:
+        case "end":
+          return _context33.stop();
+      }
+    }
+  }, null, null, [[0, 14]]);
+}
+
+function RejectLeaves(reqId) {
+  var pool, result, message;
+  return regeneratorRuntime.async(function RejectLeaves$(_context34) {
+    while (1) {
+      switch (_context34.prev = _context34.next) {
+        case 0:
+          _context34.prev = 0;
+          _context34.next = 3;
+          return regeneratorRuntime.awrap(sql.connect(config));
+
+        case 3:
+          pool = _context34.sent;
+          _context34.next = 6;
+          return regeneratorRuntime.awrap(pool.request().input("LEAVE_PKID", reqId).query("UPDATE EMPLOYEE_LEAVE SET LEAVE_ISACTIVE =2 WHERE LEAVE_PKID=@LEAVE_PKID"));
+
+        case 6:
+          result = _context34.sent;
+          pool.close();
+          message = false;
+
+          if (result.rowsAffected) {
+            message = true;
+          }
+
+          pool.close();
+          return _context34.abrupt("return", message);
+
+        case 14:
+          _context34.prev = 14;
+          _context34.t0 = _context34["catch"](0);
+          console.log("RejectLeaves-->", _context34.t0);
+
+        case 17:
+        case "end":
+          return _context34.stop();
+      }
+    }
+  }, null, null, [[0, 14]]);
+}
+
+function getReasonForLeave(reqId) {
+  var pool, result;
+  return regeneratorRuntime.async(function getReasonForLeave$(_context35) {
+    while (1) {
+      switch (_context35.prev = _context35.next) {
+        case 0:
+          _context35.prev = 0;
+          _context35.next = 3;
+          return regeneratorRuntime.awrap(sql.connect(config));
+
+        case 3:
+          pool = _context35.sent;
+          _context35.next = 6;
+          return regeneratorRuntime.awrap(pool.request().input("LEAVE_PKID", reqId).query("SELECT LEAVE_REASON FROM [EMPLOYEE_LEAVE] WHERE LEAVE_PKID=@LEAVE_PKID"));
+
+        case 6:
+          result = _context35.sent;
+          pool.close();
+          return _context35.abrupt("return", result.recordsets[0]);
+
+        case 11:
+          _context35.prev = 11;
+          _context35.t0 = _context35["catch"](0);
+          console.log("getReasonForLeave-->", _context35.t0);
+
+        case 14:
+        case "end":
+          return _context35.stop();
+      }
+    }
+  }, null, null, [[0, 11]]);
+}
+
+function getAllLeavesForEmployee(empId) {
+  var pool, result;
+  return regeneratorRuntime.async(function getAllLeavesForEmployee$(_context36) {
+    while (1) {
+      switch (_context36.prev = _context36.next) {
+        case 0:
+          _context36.prev = 0;
+          _context36.next = 3;
+          return regeneratorRuntime.awrap(sql.connect(config));
+
+        case 3:
+          pool = _context36.sent;
+          _context36.next = 6;
+          return regeneratorRuntime.awrap(pool.request().input("LEAVE_EMPLOYEE_FKID", empId).query("SELECT * FROM [EMPLOYEE_LEAVE] WHERE LEAVE_EMPLOYEE_FKID=@LEAVE_EMPLOYEE_FKID"));
+
+        case 6:
+          result = _context36.sent;
+          pool.close();
+          return _context36.abrupt("return", result.recordsets[0]);
+
+        case 11:
+          _context36.prev = 11;
+          _context36.t0 = _context36["catch"](0);
+          console.log("getAllLeavesForEmployee-->", _context36.t0);
+
+        case 14:
+        case "end":
+          return _context36.stop();
+      }
+    }
+  }, null, null, [[0, 11]]);
+}
+
+function getAllEmployeeLeaves() {
+  var pool, result;
+  return regeneratorRuntime.async(function getAllEmployeeLeaves$(_context37) {
+    while (1) {
+      switch (_context37.prev = _context37.next) {
+        case 0:
+          _context37.prev = 0;
+          _context37.next = 3;
+          return regeneratorRuntime.awrap(sql.connect(config));
+
+        case 3:
+          pool = _context37.sent;
+          _context37.next = 6;
+          return regeneratorRuntime.awrap(pool.request().query("select distinct [EMPLOYEE_PKID] as LEAVE_EMPLOYEE_FKID,[EMPLOYEE_TYPE_NAME],[EMPLOYEE_SUB_TYPE_NAME],[HQ_NAME],[COMPANY_NAME],[EMPLOYEE_NAME],[EMPOLYEE_IS_MANAGER],(select count(*) from [dbo].[EMPLOYEE_LEAVE] where [LEAVE_EMPLOYEE_FKID] = EMPLOYEE_PKID) as LeaveCount from [EMPLOYEE_MASTER] JOIN [dbo].[EMPLOYEE_TYPE] ON [EMPLOYEE_TYPE_PKID]=[EMPLOYEE_TYPE_FKID] JOIN [dbo].[EMPLOYEE_SUB_TYPE] ON [EMPLOYEE_SUB_TYPE_PKID]=[EMPOYEE_SUB_TYPE_FKID] JOIN [dbo].[HQ] ON [HQ_PKID]=[EMPLOYEE_HQ_FKID] JOIN [dbo].[COMPANY] ON [COMPANY_PKID]=[EMPLOYEE_COMPANY_FKID] JOIN [dbo].[EMPLOYEE_LEAVE] as el ON [LEAVE_EMPLOYEE_FKID]=[EMPLOYEE_PKID]"));
+
+        case 6:
+          result = _context37.sent;
+          pool.close();
+          return _context37.abrupt("return", result.recordsets[0]);
+
+        case 11:
+          _context37.prev = 11;
+          _context37.t0 = _context37["catch"](0);
+          console.log("getAllEmployeeLeaves-->", _context37.t0);
+
+        case 14:
+        case "end":
+          return _context37.stop();
+      }
+    }
+  }, null, null, [[0, 11]]);
+}
+
 module.exports = {
   getEmpTypes: getEmpTypes,
   addEmpType: addEmpType,
@@ -1263,5 +1658,15 @@ module.exports = {
   getEmpStatesInCoveredAreasForEdit: getEmpStatesInCoveredAreasForEdit,
   getEmpCitiesInCoveredAreasForEdit: getEmpCitiesInCoveredAreasForEdit,
   getEmpAreasInCoveredAreasForEdit: getEmpAreasInCoveredAreasForEdit,
-  DeleteEmpDocs: DeleteEmpDocs
+  DeleteEmpDocs: DeleteEmpDocs,
+  getEmpIncentives: getEmpIncentives,
+  addEmpIncentives: addEmpIncentives,
+  DeleteEmpIncentives: DeleteEmpIncentives,
+  updateEmpIncentives: updateEmpIncentives,
+  getEmpLeaves: getEmpLeaves,
+  AcceptLeaves: AcceptLeaves,
+  RejectLeaves: RejectLeaves,
+  getReasonForLeave: getReasonForLeave,
+  getAllLeavesForEmployee: getAllLeavesForEmployee,
+  getAllEmployeeLeaves: getAllEmployeeLeaves
 };

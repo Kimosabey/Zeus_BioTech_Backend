@@ -2,7 +2,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-14 10:29:23
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-28 13:30:58
+ * @Last Modified time: 2022-03-02 13:52:21
  */
 
 var config = require("../dbconfig");
@@ -84,7 +84,7 @@ async function deleteUom(UomId) {
 }
 
 async function updateUom(UomId, obj) {
-  console.log('UomId, obj: ', UomId, obj);
+ 
   let pool = await sql.connect(config);
   let result = await pool
     .request()

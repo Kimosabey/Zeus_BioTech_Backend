@@ -2,7 +2,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-07 18:02:44
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-03 15:30:51
+ * @Last Modified time: 2022-03-03 19:14:29
  */
 
 var express = require("express");
@@ -644,6 +644,38 @@ router.get("/leaves", async (req, res) => {
   res.json(await EmpsDb.getEmpLeaves());
 });
 
+router.get("/leavereason/:id", async (req, res) => {
+  res.json(await EmpsDb.getReasonForLeave(req.params.id));
+});
+
+router.get("/leavesbyemp/:id", async (req, res) => {
+  res.json(await EmpsDb.getAllLeavesForEmployee(req.params.id));
+});
+
+
+router.put("/acceptleaves/:id", async (req, res, next) => {
+  try {
+    res.json(await EmpsDb.AcceptLeaves(req.params.id));
+  } catch (err) {
+    console.error(`Error while Updating`, err.message);
+    next(err);
+  }
+});
+
+router.put("/rejectleaves/:id", async (req, res, next) => {
+  try {
+    res.json(await EmpsDb.RejectLeaves(req.params.id));
+  } catch (err) {
+    console.error(`Error while Updating`, err.message);
+    next(err);
+  }
+});
+
+
+
+router.get("/leavesforallemps", async (req, res) => {
+  res.json(await EmpsDb.getAllEmployeeLeaves());
+});
 // -------CUSTOMER Api's----------------------------------------------------//
 
 router.get("/custcat", async (req, res) => {
@@ -741,6 +773,10 @@ router.get("/customerdocs/:id", async (req, res) => {
 
 router.get("/customercontactpersons/:id", async (req, res) => {
   res.json(await CustsDb.getCustContactPersons(req.params.id));
+});
+
+router.get("/customerreaoson/:id", async (req, res) => {
+  res.json(await CustsDb.getCustReasonForDelete(req.params.id));
 });
 
 router.post("/customer", async (req, res) => {

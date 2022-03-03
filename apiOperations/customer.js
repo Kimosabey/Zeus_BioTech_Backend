@@ -2,7 +2,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-12 18:47:46
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-26 17:11:34
+ * @Last Modified time: 2022-03-03 19:17:09
  */
 
 var config = require("../dbconfig");
@@ -545,7 +545,7 @@ async function getCustContactPersons(custId) {
 }
 
 async function getAddressType(custId) {
-  console.log('custId: ', custId);
+  console.log("custId: ", custId);
   try {
     let pool = await sql.connect(config);
 
@@ -642,6 +642,94 @@ async function deleteAddressType(TypeId) {
   }
 }
 
+async function getCustDeleteNewRequest() {
+  try {
+    let pool = await sql.connect(config);
+    let result = await pool
+      .request()
+      .query(
+        "SELECT [CUSTOMER_DELETE_REQ_PKID],[CUSTOMER_DELETE_REQ_CUST_FKID] , [CUSTOMER_DELETE_REQ_EMP_FKID] ,[CUSTOMER_DELETE_REQ_DATE] , [CUSTOMER_DELETE_REQ_ACTIVE] ,[CUSTOMER_DELETE_REQ_REASON] ,CUSTOMER_NAME,EMPLOYEE_NAME,EMPLOYEE_TYPE_NAME,[EMPLOYEE_SUB_TYPE_NAME],CUSTOMER_CATEGORY_NAME,CUSTOMER_TYPE_NAME,CUSTOMER_SUBTYPE_NAME,CUSTOMER_EMAIL,CUSTOMER_MOBILE FROM CUSTOMER_DELETE_REQ JOIN CUSTOMER_MASTER ON CUSTOMER_PKID=CUSTOMER_DELETE_REQ_CUST_FKID JOIN EMPLOYEE_MASTER ON [EMPLOYEE_PKID]=[CUSTOMER_DELETE_REQ_EMP_FKID] JOIN EMPLOYEE_TYPE ON EMPLOYEE_TYPE_PKID=[EMPLOYEE_TYPE_FKID] JOIN EMPLOYEE_SUB_TYPE ON [EMPLOYEE_SUB_TYPE_TYPE_FKID]=EMPLOYEE_TYPE_PKID JOIN CUSTOMER_CATEGORY ON [CUSTOMER_CATEGORY_PKID]=[CUSTOMER_CATEGORY_FKID] JOIN CUSTOMER_TYPE ON CUSTOMER_TYPE_PKID=[CUSTOMER_TYPE_FKID] JOIN [dbo].[CUSTOMER_SUBTYPE] ON [CUSTOMER_SUBTYPE_PKID]=[CUSTOMER_SUBTYPE_FKID]"
+      );
+    pool.close();
+    return result.recordsets[0];
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function AcceptDeleteRequest(reqId, custId) {
+  console.log("reqId, custId: ", reqId, custId);
+
+  try {
+    let pool = await sql.connect(config);
+    let result = await pool
+      .request()
+      .input("CUSTOMER_DELETE_REQ_PKID", reqId)
+      .query(
+        `UPDATE CUSTOMER_DELETE_REQ SET CUSTOMER_DELETE_REQ_ACTIVE =1 WHERE CUSTOMER_DELETE_REQ_PKID=@CUSTOMER_DELETE_REQ_PKID`
+      );
+
+    let result2 = await pool
+      .request()
+      .input("CUSTOMER_DELETE_REQ_CUST_FKID", custId)
+      .query(
+        `UPDATE CUSTOMER_MASTER SET CUSTOMER_ISACTIVE = 0 WHERE CUSTOMER_PKID=@CUSTOMER_DELETE_REQ_CUST_FKID`
+      );
+
+    pool.close();
+    let message = false;
+
+    if (result.rowsAffected && result2.rowsAffected) {
+      message = true;
+    }
+    pool.close();
+
+    return message;
+  } catch (error) {
+    console.log("AcceptDeleteRequest-->", error);
+  }
+}
+
+async function RejectDeleteRequest(reqId) {
+  try {
+    let pool = await sql.connect(config);
+    let result = await pool
+      .request()
+      .input("CUSTOMER_DELETE_REQ_PKID", reqId)
+      .query(
+        `UPDATE CUSTOMER_DELETE_REQ SET CUSTOMER_DELETE_REQ_ACTIVE =2 WHERE CUSTOMER_DELETE_REQ_PKID=@CUSTOMER_DELETE_REQ_PKID`
+      );
+
+    pool.close();
+    let message = false;
+
+    if (result.rowsAffected) {
+      message = true;
+    }
+    pool.close();
+
+    return message;
+  } catch (error) {
+    console.log("RejectDeleteRequest-->", error);
+  }
+}
+
+async function getCustReasonForDelete(delreqId) {
+  try {
+    let pool = await sql.connect(config);
+    let result = await pool
+      .request()
+      .input("CUSTOMER_DELETE_REQ_PKID", delreqId)
+      .query(
+        "SELECT [CUSTOMER_DELETE_REQ_PKID],[CUSTOMER_DELETE_REQ_REASON]  FROM CUSTOMER_DELETE_REQ JOIN CUSTOMER_MASTER ON CUSTOMER_PKID=CUSTOMER_DELETE_REQ_CUST_FKID JOIN EMPLOYEE_MASTER ON [EMPLOYEE_PKID]=[CUSTOMER_DELETE_REQ_EMP_FKID] JOIN EMPLOYEE_TYPE ON EMPLOYEE_TYPE_PKID=[EMPLOYEE_TYPE_FKID] JOIN EMPLOYEE_SUB_TYPE ON [EMPLOYEE_SUB_TYPE_TYPE_FKID]=EMPLOYEE_TYPE_PKID JOIN CUSTOMER_CATEGORY ON [CUSTOMER_CATEGORY_PKID]=[CUSTOMER_CATEGORY_FKID] JOIN CUSTOMER_TYPE ON CUSTOMER_TYPE_PKID=[CUSTOMER_TYPE_FKID] JOIN [dbo].[CUSTOMER_SUBTYPE] ON [CUSTOMER_SUBTYPE_PKID]=[CUSTOMER_SUBTYPE_FKID] WHERE CUSTOMER_DELETE_REQ_PKID=@CUSTOMER_DELETE_REQ_PKID"
+      );
+    pool.close();
+    return result.recordsets[0];
+  } catch (error) {
+    console.log("getCustReasonForDelete-->",error);
+  }
+}
+
 module.exports = {
   getCustomersCat: getCustomersCat,
   deleteCustomersCat: deleteCustomersCat,
@@ -666,4 +754,8 @@ module.exports = {
   addAddressType: addAddressType,
   deleteAddressType: deleteAddressType,
   updateAddressType: updateAddressType,
+  getCustDeleteNewRequest: getCustDeleteNewRequest,
+  AcceptDeleteRequest: AcceptDeleteRequest,
+  RejectDeleteRequest: RejectDeleteRequest,
+  getCustReasonForDelete: getCustReasonForDelete,
 };
