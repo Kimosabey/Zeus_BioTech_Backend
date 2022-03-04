@@ -2,7 +2,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-04 19:13:14
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-23 12:02:59
+ * @Last Modified time: 2022-03-03 19:49:19
  */
 var config = require("../dbconfig");
 const sql = require("mssql");
@@ -20,7 +20,7 @@ async function getCities() {
 
     return result.recordsets[0];
   } catch (error) {
-    console.log(error);
+    console.log("getCities-->", error);
     // pool.close();
   }
 }
@@ -55,7 +55,7 @@ async function addCity(obj) {
       return "Already Existed!";
     }
   } catch (err) {
-    console.log(err);
+    console.log("addCity-->", err);
   }
 }
 
@@ -71,7 +71,6 @@ async function getForCheckBoxCityByStateId(ObjOfArr) {
         `select * from [dbo].[CITY_MASTER] where [CITY_STATE_FKID] in (${y}) AND CITY_COUNTRY_FKID in (${x})`
       );
     pool.close();
-
 
     return result.recordsets[0];
   } catch (error) {
@@ -122,7 +121,7 @@ async function deleteCity(cityId) {
       return true;
     }
   } catch (error) {
-    console.log(error);
+    console.log("deleteCity-->", error);
     // pool.close();
   }
 }
@@ -141,7 +140,7 @@ async function getCitiesByStateId(stateId) {
 
     return result.recordsets[0];
   } catch (error) {
-    console.log(error);
+    console.log("getCitiesByStateId-->", error);
     // pool.close();
   }
 }

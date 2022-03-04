@@ -4,7 +4,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-19 16:45:50
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-19 17:57:42
+ * @Last Modified time: 2022-03-03 19:42:35
  */
 var config = require("../dbconfig");
 
@@ -34,7 +34,7 @@ function getCompanies() {
         case 11:
           _context.prev = 11;
           _context.t0 = _context["catch"](0);
-          console.log(_context.t0); // pool.close();
+          console.log("getCompanies-->", _context.t0); // pool.close();
 
         case 14:
         case "end":
@@ -100,7 +100,7 @@ function addCompany(obj) {
         case 24:
           _context2.prev = 24;
           _context2.t0 = _context2["catch"](0);
-          console.log(_context2.t0);
+          console.log("addCompany-->", _context2.t0);
 
         case 27:
         case "end":
@@ -116,15 +116,16 @@ function updateCompany(Compid, obj) {
     while (1) {
       switch (_context3.prev = _context3.next) {
         case 0:
-          _context3.next = 2;
+          _context3.prev = 0;
+          _context3.next = 3;
           return regeneratorRuntime.awrap(sql.connect(config));
 
-        case 2:
+        case 3:
           pool = _context3.sent;
-          _context3.next = 5;
+          _context3.next = 6;
           return regeneratorRuntime.awrap(pool.request().input("COMPANY_PKID", Compid).input("COMPANY_HQ_FKID", obj.COMPANY_HQ_FKID).input("COMPANY_NAME", obj.COMPANY_NAME).input("COMPANY_EMAIL", obj.COMPANY_EMAIL).input("COMPANY_PHONE", obj.COMPANY_PHONE).input("COMPANY_ADDRESS", obj.COMPANY_ADDRESS).query("UPDATE COMPANY SET [COMPANY_NAME]=@COMPANY_NAME ,[COMPANY_HQ_FKID]=@COMPANY_HQ_FKID ,[COMPANY_EMAIL]=@COMPANY_EMAIL ,[COMPANY_PHONE]=@COMPANY_PHONE ,[COMPANY_ADDRESS]=@COMPANY_ADDRESS WHERE COMPANY_PKID =@COMPANY_PKID"));
 
-        case 5:
+        case 6:
           result = _context3.sent;
           pool.close();
           message = false;
@@ -138,12 +139,17 @@ function updateCompany(Compid, obj) {
 
           return _context3.abrupt("return", message);
 
-        case 11:
+        case 14:
+          _context3.prev = 14;
+          _context3.t0 = _context3["catch"](0);
+          console.log("updateCompany-->", _context3.t0);
+
+        case 17:
         case "end":
           return _context3.stop();
       }
     }
-  });
+  }, null, null, [[0, 14]]);
 }
 
 function deleteCompany(Compid) {
@@ -184,7 +190,7 @@ function deleteCompany(Compid) {
         case 17:
           _context4.prev = 17;
           _context4.t0 = _context4["catch"](0);
-          console.log(_context4.t0); // pool.close();
+          console.log("deleteCompany-->", _context4.t0); // pool.close();
 
         case 20:
         case "end":

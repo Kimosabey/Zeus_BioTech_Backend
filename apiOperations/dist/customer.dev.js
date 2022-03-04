@@ -4,7 +4,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-12 18:47:46
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-03 19:17:09
+ * @Last Modified time: 2022-03-03 19:52:18
  */
 var config = require("../dbconfig");
 
@@ -771,7 +771,7 @@ function getCustSubTypeByType(custId) {
         case 11:
           _context17.prev = 11;
           _context17.t0 = _context17["catch"](0);
-          console.log(_context17.t0); // pool.close();
+          console.log("getCustSubTypeByType-->", _context17.t0); // pool.close();
 
         case 14:
         case "end":
@@ -1038,7 +1038,7 @@ function getCustDeleteNewRequest() {
         case 11:
           _context24.prev = 11;
           _context24.t0 = _context24["catch"](0);
-          console.log(_context24.t0);
+          console.log("getCustDeleteNewRequest-->", _context24.t0);
 
         case 14:
         case "end":
@@ -1157,7 +1157,7 @@ function getCustReasonForDelete(delreqId) {
         case 11:
           _context27.prev = 11;
           _context27.t0 = _context27["catch"](0);
-          console.log(_context27.t0);
+          console.log("getCustReasonForDelete-->", _context27.t0);
 
         case 14:
         case "end":

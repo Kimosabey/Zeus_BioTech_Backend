@@ -4,7 +4,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-14 10:29:23
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-02 13:52:21
+ * @Last Modified time: 2022-03-03 19:48:15
  */
 var config = require("../dbconfig");
 
@@ -33,7 +33,7 @@ function getUom() {
         case 11:
           _context.prev = 11;
           _context.t0 = _context["catch"](0);
-          console.log(_context.t0); // pool.close();
+          console.log("getUom-->", _context.t0); // pool.close();
 
         case 14:
         case "end":
@@ -147,7 +147,7 @@ function deleteUom(UomId) {
         case 17:
           _context3.prev = 17;
           _context3.t0 = _context3["catch"](0);
-          console.log(_context3.t0); // pool.close();
+          console.log("deleteUom-->", _context3.t0); // pool.close();
 
         case 20:
         case "end":
@@ -163,15 +163,16 @@ function updateUom(UomId, obj) {
     while (1) {
       switch (_context4.prev = _context4.next) {
         case 0:
-          _context4.next = 2;
+          _context4.prev = 0;
+          _context4.next = 3;
           return regeneratorRuntime.awrap(sql.connect(config));
 
-        case 2:
+        case 3:
           pool = _context4.sent;
-          _context4.next = 5;
+          _context4.next = 6;
           return regeneratorRuntime.awrap(pool.request().input("input_parameter", UomId).input("UomName", obj.UomName).input("UomKey", obj.UomKey).query("UPDATE UNIT_OF_MEASUREMENT SET UNIT_OF_MEASUREMENT_NAME  = @UomName,UNIT_OF_MEASUREMENT_SHORT_KEY=@UomKey WHERE UNIT_OF_MEASUREMENT_PKID =@input_parameter"));
 
-        case 5:
+        case 6:
           result = _context4.sent;
           pool.close();
           message = false;
@@ -185,12 +186,17 @@ function updateUom(UomId, obj) {
 
           return _context4.abrupt("return", message);
 
-        case 11:
+        case 14:
+          _context4.prev = 14;
+          _context4.t0 = _context4["catch"](0);
+          console.log("updateUom-->", _context4.t0);
+
+        case 17:
         case "end":
           return _context4.stop();
       }
     }
-  });
+  }, null, null, [[0, 14]]);
 }
 
 module.exports = {

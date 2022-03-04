@@ -2,14 +2,12 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-04 16:20:31
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-25 17:15:44
+ * @Last Modified time: 2022-03-03 19:52:15
  */
 var config = require("../dbconfig");
 const sql = require("mssql");
 
 async function getCountries() {
-  console.log("getCountries: hit! ");
-
   try {
     let pool = await sql.connect(config);
 

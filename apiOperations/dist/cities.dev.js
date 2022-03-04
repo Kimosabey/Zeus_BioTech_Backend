@@ -4,7 +4,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-04 19:13:14
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-23 12:02:59
+ * @Last Modified time: 2022-03-03 19:49:19
  */
 var config = require("../dbconfig");
 
@@ -33,7 +33,7 @@ function getCities() {
         case 11:
           _context.prev = 11;
           _context.t0 = _context["catch"](0);
-          console.log(_context.t0); // pool.close();
+          console.log("getCities-->", _context.t0); // pool.close();
 
         case 14:
         case "end":
@@ -99,7 +99,7 @@ function addCity(obj) {
         case 24:
           _context2.prev = 24;
           _context2.t0 = _context2["catch"](0);
-          console.log(_context2.t0);
+          console.log("addCity-->", _context2.t0);
 
         case 27:
         case "end":
@@ -219,7 +219,7 @@ function deleteCity(cityId) {
         case 18:
           _context5.prev = 18;
           _context5.t0 = _context5["catch"](0);
-          console.log(_context5.t0); // pool.close();
+          console.log("deleteCity-->", _context5.t0); // pool.close();
 
         case 21:
         case "end":
@@ -252,7 +252,7 @@ function getCitiesByStateId(stateId) {
         case 11:
           _context6.prev = 11;
           _context6.t0 = _context6["catch"](0);
-          console.log(_context6.t0); // pool.close();
+          console.log("getCitiesByStateId-->", _context6.t0); // pool.close();
 
         case 14:
         case "end":

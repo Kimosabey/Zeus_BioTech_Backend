@@ -4,7 +4,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-19 12:05:08
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-25 12:19:45
+ * @Last Modified time: 2022-03-03 19:51:52
  */
 var config = require("../dbconfig");
 
@@ -46,7 +46,7 @@ function getAdminLogin(AdminEmail, AdminPass) {
         case 15:
           _context.prev = 15;
           _context.t0 = _context["catch"](0);
-          console.log(_context.t0); // pool.close();
+          console.log("getAdminLogin-->", _context.t0); // pool.close();
 
         case 18:
         case "end":

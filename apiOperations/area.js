@@ -2,7 +2,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-07 17:55:30
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-24 12:19:32
+ * @Last Modified time: 2022-03-03 19:52:10
  */
 var config = require("../dbconfig");
 const sql = require("mssql");
@@ -20,7 +20,7 @@ async function getAreas() {
 
     return result.recordsets[0];
   } catch (error) {
-    console.log(error);
+    console.log("getAreas-->", error);
     // pool.close();
   }
 }
@@ -39,7 +39,7 @@ async function getAreasByCityId(cityId) {
 
     return result.recordsets[0];
   } catch (error) {
-    console.log(error);
+    console.log("getAreasByCityId-->", error);
     // pool.close();
   }
 }
@@ -58,7 +58,7 @@ async function getAreasByHq(hqId) {
     // console.log(result.recordsets);
     return result.recordsets[0];
   } catch (error) {
-    console.log(error);
+    console.log("getAreasByHq-->", error);
     // pool.close();
   }
 }
@@ -105,7 +105,7 @@ async function getForCheckBoxAreaByCityId(ObjOfArr) {
   let x = ObjOfArr.CountryId;
   let y = ObjOfArr.StateId;
   let z = ObjOfArr.CityId;
-  
+
   try {
     let pool = await sql.connect(config);
     let result = await pool
@@ -117,7 +117,7 @@ async function getForCheckBoxAreaByCityId(ObjOfArr) {
 
     return result.recordsets[0];
   } catch (error) {
-    console.log(error);
+    console.log("getForCheckBoxAreaByCityId-->", error);
     // pool.close();
   }
 }
@@ -165,7 +165,7 @@ async function deleteArea(AreaId) {
       return true;
     }
   } catch (error) {
-    console.log(error);
+    console.log("deleteArea-->", error);
     // pool.close();
   }
 }

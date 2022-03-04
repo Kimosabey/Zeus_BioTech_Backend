@@ -2,7 +2,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-19 12:05:08
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-25 12:19:45
+ * @Last Modified time: 2022-03-03 19:51:52
  */
 
 var config = require("../dbconfig");
@@ -28,12 +28,10 @@ async function getAdminLogin(AdminEmail, AdminPass) {
     }
     // return result.recordsets[0];
   } catch (error) {
-    console.log(error);
-   // pool.close();
+    console.log("getAdminLogin-->", error);
+    // pool.close();
   }
 }
-
-
 
 module.exports = {
   getAdminLogin: getAdminLogin,

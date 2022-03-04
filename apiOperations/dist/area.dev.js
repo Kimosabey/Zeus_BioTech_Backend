@@ -4,7 +4,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-07 17:55:30
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-24 12:19:32
+ * @Last Modified time: 2022-03-03 19:52:10
  */
 var config = require("../dbconfig");
 
@@ -33,7 +33,7 @@ function getAreas() {
         case 11:
           _context.prev = 11;
           _context.t0 = _context["catch"](0);
-          console.log(_context.t0); // pool.close();
+          console.log("getAreas-->", _context.t0); // pool.close();
 
         case 14:
         case "end":
@@ -66,7 +66,7 @@ function getAreasByCityId(cityId) {
         case 11:
           _context2.prev = 11;
           _context2.t0 = _context2["catch"](0);
-          console.log(_context2.t0); // pool.close();
+          console.log("getAreasByCityId-->", _context2.t0); // pool.close();
 
         case 14:
         case "end":
@@ -100,7 +100,7 @@ function getAreasByHq(hqId) {
         case 11:
           _context3.prev = 11;
           _context3.t0 = _context3["catch"](0);
-          console.log(_context3.t0); // pool.close();
+          console.log("getAreasByHq-->", _context3.t0); // pool.close();
 
         case 14:
         case "end":
@@ -203,7 +203,7 @@ function getForCheckBoxAreaByCityId(ObjOfArr) {
         case 14:
           _context5.prev = 14;
           _context5.t0 = _context5["catch"](3);
-          console.log(_context5.t0); // pool.close();
+          console.log("getForCheckBoxAreaByCityId-->", _context5.t0); // pool.close();
 
         case 17:
         case "end":
@@ -287,7 +287,7 @@ function deleteArea(AreaId) {
         case 17:
           _context7.prev = 17;
           _context7.t0 = _context7["catch"](0);
-          console.log(_context7.t0); // pool.close();
+          console.log("deleteArea-->", _context7.t0); // pool.close();
 
         case 20:
         case "end":

@@ -2,7 +2,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-19 16:45:50
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-19 17:57:42
+ * @Last Modified time: 2022-03-03 19:42:35
  */
 
 var config = require("../dbconfig");
@@ -19,8 +19,8 @@ async function getCompanies() {
     // console.log(result.recordsets);
     return result.recordsets[0];
   } catch (error) {
-    console.log(error);
-   // pool.close();
+    console.log("getCompanies-->", error);
+    // pool.close();
   }
 }
 
@@ -59,35 +59,39 @@ async function addCompany(obj) {
       return "0";
     }
   } catch (err) {
-    console.log(err);
+    console.log("addCompany-->", err);
   }
 }
 
 async function updateCompany(Compid, obj) {
-  let pool = await sql.connect(config);
-  let result = await pool
-    .request()
-    .input("COMPANY_PKID", Compid)
-    .input("COMPANY_HQ_FKID", obj.COMPANY_HQ_FKID)
-    .input("COMPANY_NAME", obj.COMPANY_NAME)
-    .input("COMPANY_EMAIL", obj.COMPANY_EMAIL)
-    .input("COMPANY_PHONE", obj.COMPANY_PHONE)
-    .input("COMPANY_ADDRESS", obj.COMPANY_ADDRESS)
+  try {
+    let pool = await sql.connect(config);
+    let result = await pool
+      .request()
+      .input("COMPANY_PKID", Compid)
+      .input("COMPANY_HQ_FKID", obj.COMPANY_HQ_FKID)
+      .input("COMPANY_NAME", obj.COMPANY_NAME)
+      .input("COMPANY_EMAIL", obj.COMPANY_EMAIL)
+      .input("COMPANY_PHONE", obj.COMPANY_PHONE)
+      .input("COMPANY_ADDRESS", obj.COMPANY_ADDRESS)
 
-    .query(
-      `UPDATE COMPANY SET [COMPANY_NAME]=@COMPANY_NAME ,[COMPANY_HQ_FKID]=@COMPANY_HQ_FKID ,[COMPANY_EMAIL]=@COMPANY_EMAIL ,[COMPANY_PHONE]=@COMPANY_PHONE ,[COMPANY_ADDRESS]=@COMPANY_ADDRESS WHERE COMPANY_PKID =@COMPANY_PKID`
-    );
+      .query(
+        `UPDATE COMPANY SET [COMPANY_NAME]=@COMPANY_NAME ,[COMPANY_HQ_FKID]=@COMPANY_HQ_FKID ,[COMPANY_EMAIL]=@COMPANY_EMAIL ,[COMPANY_PHONE]=@COMPANY_PHONE ,[COMPANY_ADDRESS]=@COMPANY_ADDRESS WHERE COMPANY_PKID =@COMPANY_PKID`
+      );
 
-  pool.close();
-  let message = false;
+    pool.close();
+    let message = false;
 
-  if (result.rowsAffected) {
-    message = true;
+    if (result.rowsAffected) {
+      message = true;
+    }
+    pool.close();
+    // return { message };
+    // console.log(pool._connected);
+    return message;
+  } catch (error) {
+    console.log("updateCompany-->", error);
   }
-  pool.close();
-  // return { message };
-  // console.log(pool._connected);
-  return message;
 }
 
 async function deleteCompany(Compid) {
@@ -107,8 +111,8 @@ async function deleteCompany(Compid) {
       return true;
     }
   } catch (error) {
-    console.log(error);
-   // pool.close();
+    console.log("deleteCompany-->", error);
+    // pool.close();
   }
 }
 

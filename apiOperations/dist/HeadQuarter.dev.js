@@ -4,7 +4,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-19 14:59:10
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-21 18:27:55
+ * @Last Modified time: 2022-03-03 19:45:29
  */
 var config = require("../dbconfig");
 
@@ -34,7 +34,7 @@ function getHq() {
         case 11:
           _context.prev = 11;
           _context.t0 = _context["catch"](0);
-          console.log(_context.t0); // pool.close();
+          console.log("getHq-->", _context.t0); // pool.close();
 
         case 14:
         case "end":
@@ -185,7 +185,7 @@ function deleteHq(HqId) {
         case 17:
           _context4.prev = 17;
           _context4.t0 = _context4["catch"](0);
-          console.log(_context4.t0); // pool.close();
+          console.log("deleteHq-->", _context4.t0); // pool.close();
 
         case 20:
         case "end":

@@ -2,7 +2,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-07 18:02:44
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-03 19:14:29
+ * @Last Modified time: 2022-03-04 18:17:55
  */
 
 var express = require("express");
@@ -34,6 +34,7 @@ var AdmDb = require("./apiOperations/AdminLogin");
 var HqDb = require("./apiOperations/HeadQuarter");
 var CompDb = require("./apiOperations/company");
 var ProdDb = require("./apiOperations/products");
+var OrdDb = require("./apiOperations/OrderManagement");
 
 // ----------------Building a Secure Node js REST API---------------------//
 app.use(express.static(__dirname + "/static"));
@@ -153,24 +154,24 @@ router.use((req, res, next) => {
   next();
 });
 
-router.route("/orders").get(async (request, response) => {
-  await Db.getOrders().then((data) => {
-    response.json(data);
-  });
-});
+// router.route("/orders").get(async (request, response) => {
+//   await Db.getOrders().then((data) => {
+//     response.json(data);
+//   });
+// });
 
-router.route("/orders/:id").get(async (request, response) => {
-  await Db.getOrder(request.params.id).then((data) => {
-    response.json(data[0]);
-  });
-});
+// router.route("/orders/:id").get(async (request, response) => {
+//   await Db.getOrder(request.params.id).then((data) => {
+//     response.json(data[0]);
+//   });
+// });
 
-router.route("/orders").post(async (request, response) => {
-  let order = { ...request.body };
-  await Db.addOrder(order).then((data) => {
-    response.status(201).json(data);
-  });
-});
+// router.route("/orders").post(async (request, response) => {
+//   let order = { ...request.body };
+//   await Db.addOrder(order).then((data) => {
+//     response.status(201).json(data);
+//   });
+// });
 
 // -----------Login Api's--------------- //
 
@@ -652,7 +653,6 @@ router.get("/leavesbyemp/:id", async (req, res) => {
   res.json(await EmpsDb.getAllLeavesForEmployee(req.params.id));
 });
 
-
 router.put("/acceptleaves/:id", async (req, res, next) => {
   try {
     res.json(await EmpsDb.AcceptLeaves(req.params.id));
@@ -670,8 +670,6 @@ router.put("/rejectleaves/:id", async (req, res, next) => {
     next(err);
   }
 });
-
-
 
 router.get("/leavesforallemps", async (req, res) => {
   res.json(await EmpsDb.getAllEmployeeLeaves());
@@ -950,6 +948,89 @@ router.put("/uom/:id", async (req, res, next) => {
     console.error(`Error while Adding`, err.message);
     next(err);
   }
+});
+
+// -------ORDER MANAGEMENT Api's----------------------------------------------------//
+
+router.get("/GetAllOrderRequest", async (req, res) => {
+  res.json(await OrdDb.getOrders());
+});
+
+router.get("/GetOrderItemOrderID/:id", async (req, res) => {
+  res.json(await OrdDb.getItemsByOrderId(req.params.id));
+});
+
+router.get("/OrderRemark/:id", async (req, res) => {
+  res.json(await OrdDb.getRemarksOrdersById(req.params.id));
+});
+
+router.get("/OrderBillingAddress/:id", async (req, res) => {
+  res.json(await OrdDb.getBillingAddressOrdersById(req.params.id));
+});
+
+router.get("/OrderShippingAddress/:id", async (req, res) => {
+  res.json(await OrdDb.getShippingAddressOrdersById(req.params.id));
+});
+
+router.put("/AcceptOrder/:id", async (req, res, next) => {
+  let obj = { ...req.body };
+
+  try {
+    res.json(await OrdDb.AcceptOrderRequest(req.params.id, obj));
+  } catch (err) {
+    console.error(`Error while Adding`, err.message);
+    next(err);
+  }
+});
+
+router.put("/RejectOrder/:id", async (req, res, next) => {
+  let obj = { ...req.body };
+
+  try {
+    res.json(await OrdDb.RejectOrderRequest(req.params.id, obj));
+  } catch (err) {
+    console.error(`Error while Adding`, err.message);
+    next(err);
+  }
+});
+
+router.get("/OrderSupplyType", async (req, res) => {
+  res.json(await OrdDb.getSupplyType());
+});
+
+router.put("/OrderSupplyType/:id", async (req, res, next) => {
+  let obj = { ...req.body };
+
+  try {
+    res.json(await OrdDb.updateSupplyType(req.params.id, obj));
+  } catch (err) {
+    console.error(`Error while Adding`, err.message);
+    next(err);
+  }
+});
+
+router.post("/OrderSupplyType", async (req, res) => {
+  let obj = { ...req.body };
+
+  try {
+    res.json(await OrdDb.addSupplyType(obj));
+  } catch (err) {
+    console.error(`Error while Adding`, err.message);
+    next(err);
+  }
+});
+
+router.put("/OrderSupplyTypeDel/:id", async (req, res, next) => {
+  try {
+    res.json(await OrdDb.deleteSupplyType(req.params.id));
+  } catch (err) {
+    console.error(`Error while Adding`, err.message);
+    next(err);
+  }
+});
+
+router.get("/GetPendingOrdersBySupplayType/:id", async (req, res) => {
+  res.json(await OrdDb.GetPendingOrdersBySupplyType(req.params.id));
 });
 
 // -------END----------------------------------------------------//

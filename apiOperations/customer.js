@@ -2,7 +2,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-12 18:47:46
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-03 19:17:09
+ * @Last Modified time: 2022-03-03 19:52:18
  */
 
 var config = require("../dbconfig");
@@ -505,7 +505,7 @@ async function getCustSubTypeByType(custId) {
     pool.close();
     return result.recordsets[0];
   } catch (error) {
-    console.log(error);
+    console.log("getCustSubTypeByType-->", error);
     // pool.close();
   }
 }
@@ -653,7 +653,7 @@ async function getCustDeleteNewRequest() {
     pool.close();
     return result.recordsets[0];
   } catch (error) {
-    console.log(error);
+    console.log("getCustDeleteNewRequest-->", error);
   }
 }
 
@@ -726,7 +726,7 @@ async function getCustReasonForDelete(delreqId) {
     pool.close();
     return result.recordsets[0];
   } catch (error) {
-    console.log("getCustReasonForDelete-->",error);
+    console.log("getCustReasonForDelete-->", error);
   }
 }
 

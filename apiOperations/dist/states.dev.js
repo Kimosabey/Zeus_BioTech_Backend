@@ -4,7 +4,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-04 16:20:37
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-28 16:25:33
+ * @Last Modified time: 2022-03-03 19:49:58
  */
 var config = require("../dbconfig");
 
@@ -33,7 +33,7 @@ function getStates() {
         case 11:
           _context.prev = 11;
           _context.t0 = _context["catch"](0);
-          console.log(_context.t0); // pool.close();
+          console.log("getStates-->", _context.t0); // pool.close();
 
         case 14:
         case "end":
@@ -66,7 +66,7 @@ function getStatesById(stateId) {
         case 11:
           _context2.prev = 11;
           _context2.t0 = _context2["catch"](0);
-          console.log(_context2.t0); // pool.close();
+          console.log("getStatesById-->", _context2.t0); // pool.close();
 
         case 14:
         case "end":
@@ -99,7 +99,7 @@ function getStateByCountryId(countryId) {
         case 11:
           _context3.prev = 11;
           _context3.t0 = _context3["catch"](0);
-          console.log(_context3.t0); // pool.close();
+          console.log("getStateByCountryId-->", _context3.t0); // pool.close();
 
         case 14:
         case "end":
@@ -133,7 +133,7 @@ function getForCheckBoxStateByCountryId(ObjOfArr) {
         case 12:
           _context4.prev = 12;
           _context4.t0 = _context4["catch"](1);
-          console.log(_context4.t0); // pool.close();
+          console.log("getForCheckBoxStateByCountryId-->", _context4.t0); // pool.close();
 
         case 15:
         case "end":
@@ -199,7 +199,7 @@ function addState(obj) {
         case 24:
           _context5.prev = 24;
           _context5.t0 = _context5["catch"](0);
-          console.log(_context5.t0);
+          console.log("addState->", _context5.t0);
 
         case 27:
         case "end":
@@ -215,15 +215,16 @@ function updateState(stateId, obj) {
     while (1) {
       switch (_context6.prev = _context6.next) {
         case 0:
-          _context6.next = 2;
+          _context6.prev = 0;
+          _context6.next = 3;
           return regeneratorRuntime.awrap(sql.connect(config));
 
-        case 2:
+        case 3:
           pool = _context6.sent;
-          _context6.next = 5;
+          _context6.next = 6;
           return regeneratorRuntime.awrap(pool.request().input("stateId", stateId).input("StateName", sql.NVarChar, obj.StateName).input("CountryId", sql.Int, obj.CountryId).query("UPDATE STATE_MASTER SET STATE_COUNTRY_FKID = @CountryId, STATE_NAME= @StateName WHERE STATE_PKID =@stateId"));
 
-        case 5:
+        case 6:
           result = _context6.sent;
           pool.close();
           message = false;
@@ -237,12 +238,17 @@ function updateState(stateId, obj) {
 
           return _context6.abrupt("return", message);
 
-        case 11:
+        case 14:
+          _context6.prev = 14;
+          _context6.t0 = _context6["catch"](0);
+          console.log("updateState-->", _context6.t0);
+
+        case 17:
         case "end":
           return _context6.stop();
       }
     }
-  });
+  }, null, null, [[0, 14]]);
 }
 
 function deleteState(stateId) {
@@ -283,7 +289,7 @@ function deleteState(stateId) {
         case 17:
           _context7.prev = 17;
           _context7.t0 = _context7["catch"](0);
-          console.log(_context7.t0); // pool.close();
+          console.log("deleteState-->", _context7.t0); // pool.close();
 
         case 20:
         case "end":

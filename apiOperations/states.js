@@ -2,7 +2,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-04 16:20:37
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-28 16:25:33
+ * @Last Modified time: 2022-03-03 19:49:58
  */
 var config = require("../dbconfig");
 const sql = require("mssql");
@@ -20,7 +20,7 @@ async function getStates() {
 
     return result.recordsets[0];
   } catch (error) {
-    console.log(error);
+    console.log("getStates-->", error);
     // pool.close();
   }
 }
@@ -37,7 +37,7 @@ async function getStatesById(stateId) {
     pool.close();
     return result.recordsets[0];
   } catch (error) {
-    console.log(error);
+    console.log("getStatesById-->", error);
     // pool.close();
   }
 }
@@ -54,7 +54,7 @@ async function getStateByCountryId(countryId) {
     pool.close();
     return result.recordsets[0];
   } catch (error) {
-    console.log(error);
+    console.log("getStateByCountryId-->", error);
     // pool.close();
   }
 }
@@ -73,7 +73,7 @@ async function getForCheckBoxStateByCountryId(ObjOfArr) {
 
     return result.recordsets[0];
   } catch (error) {
-    console.log(error);
+    console.log("getForCheckBoxStateByCountryId-->", error);
     // pool.close();
   }
 }
@@ -105,31 +105,35 @@ async function addState(obj) {
       return "Already Existed!";
     }
   } catch (err) {
-    console.log(err);
+    console.log("addState->", err);
   }
 }
 
 async function updateState(stateId, obj) {
-  let pool = await sql.connect(config);
-  let result = await pool
-    .request()
-    .input("stateId", stateId)
-    .input("StateName", sql.NVarChar, obj.StateName)
-    .input("CountryId", sql.Int, obj.CountryId)
-    .query(
-      `UPDATE STATE_MASTER SET STATE_COUNTRY_FKID = @CountryId, STATE_NAME= @StateName WHERE STATE_PKID =@stateId`
-    );
+  try {
+    let pool = await sql.connect(config);
+    let result = await pool
+      .request()
+      .input("stateId", stateId)
+      .input("StateName", sql.NVarChar, obj.StateName)
+      .input("CountryId", sql.Int, obj.CountryId)
+      .query(
+        `UPDATE STATE_MASTER SET STATE_COUNTRY_FKID = @CountryId, STATE_NAME= @StateName WHERE STATE_PKID =@stateId`
+      );
 
-  pool.close();
-  let message = false;
+    pool.close();
+    let message = false;
 
-  if (result.rowsAffected) {
-    message = true;
+    if (result.rowsAffected) {
+      message = true;
+    }
+    pool.close();
+    // return { message };
+    // console.log(pool._connected);
+    return message;
+  } catch (error) {
+    console.log("updateState-->", error);
   }
-  pool.close();
-  // return { message };
-  // console.log(pool._connected);
-  return message;
 }
 
 async function deleteState(stateId) {
@@ -149,7 +153,7 @@ async function deleteState(stateId) {
       return true;
     }
   } catch (error) {
-    console.log(error);
+    console.log("deleteState-->", error);
     // pool.close();
   }
 }

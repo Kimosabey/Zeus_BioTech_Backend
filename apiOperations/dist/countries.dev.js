@@ -4,7 +4,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-04 16:20:31
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-02-25 17:15:44
+ * @Last Modified time: 2022-03-03 19:52:15
  */
 var config = require("../dbconfig");
 
@@ -16,32 +16,31 @@ function getCountries() {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
-          console.log("getCountries: hit! ");
-          _context.prev = 1;
-          _context.next = 4;
+          _context.prev = 0;
+          _context.next = 3;
           return regeneratorRuntime.awrap(sql.connect(config));
 
-        case 4:
+        case 3:
           pool = _context.sent;
-          _context.next = 7;
+          _context.next = 6;
           return regeneratorRuntime.awrap(pool.request().query("SELECT * FROM [COUNTRY_MASTER]"));
 
-        case 7:
+        case 6:
           result = _context.sent;
           pool.close();
           return _context.abrupt("return", result.recordsets[0]);
 
-        case 12:
-          _context.prev = 12;
-          _context.t0 = _context["catch"](1);
+        case 11:
+          _context.prev = 11;
+          _context.t0 = _context["catch"](0);
           console.log("getCountries-->", _context.t0); // pool.close();
 
-        case 15:
+        case 14:
         case "end":
           return _context.stop();
       }
     }
-  }, null, null, [[1, 12]]);
+  }, null, null, [[0, 11]]);
 }
 
 function getCountryById(countryId) {

@@ -2,7 +2,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-14 10:29:23
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-02 13:52:21
+ * @Last Modified time: 2022-03-03 19:48:15
  */
 
 var config = require("../dbconfig");
@@ -19,13 +19,12 @@ async function getUom() {
 
     return result.recordsets[0];
   } catch (error) {
-    console.log(error);
+    console.log("getUom-->", error);
     // pool.close();
   }
 }
 
 async function addUom(obj) {
- 
   try {
     let pool = await sql.connect(config);
     let result = await pool
@@ -78,33 +77,36 @@ async function deleteUom(UomId) {
       return true;
     }
   } catch (error) {
-    console.log(error);
+    console.log("deleteUom-->", error);
     // pool.close();
   }
 }
 
 async function updateUom(UomId, obj) {
- 
-  let pool = await sql.connect(config);
-  let result = await pool
-    .request()
-    .input("input_parameter", UomId)
-    .input("UomName", obj.UomName)
-    .input("UomKey", obj.UomKey)
-    .query(
-      `UPDATE UNIT_OF_MEASUREMENT SET UNIT_OF_MEASUREMENT_NAME  = @UomName,UNIT_OF_MEASUREMENT_SHORT_KEY=@UomKey WHERE UNIT_OF_MEASUREMENT_PKID =@input_parameter`
-    );
+  try {
+    let pool = await sql.connect(config);
+    let result = await pool
+      .request()
+      .input("input_parameter", UomId)
+      .input("UomName", obj.UomName)
+      .input("UomKey", obj.UomKey)
+      .query(
+        `UPDATE UNIT_OF_MEASUREMENT SET UNIT_OF_MEASUREMENT_NAME  = @UomName,UNIT_OF_MEASUREMENT_SHORT_KEY=@UomKey WHERE UNIT_OF_MEASUREMENT_PKID =@input_parameter`
+      );
 
-  pool.close();
-  let message = false;
+    pool.close();
+    let message = false;
 
-  if (result.rowsAffected) {
-    message = true;
+    if (result.rowsAffected) {
+      message = true;
+    }
+    pool.close();
+    // return { message };
+    // console.log(pool._connected);
+    return message;
+  } catch (error) {
+    console.log("updateUom-->", error);
   }
-  pool.close();
-  // return { message };
-  // console.log(pool._connected);
-  return message;
 }
 
 module.exports = {
