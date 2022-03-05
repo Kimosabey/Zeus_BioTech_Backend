@@ -10,7 +10,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
  * @Author: Hey Kimo here!
  * @Date: 2022-02-07 18:02:44
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-04 18:17:55
+ * @Last Modified time: 2022-03-05 16:49:07
  */
 var express = require("express");
 
@@ -3292,6 +3292,132 @@ router.get("/GetPendingOrdersBySupplayType/:id", function _callee122(req, res) {
         case 5:
         case "end":
           return _context122.stop();
+      }
+    }
+  });
+});
+router.get("/GetPendingOrdersByMonth/:MOnthNumber", function _callee123(req, res) {
+  return regeneratorRuntime.async(function _callee123$(_context123) {
+    while (1) {
+      switch (_context123.prev = _context123.next) {
+        case 0:
+          _context123.t0 = res;
+          _context123.next = 3;
+          return regeneratorRuntime.awrap(OrdDb.GetPendingOrdersByMonth(req.params.MOnthNumber));
+
+        case 3:
+          _context123.t1 = _context123.sent;
+
+          _context123.t0.json.call(_context123.t0, _context123.t1);
+
+        case 5:
+        case "end":
+          return _context123.stop();
+      }
+    }
+  });
+});
+router.get("/GetPendingOrdersByDate/:fdate/:tdate", function _callee124(req, res) {
+  return regeneratorRuntime.async(function _callee124$(_context124) {
+    while (1) {
+      switch (_context124.prev = _context124.next) {
+        case 0:
+          _context124.t0 = res;
+          _context124.next = 3;
+          return regeneratorRuntime.awrap(OrdDb.GetPendingOrdersByDate(req.params.fdate, req.params.tdate));
+
+        case 3:
+          _context124.t1 = _context124.sent;
+
+          _context124.t0.json.call(_context124.t0, _context124.t1);
+
+        case 5:
+        case "end":
+          return _context124.stop();
+      }
+    }
+  });
+});
+router.get("/GetAllApprovedOrder", function _callee125(req, res) {
+  return regeneratorRuntime.async(function _callee125$(_context125) {
+    while (1) {
+      switch (_context125.prev = _context125.next) {
+        case 0:
+          _context125.t0 = res;
+          _context125.next = 3;
+          return regeneratorRuntime.awrap(OrdDb.getAllApprovedOrders());
+
+        case 3:
+          _context125.t1 = _context125.sent;
+
+          _context125.t0.json.call(_context125.t0, _context125.t1);
+
+        case 5:
+        case "end":
+          return _context125.stop();
+      }
+    }
+  });
+});
+router.get("/GetApprovedOrdersBySupplayType/:id", function _callee126(req, res) {
+  return regeneratorRuntime.async(function _callee126$(_context126) {
+    while (1) {
+      switch (_context126.prev = _context126.next) {
+        case 0:
+          _context126.t0 = res;
+          _context126.next = 3;
+          return regeneratorRuntime.awrap(OrdDb.getApprovedOrdersBySupplyType(req.params.id));
+
+        case 3:
+          _context126.t1 = _context126.sent;
+
+          _context126.t0.json.call(_context126.t0, _context126.t1);
+
+        case 5:
+        case "end":
+          return _context126.stop();
+      }
+    }
+  });
+});
+router.get("/GetApprovedOrdersByMonth/:MOnthNumber", function _callee127(req, res) {
+  return regeneratorRuntime.async(function _callee127$(_context127) {
+    while (1) {
+      switch (_context127.prev = _context127.next) {
+        case 0:
+          _context127.t0 = res;
+          _context127.next = 3;
+          return regeneratorRuntime.awrap(OrdDb.getApprovedOrdersByMonth(req.params.MOnthNumber));
+
+        case 3:
+          _context127.t1 = _context127.sent;
+
+          _context127.t0.json.call(_context127.t0, _context127.t1);
+
+        case 5:
+        case "end":
+          return _context127.stop();
+      }
+    }
+  });
+});
+router.get("/GetApprovedOrdersByDate/:fdate/:tdate", function _callee128(req, res) {
+  return regeneratorRuntime.async(function _callee128$(_context128) {
+    while (1) {
+      switch (_context128.prev = _context128.next) {
+        case 0:
+          _context128.t0 = res;
+          _context128.next = 3;
+          return regeneratorRuntime.awrap(OrdDb.getApprovedOrdersByDate(req.params.fdate, req.params.tdate));
+
+        case 3:
+          _context128.t1 = _context128.sent;
+
+          _context128.t0.json.call(_context128.t0, _context128.t1);
+
+        case 5:
+        case "end":
+          return _context128.stop();
       }
     }
   });

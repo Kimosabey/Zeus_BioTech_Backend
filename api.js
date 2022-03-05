@@ -2,7 +2,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-07 18:02:44
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-04 18:17:55
+ * @Last Modified time: 2022-03-05 16:49:07
  */
 
 var express = require("express");
@@ -1031,6 +1031,34 @@ router.put("/OrderSupplyTypeDel/:id", async (req, res, next) => {
 
 router.get("/GetPendingOrdersBySupplayType/:id", async (req, res) => {
   res.json(await OrdDb.GetPendingOrdersBySupplyType(req.params.id));
+});
+
+router.get("/GetPendingOrdersByMonth/:MOnthNumber", async (req, res) => {
+  res.json(await OrdDb.GetPendingOrdersByMonth(req.params.MOnthNumber));
+});
+
+router.get("/GetPendingOrdersByDate/:fdate/:tdate", async (req, res) => {
+  res.json(
+    await OrdDb.GetPendingOrdersByDate(req.params.fdate, req.params.tdate)
+  );
+});
+
+router.get("/GetAllApprovedOrder", async (req, res) => {
+  res.json(await OrdDb.getAllApprovedOrders());
+});
+
+router.get("/GetApprovedOrdersBySupplayType/:id", async (req, res) => {
+  res.json(await OrdDb.getApprovedOrdersBySupplyType(req.params.id));
+});
+
+router.get("/GetApprovedOrdersByMonth/:MOnthNumber", async (req, res) => {
+  res.json(await OrdDb.getApprovedOrdersByMonth(req.params.MOnthNumber));
+});
+
+router.get("/GetApprovedOrdersByDate/:fdate/:tdate", async (req, res) => {
+  res.json(
+    await OrdDb.getApprovedOrdersByDate(req.params.fdate, req.params.tdate)
+  );
 });
 
 // -------END----------------------------------------------------//

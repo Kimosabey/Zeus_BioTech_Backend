@@ -4,7 +4,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-03-04 14:28:13
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-04 18:59:28
+ * @Last Modified time: 2022-03-05 14:57:13
  */
 var config = require("../dbconfig");
 
@@ -122,7 +122,7 @@ function getOrders() {
         case 3:
           pool = _context4.sent;
           _context4.next = 6;
-          return regeneratorRuntime.awrap(pool.request().query("select ORD.*,CUSTOMER_NAME,COMPANY_NAME,[SUPPLY_NAME],(SELECT DATEDIFF(HOUR, (SELECT [ORDER_DATE] FROM [dbo].[ORDER]), (SELECT SYSDATETIME())) ) AS hrs ,(SELECT CASE WHEN ORDER_BY = 'admin' THEN (select SUPER_ADMIN_EMAIL from [dbo].[SUPER_ADMIN] WHERE [SUPER_ADMIN_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'manager' OR ORDER_BY = 'officer' THEN (select [EMPLOYEE_NAME] from [dbo].[EMPLOYEE_MASTER] WHERE [EMPLOYEE_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'customer' THEN (select [CUSTOMER_NAME] from [dbo].[CUSTOMER_MASTER] WHERE [CUSTOMER_PKID]=ORDER_BY_FKID) END FROM [dbo].[ORDER]) as TypeName from [dbo].[ORDER] AS ORD JOIN [dbo].[ORDER_ITEM] AS ITM ON [ORDER_ITEM_ORDER_FKID]=[ORDER_PKID] JOIN [dbo].[CUSTOMER_MASTER] ON [CUSTOMER_PKID]=[ORDER_CUSTOMER_FKID] JOIN [dbo].[COMPANY] ON [COMPANY_PKID]=[ORDER_COMPANY_FKID] JOIN [dbo].[SUPPLY_TYPE] ON [SUPPLY_TYPE_PKID]=[ORDER_SUPPLY_TYPE] WHERE ORDER_ISACTIVE=0"));
+          return regeneratorRuntime.awrap(pool.request().query("select (select count(*) from [dbo].[ORDER_ITEM] where [ORDER_ITEM_ORDER_FKID] = ORD.ORDER_PKID) as ItemCount,(SELECT MONTH(ORDER_DATE)) AS MONTH_NUMBER ,cast([ORDER_DATE] as date) as bdate,(SELECT CONVERT(TIME, ORDER_DATE)) as clock,ORD.*,CUSTOMER_NAME,COMPANY_NAME,[SUPPLY_NAME],(SELECT DATEDIFF(HOUR, (SELECT [ORDER_DATE] FROM [dbo].[ORDER]), (SELECT SYSDATETIME())) ) AS hrs ,(SELECT CASE WHEN ORDER_BY = 'admin' THEN (select SUPER_ADMIN_NAME from [dbo].[SUPER_ADMIN] WHERE [SUPER_ADMIN_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'manager' OR ORDER_BY = 'officer' THEN (select [EMPLOYEE_NAME] from [dbo].[EMPLOYEE_MASTER] WHERE [EMPLOYEE_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'customer' THEN (select [CUSTOMER_NAME] from [dbo].[CUSTOMER_MASTER] WHERE [CUSTOMER_PKID]=ORDER_BY_FKID) END FROM [dbo].[ORDER]) as TypeName from [dbo].[ORDER] AS ORD JOIN [dbo].[ORDER_ITEM] AS ITM ON [ORDER_ITEM_ORDER_FKID]=[ORDER_PKID] JOIN [dbo].[CUSTOMER_MASTER] ON [CUSTOMER_PKID]=[ORDER_CUSTOMER_FKID] JOIN [dbo].[COMPANY] ON [COMPANY_PKID]=[ORDER_COMPANY_FKID] JOIN [dbo].[SUPPLY_TYPE] ON [SUPPLY_TYPE_PKID]=[ORDER_SUPPLY_TYPE] WHERE ORDER_ISACTIVE=0 AND ORDER_STATUS=0"));
 
         case 6:
           result = _context4.sent;
@@ -155,7 +155,7 @@ function getItemsByOrderId(ordId) {
         case 3:
           pool = _context5.sent;
           _context5.next = 6;
-          return regeneratorRuntime.awrap(pool.request().input("ORDER_ITEM_ORDER_FKID", ordId).query("select items.* from [dbo].[ORDER_ITEM] as items join [dbo].[ORDER] on [ORDER_PKID]=[ORDER_ITEM_ORDER_FKID] where [ORDER_ITEM_ORDER_FKID]=@ORDER_ITEM_ORDER_FKID"));
+          return regeneratorRuntime.awrap(pool.request().input("ORDER_ITEM_ORDER_FKID", ordId).query("select items.*,[PRODUCT_NAME], [PRODUCT_UNIT],[PRODUCT_MRP] from [dbo].[ORDER_ITEM] as items join [dbo].[ORDER] on [ORDER_PKID]=[ORDER_ITEM_ORDER_FKID] join [dbo].[PRODUCT_MASTER] ON [PRODUCT_PKID]=[ORDER_ITEM_PRODUCT_FKID] where [ORDER_ITEM_ORDER_FKID]=@ORDER_ITEM_ORDER_FKID"));
 
         case 6:
           result = _context5.sent;
@@ -181,16 +181,17 @@ function AcceptOrderRequest(reqId) {
     while (1) {
       switch (_context6.prev = _context6.next) {
         case 0:
-          _context6.prev = 0;
-          _context6.next = 3;
+          console.log("reqId: ", reqId);
+          _context6.prev = 1;
+          _context6.next = 4;
           return regeneratorRuntime.awrap(sql.connect(config));
 
-        case 3:
+        case 4:
           pool = _context6.sent;
-          _context6.next = 6;
-          return regeneratorRuntime.awrap(pool.request().input("ORDER_PKID", reqId).query("UPDATE ORDER SET ORDER_ISACTIVE =1 WHERE ORDER_PKID=@ORDER_PKID"));
+          _context6.next = 7;
+          return regeneratorRuntime.awrap(pool.request().input("ORDER_PKID", reqId).query("UPDATE [dbo].[ORDER] SET ORDER_ISACTIVE =1 , ORDER_STATUS=1 WHERE ORDER_PKID=@ORDER_PKID"));
 
-        case 6:
+        case 7:
           result = _context6.sent;
           pool.close();
           message = false;
@@ -200,19 +201,20 @@ function AcceptOrderRequest(reqId) {
           }
 
           pool.close();
+          console.log("message: ", message);
           return _context6.abrupt("return", message);
 
-        case 14:
-          _context6.prev = 14;
-          _context6.t0 = _context6["catch"](0);
+        case 16:
+          _context6.prev = 16;
+          _context6.t0 = _context6["catch"](1);
           console.log("AcceptOrderRequest-->", _context6.t0);
 
-        case 17:
+        case 19:
         case "end":
           return _context6.stop();
       }
     }
-  }, null, null, [[0, 14]]);
+  }, null, null, [[1, 16]]);
 }
 
 function RejectOrderRequest(reqId) {
@@ -221,16 +223,17 @@ function RejectOrderRequest(reqId) {
     while (1) {
       switch (_context7.prev = _context7.next) {
         case 0:
-          _context7.prev = 0;
-          _context7.next = 3;
+          console.log("reqId: ", reqId);
+          _context7.prev = 1;
+          _context7.next = 4;
           return regeneratorRuntime.awrap(sql.connect(config));
 
-        case 3:
+        case 4:
           pool = _context7.sent;
-          _context7.next = 6;
-          return regeneratorRuntime.awrap(pool.request().input("ORDER_PKID", reqId).query("UPDATE ORDER SET ORDER_ISACTIVE =2 WHERE ORDER_PKID=@ORDER_PKID"));
+          _context7.next = 7;
+          return regeneratorRuntime.awrap(pool.request().input("ORDER_PKID", reqId).query("UPDATE [dbo].[ORDER] SET ORDER_ISACTIVE =0 , ORDER_STATUS=2 WHERE ORDER_PKID=@ORDER_PKID"));
 
-        case 6:
+        case 7:
           result = _context7.sent;
           pool.close();
           message = false;
@@ -242,17 +245,17 @@ function RejectOrderRequest(reqId) {
           pool.close();
           return _context7.abrupt("return", message);
 
-        case 14:
-          _context7.prev = 14;
-          _context7.t0 = _context7["catch"](0);
+        case 15:
+          _context7.prev = 15;
+          _context7.t0 = _context7["catch"](1);
           console.log("RejectOrderRequest-->", _context7.t0);
 
-        case 17:
+        case 18:
         case "end":
           return _context7.stop();
       }
     }
-  }, null, null, [[0, 14]]);
+  }, null, null, [[1, 15]]);
 }
 
 function getSupplyType() {
@@ -442,7 +445,7 @@ function updateSupplyType(TypeId, obj) {
 }
 
 function GetPendingOrdersBySupplyType(supplyId) {
-  var pool, result;
+  var pool, result, result2;
   return regeneratorRuntime.async(function GetPendingOrdersBySupplyType$(_context12) {
     while (1) {
       switch (_context12.prev = _context12.next) {
@@ -454,28 +457,46 @@ function GetPendingOrdersBySupplyType(supplyId) {
         case 3:
           pool = _context12.sent;
           _context12.next = 6;
-          return regeneratorRuntime.awrap(pool.request().input("SUPPLY_TYPE_PKID", supplyId).query(" select [ORDER_NUMBER],[SUPPLY_NAME] FROM [dbo].[ORDER] join [dbo].[SUPPLY_TYPE] on [SUPPLY_TYPE_PKID]=[ORDER_SUPPLY_TYPE] WHERE [ORDER_ISACTIVE] = 0 AND [ORDER_SUPPLY_TYPE]=@SUPPLY_TYPE_PKID"));
+          return regeneratorRuntime.awrap(pool.request().input("SUPPLY_TYPE_PKID", supplyId).query("select (select count(*) from [dbo].[ORDER_ITEM] where [ORDER_ITEM_ORDER_FKID] = ORD.ORDER_PKID) as ItemCount,(SELECT MONTH(ORDER_DATE)) AS MONTH_NUMBER ,(SELECT CONVERT(TIME, ORDER_DATE)) as clock,ORD.*,CUSTOMER_NAME,COMPANY_NAME,[SUPPLY_NAME],(SELECT DATEDIFF(HOUR, (SELECT [ORDER_DATE] FROM [dbo].[ORDER]), (SELECT SYSDATETIME())) ) AS hrs ,(SELECT CASE WHEN ORDER_BY = 'admin' THEN (select SUPER_ADMIN_NAME from [dbo].[SUPER_ADMIN] WHERE [SUPER_ADMIN_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'manager' OR ORDER_BY = 'officer' THEN (select [EMPLOYEE_NAME] from [dbo].[EMPLOYEE_MASTER] WHERE [EMPLOYEE_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'customer' THEN (select [CUSTOMER_NAME] from [dbo].[CUSTOMER_MASTER] WHERE [CUSTOMER_PKID]=ORDER_BY_FKID) END FROM [dbo].[ORDER]) as TypeName from [dbo].[ORDER] AS ORD JOIN [dbo].[ORDER_ITEM] AS ITM ON [ORDER_ITEM_ORDER_FKID]=[ORDER_PKID] JOIN [dbo].[CUSTOMER_MASTER] ON [CUSTOMER_PKID]=[ORDER_CUSTOMER_FKID] JOIN [dbo].[COMPANY] ON [COMPANY_PKID]=[ORDER_COMPANY_FKID] JOIN [dbo].[SUPPLY_TYPE] ON [SUPPLY_TYPE_PKID]=[ORDER_SUPPLY_TYPE] WHERE ORDER_ISACTIVE=0 AND [ORDER_SUPPLY_TYPE]=@SUPPLY_TYPE_PKID"));
 
         case 6:
           result = _context12.sent;
+          _context12.next = 9;
+          return regeneratorRuntime.awrap(pool.request().query("select ORD.*,CUSTOMER_NAME,COMPANY_NAME,[SUPPLY_NAME],(SELECT DATEDIFF(HOUR, (SELECT [ORDER_DATE] FROM [dbo].[ORDER]), (SELECT SYSDATETIME())) ) AS hrs ,(SELECT CASE WHEN ORDER_BY = 'admin' THEN (select SUPER_ADMIN_NAME from [dbo].[SUPER_ADMIN] WHERE [SUPER_ADMIN_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'manager' OR ORDER_BY = 'officer' THEN (select [EMPLOYEE_NAME] from [dbo].[EMPLOYEE_MASTER] WHERE [EMPLOYEE_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'customer' THEN (select [CUSTOMER_NAME] from [dbo].[CUSTOMER_MASTER] WHERE [CUSTOMER_PKID]=ORDER_BY_FKID) END FROM [dbo].[ORDER]) as TypeName from [dbo].[ORDER] AS ORD JOIN [dbo].[ORDER_ITEM] AS ITM ON [ORDER_ITEM_ORDER_FKID]=[ORDER_PKID] JOIN [dbo].[CUSTOMER_MASTER] ON [CUSTOMER_PKID]=[ORDER_CUSTOMER_FKID] JOIN [dbo].[COMPANY] ON [COMPANY_PKID]=[ORDER_COMPANY_FKID] JOIN [dbo].[SUPPLY_TYPE] ON [SUPPLY_TYPE_PKID]=[ORDER_SUPPLY_TYPE] WHERE ORDER_ISACTIVE=0"));
+
+        case 9:
+          result2 = _context12.sent;
           pool.close();
+
+          if (!(supplyId == 0)) {
+            _context12.next = 15;
+            break;
+          }
+
+          return _context12.abrupt("return", result2.recordsets[0]);
+
+        case 15:
           return _context12.abrupt("return", result.recordsets[0]);
 
-        case 11:
-          _context12.prev = 11;
+        case 16:
+          _context12.next = 21;
+          break;
+
+        case 18:
+          _context12.prev = 18;
           _context12.t0 = _context12["catch"](0);
           console.log("GetPendingOrdersBySupplyType-->", _context12.t0);
 
-        case 14:
+        case 21:
         case "end":
           return _context12.stop();
       }
     }
-  }, null, null, [[0, 11]]);
+  }, null, null, [[0, 18]]);
 }
 
-function GetPendingOrdersByMonth(supplyId) {
-  var pool, result;
+function GetPendingOrdersByMonth(MONTH_NUMBER) {
+  var pool, result, result2;
   return regeneratorRuntime.async(function GetPendingOrdersByMonth$(_context13) {
     while (1) {
       switch (_context13.prev = _context13.next) {
@@ -487,24 +508,244 @@ function GetPendingOrdersByMonth(supplyId) {
         case 3:
           pool = _context13.sent;
           _context13.next = 6;
-          return regeneratorRuntime.awrap(pool.request().input("SUPPLY_TYPE_PKID", supplyId).query("select [ORDER_NUMBER], [SUPPLY_NAME] FROM [dbo].[ORDER] join [dbo].[SUPPLY_TYPE] on [SUPPLY_TYPE_PKID]=[ORDER_SUPPLY_TYPE] WHERE [ORDER_ISACTIVE] = 0 AND [ORDER_SUPPLY_TYPE]=@SUPPLY_TYPE_PKID"));
+          return regeneratorRuntime.awrap(pool.request().input("MONTH_NUMBER", MONTH_NUMBER).query("select (select count(*) from [dbo].[ORDER_ITEM] where [ORDER_ITEM_ORDER_FKID] = ORD.ORDER_PKID) as ItemCount,(SELECT MONTH(ORDER_DATE)) AS MONTH_NUMBER ,(SELECT CONVERT(TIME, ORDER_DATE)) as clock,ORD.*,CUSTOMER_NAME,COMPANY_NAME,[SUPPLY_NAME],(SELECT DATEDIFF(HOUR, (SELECT [ORDER_DATE] FROM [dbo].[ORDER]), (SELECT SYSDATETIME())) ) AS hrs , (SELECT CASE WHEN ORDER_BY = 'admin' THEN (select SUPER_ADMIN_NAME from [dbo].[SUPER_ADMIN] WHERE [SUPER_ADMIN_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'manager' OR ORDER_BY = 'officer' THEN (select [EMPLOYEE_NAME] from [dbo].[EMPLOYEE_MASTER] WHERE [EMPLOYEE_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'customer' THEN (select [CUSTOMER_NAME] from [dbo].[CUSTOMER_MASTER] WHERE [CUSTOMER_PKID]=ORDER_BY_FKID) END FROM [dbo].[ORDER]) as TypeName from [dbo].[ORDER] AS ORD JOIN [dbo].[ORDER_ITEM] AS ITM ON [ORDER_ITEM_ORDER_FKID]=[ORDER_PKID] JOIN [dbo].[CUSTOMER_MASTER] ON [CUSTOMER_PKID]=[ORDER_CUSTOMER_FKID] JOIN [dbo].[COMPANY] ON [COMPANY_PKID]=[ORDER_COMPANY_FKID] JOIN [dbo].[SUPPLY_TYPE] ON [SUPPLY_TYPE_PKID]=[ORDER_SUPPLY_TYPE] WHERE ORDER_ISACTIVE=0 and (SELECT MONTH(ORDER_DATE))=@MONTH_NUMBER"));
 
         case 6:
           result = _context13.sent;
+          _context13.next = 9;
+          return regeneratorRuntime.awrap(pool.request().query("select (select count(*) from [dbo].[ORDER_ITEM] where [ORDER_ITEM_ORDER_FKID] = ORD.ORDER_PKID) as ItemCount,(SELECT MONTH(ORDER_DATE)) AS MONTH_NUMBER ,ORD.*,CUSTOMER_NAME,COMPANY_NAME,[SUPPLY_NAME],(SELECT DATEDIFF(HOUR, (SELECT [ORDER_DATE] FROM [dbo].[ORDER]), (SELECT SYSDATETIME())) ) AS hrs , (SELECT CASE WHEN ORDER_BY = 'admin' THEN (select SUPER_ADMIN_NAME from [dbo].[SUPER_ADMIN] WHERE [SUPER_ADMIN_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'manager' OR ORDER_BY = 'officer' THEN (select [EMPLOYEE_NAME] from [dbo].[EMPLOYEE_MASTER] WHERE [EMPLOYEE_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'customer' THEN (select [CUSTOMER_NAME] from [dbo].[CUSTOMER_MASTER] WHERE [CUSTOMER_PKID]=ORDER_BY_FKID) END FROM [dbo].[ORDER]) as TypeName from [dbo].[ORDER] AS ORD JOIN [dbo].[ORDER_ITEM] AS ITM ON [ORDER_ITEM_ORDER_FKID]=[ORDER_PKID] JOIN [dbo].[CUSTOMER_MASTER] ON [CUSTOMER_PKID]=[ORDER_CUSTOMER_FKID] JOIN [dbo].[COMPANY] ON [COMPANY_PKID]=[ORDER_COMPANY_FKID] JOIN [dbo].[SUPPLY_TYPE] ON [SUPPLY_TYPE_PKID]=[ORDER_SUPPLY_TYPE] WHERE ORDER_ISACTIVE=0"));
+
+        case 9:
+          result2 = _context13.sent;
           pool.close();
+
+          if (!(MONTH_NUMBER == 0)) {
+            _context13.next = 15;
+            break;
+          }
+
+          return _context13.abrupt("return", result2.recordsets[0]);
+
+        case 15:
           return _context13.abrupt("return", result.recordsets[0]);
 
-        case 11:
-          _context13.prev = 11;
+        case 16:
+          _context13.next = 21;
+          break;
+
+        case 18:
+          _context13.prev = 18;
           _context13.t0 = _context13["catch"](0);
           console.log("GetPendingOrdersByMonth-->", _context13.t0);
 
-        case 14:
+        case 21:
         case "end":
           return _context13.stop();
       }
     }
+  }, null, null, [[0, 18]]);
+}
+
+function GetPendingOrdersByDate(fdate, tdate) {
+  var pool, result;
+  return regeneratorRuntime.async(function GetPendingOrdersByDate$(_context14) {
+    while (1) {
+      switch (_context14.prev = _context14.next) {
+        case 0:
+          console.log("fdate, tdate: ", fdate, tdate);
+          _context14.prev = 1;
+          _context14.next = 4;
+          return regeneratorRuntime.awrap(sql.connect(config));
+
+        case 4:
+          pool = _context14.sent;
+          _context14.next = 7;
+          return regeneratorRuntime.awrap(pool.request().input("fdate", fdate).input("tdate", tdate).query("select (select count(*) from [dbo].[ORDER_ITEM] where [ORDER_ITEM_ORDER_FKID] = ORD.ORDER_PKID) as ItemCount,(SELECT MONTH(ORDER_DATE)) AS MONTH_NUMBER ,ORD.*,CUSTOMER_NAME,COMPANY_NAME,[SUPPLY_NAME],(SELECT DATEDIFF(HOUR, (SELECT [ORDER_DATE] FROM [dbo].[ORDER]), (SELECT SYSDATETIME())) ) AS hrs , (SELECT CASE WHEN ORDER_BY = 'admin' THEN (select SUPER_ADMIN_NAME from [dbo].[SUPER_ADMIN] WHERE [SUPER_ADMIN_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'manager' OR ORDER_BY = 'officer' THEN (select [EMPLOYEE_NAME] from [dbo].[EMPLOYEE_MASTER] WHERE [EMPLOYEE_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'customer' THEN (select [CUSTOMER_NAME] from [dbo].[CUSTOMER_MASTER] WHERE [CUSTOMER_PKID]=ORDER_BY_FKID) END FROM [dbo].[ORDER]) as TypeName from [dbo].[ORDER] AS ORD JOIN [dbo].[ORDER_ITEM] AS ITM ON [ORDER_ITEM_ORDER_FKID]=[ORDER_PKID] JOIN [dbo].[CUSTOMER_MASTER] ON [CUSTOMER_PKID]=[ORDER_CUSTOMER_FKID] JOIN [dbo].[COMPANY] ON [COMPANY_PKID]=[ORDER_COMPANY_FKID] JOIN [dbo].[SUPPLY_TYPE] ON [SUPPLY_TYPE_PKID]=[ORDER_SUPPLY_TYPE] WHERE ORDER_ISACTIVE=0 and cast(ORDER_DATE as date) between @fdate and @tdate"));
+
+        case 7:
+          result = _context14.sent;
+          pool.close();
+          return _context14.abrupt("return", result.recordsets[0]);
+
+        case 12:
+          _context14.prev = 12;
+          _context14.t0 = _context14["catch"](1);
+          console.log("GetPendingOrdersByDate-->", _context14.t0);
+
+        case 15:
+        case "end":
+          return _context14.stop();
+      }
+    }
+  }, null, null, [[1, 12]]);
+}
+
+function getAllApprovedOrders() {
+  var pool, result;
+  return regeneratorRuntime.async(function getAllApprovedOrders$(_context15) {
+    while (1) {
+      switch (_context15.prev = _context15.next) {
+        case 0:
+          _context15.prev = 0;
+          _context15.next = 3;
+          return regeneratorRuntime.awrap(sql.connect(config));
+
+        case 3:
+          pool = _context15.sent;
+          _context15.next = 6;
+          return regeneratorRuntime.awrap(pool.request().query("select (select count(*) from [dbo].[ORDER_ITEM] where [ORDER_ITEM_ORDER_FKID] = ORD.ORDER_PKID) as ItemCount,(SELECT MONTH(ORDER_DATE)) AS MONTH_NUMBER ,cast([ORDER_DATE] as date) as bdate,(SELECT CONVERT(TIME, ORDER_DATE)) as clock,ORD.*,CUSTOMER_NAME,COMPANY_NAME,[SUPPLY_NAME],(SELECT DATEDIFF(HOUR, (SELECT [ORDER_DATE] FROM [dbo].[ORDER]), (SELECT SYSDATETIME())) ) AS hrs ,(SELECT CASE WHEN ORDER_BY = 'admin' THEN (select SUPER_ADMIN_NAME from [dbo].[SUPER_ADMIN] WHERE [SUPER_ADMIN_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'manager' OR ORDER_BY = 'officer' THEN (select [EMPLOYEE_NAME] from [dbo].[EMPLOYEE_MASTER] WHERE [EMPLOYEE_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'customer' THEN (select [CUSTOMER_NAME] from [dbo].[CUSTOMER_MASTER] WHERE [CUSTOMER_PKID]=ORDER_BY_FKID) END FROM [dbo].[ORDER]) as TypeName from [dbo].[ORDER] AS ORD JOIN [dbo].[ORDER_ITEM] AS ITM ON [ORDER_ITEM_ORDER_FKID]=[ORDER_PKID] JOIN [dbo].[CUSTOMER_MASTER] ON [CUSTOMER_PKID]=[ORDER_CUSTOMER_FKID] JOIN [dbo].[COMPANY] ON [COMPANY_PKID]=[ORDER_COMPANY_FKID] JOIN [dbo].[SUPPLY_TYPE] ON [SUPPLY_TYPE_PKID]=[ORDER_SUPPLY_TYPE] WHERE ORDER_ISACTIVE=1 AND ORDER_STATUS=1"));
+
+        case 6:
+          result = _context15.sent;
+          pool.close();
+          return _context15.abrupt("return", result.recordsets[0]);
+
+        case 11:
+          _context15.prev = 11;
+          _context15.t0 = _context15["catch"](0);
+          console.log("getAllApprovedOrders-->", _context15.t0);
+
+        case 14:
+        case "end":
+          return _context15.stop();
+      }
+    }
   }, null, null, [[0, 11]]);
+}
+
+function getApprovedOrdersByDate(fdate, tdate) {
+  var pool, result;
+  return regeneratorRuntime.async(function getApprovedOrdersByDate$(_context16) {
+    while (1) {
+      switch (_context16.prev = _context16.next) {
+        case 0:
+          _context16.prev = 0;
+          _context16.next = 3;
+          return regeneratorRuntime.awrap(sql.connect(config));
+
+        case 3:
+          pool = _context16.sent;
+          _context16.next = 6;
+          return regeneratorRuntime.awrap(pool.request().input("fdate", fdate).input("tdate", tdate).query("select (select count(*) from [dbo].[ORDER_ITEM] where [ORDER_ITEM_ORDER_FKID] = ORD.ORDER_PKID) as ItemCount,(SELECT MONTH(ORDER_DATE)) AS MONTH_NUMBER ,ORD.*,CUSTOMER_NAME,COMPANY_NAME,[SUPPLY_NAME],(SELECT DATEDIFF(HOUR, (SELECT [ORDER_DATE] FROM [dbo].[ORDER]), (SELECT SYSDATETIME())) ) AS hrs , (SELECT CASE WHEN ORDER_BY = 'admin' THEN (select SUPER_ADMIN_NAME from [dbo].[SUPER_ADMIN] WHERE [SUPER_ADMIN_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'manager' OR ORDER_BY = 'officer' THEN (select [EMPLOYEE_NAME] from [dbo].[EMPLOYEE_MASTER] WHERE [EMPLOYEE_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'customer' THEN (select [CUSTOMER_NAME] from [dbo].[CUSTOMER_MASTER] WHERE [CUSTOMER_PKID]=ORDER_BY_FKID) END FROM [dbo].[ORDER]) as TypeName from [dbo].[ORDER] AS ORD JOIN [dbo].[ORDER_ITEM] AS ITM ON [ORDER_ITEM_ORDER_FKID]=[ORDER_PKID] JOIN [dbo].[CUSTOMER_MASTER] ON [CUSTOMER_PKID]=[ORDER_CUSTOMER_FKID] JOIN [dbo].[COMPANY] ON [COMPANY_PKID]=[ORDER_COMPANY_FKID] JOIN [dbo].[SUPPLY_TYPE] ON [SUPPLY_TYPE_PKID]=[ORDER_SUPPLY_TYPE] WHERE ORDER_ISACTIVE=1 AND ORDER_STATUS=1 and cast(ORDER_DATE as date) between @fdate and @tdate"));
+
+        case 6:
+          result = _context16.sent;
+          pool.close();
+          return _context16.abrupt("return", result.recordsets[0]);
+
+        case 11:
+          _context16.prev = 11;
+          _context16.t0 = _context16["catch"](0);
+          console.log("GetApprovedOrdersByDate-->", _context16.t0);
+
+        case 14:
+        case "end":
+          return _context16.stop();
+      }
+    }
+  }, null, null, [[0, 11]]);
+}
+
+function getApprovedOrdersBySupplyType(supplyId) {
+  var pool, result, result2;
+  return regeneratorRuntime.async(function getApprovedOrdersBySupplyType$(_context17) {
+    while (1) {
+      switch (_context17.prev = _context17.next) {
+        case 0:
+          _context17.prev = 0;
+          _context17.next = 3;
+          return regeneratorRuntime.awrap(sql.connect(config));
+
+        case 3:
+          pool = _context17.sent;
+          _context17.next = 6;
+          return regeneratorRuntime.awrap(pool.request().input("SUPPLY_TYPE_PKID", supplyId).query("select (select count(*) from [dbo].[ORDER_ITEM] where [ORDER_ITEM_ORDER_FKID] = ORD.ORDER_PKID) as ItemCount,(SELECT MONTH(ORDER_DATE)) AS MONTH_NUMBER ,(SELECT CONVERT(TIME, ORDER_DATE)) as clock,ORD.*,CUSTOMER_NAME,COMPANY_NAME,[SUPPLY_NAME],(SELECT DATEDIFF(HOUR, (SELECT [ORDER_DATE] FROM [dbo].[ORDER]), (SELECT SYSDATETIME())) ) AS hrs ,(SELECT CASE WHEN ORDER_BY = 'admin' THEN (select SUPER_ADMIN_NAME from [dbo].[SUPER_ADMIN] WHERE [SUPER_ADMIN_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'manager' OR ORDER_BY = 'officer' THEN (select [EMPLOYEE_NAME] from [dbo].[EMPLOYEE_MASTER] WHERE [EMPLOYEE_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'customer' THEN (select [CUSTOMER_NAME] from [dbo].[CUSTOMER_MASTER] WHERE [CUSTOMER_PKID]=ORDER_BY_FKID) END FROM [dbo].[ORDER]) as TypeName from [dbo].[ORDER] AS ORD JOIN [dbo].[ORDER_ITEM] AS ITM ON [ORDER_ITEM_ORDER_FKID]=[ORDER_PKID] JOIN [dbo].[CUSTOMER_MASTER] ON [CUSTOMER_PKID]=[ORDER_CUSTOMER_FKID] JOIN [dbo].[COMPANY] ON [COMPANY_PKID]=[ORDER_COMPANY_FKID] JOIN [dbo].[SUPPLY_TYPE] ON [SUPPLY_TYPE_PKID]=[ORDER_SUPPLY_TYPE] WHERE ORDER_ISACTIVE=1 AND ORDER_STATUS=1 AND [ORDER_SUPPLY_TYPE]=@SUPPLY_TYPE_PKID"));
+
+        case 6:
+          result = _context17.sent;
+          _context17.next = 9;
+          return regeneratorRuntime.awrap(pool.request().query("select ORD.*,CUSTOMER_NAME,COMPANY_NAME,[SUPPLY_NAME],(SELECT DATEDIFF(HOUR, (SELECT [ORDER_DATE] FROM [dbo].[ORDER]), (SELECT SYSDATETIME())) ) AS hrs ,(SELECT CASE WHEN ORDER_BY = 'admin' THEN (select SUPER_ADMIN_NAME from [dbo].[SUPER_ADMIN] WHERE [SUPER_ADMIN_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'manager' OR ORDER_BY = 'officer' THEN (select [EMPLOYEE_NAME] from [dbo].[EMPLOYEE_MASTER] WHERE [EMPLOYEE_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'customer' THEN (select [CUSTOMER_NAME] from [dbo].[CUSTOMER_MASTER] WHERE [CUSTOMER_PKID]=ORDER_BY_FKID) END FROM [dbo].[ORDER]) as TypeName from [dbo].[ORDER] AS ORD JOIN [dbo].[ORDER_ITEM] AS ITM ON [ORDER_ITEM_ORDER_FKID]=[ORDER_PKID] JOIN [dbo].[CUSTOMER_MASTER] ON [CUSTOMER_PKID]=[ORDER_CUSTOMER_FKID] JOIN [dbo].[COMPANY] ON [COMPANY_PKID]=[ORDER_COMPANY_FKID] JOIN [dbo].[SUPPLY_TYPE] ON [SUPPLY_TYPE_PKID]=[ORDER_SUPPLY_TYPE] WHERE ORDER_ISACTIVE=1 AND ORDER_STATUS=1"));
+
+        case 9:
+          result2 = _context17.sent;
+          pool.close();
+
+          if (!(supplyId == 0)) {
+            _context17.next = 15;
+            break;
+          }
+
+          return _context17.abrupt("return", result2.recordsets[0]);
+
+        case 15:
+          return _context17.abrupt("return", result.recordsets[0]);
+
+        case 16:
+          _context17.next = 21;
+          break;
+
+        case 18:
+          _context17.prev = 18;
+          _context17.t0 = _context17["catch"](0);
+          console.log("getApprovedOrdersBySupplyType-->", _context17.t0);
+
+        case 21:
+        case "end":
+          return _context17.stop();
+      }
+    }
+  }, null, null, [[0, 18]]);
+}
+
+function getApprovedOrdersByMonth(MONTH_NUMBER) {
+  var pool, result, result2;
+  return regeneratorRuntime.async(function getApprovedOrdersByMonth$(_context18) {
+    while (1) {
+      switch (_context18.prev = _context18.next) {
+        case 0:
+          _context18.prev = 0;
+          _context18.next = 3;
+          return regeneratorRuntime.awrap(sql.connect(config));
+
+        case 3:
+          pool = _context18.sent;
+          _context18.next = 6;
+          return regeneratorRuntime.awrap(pool.request().input("MONTH_NUMBER", MONTH_NUMBER).query("select (select count(*) from [dbo].[ORDER_ITEM] where [ORDER_ITEM_ORDER_FKID] = ORD.ORDER_PKID) as ItemCount,(SELECT MONTH(ORDER_DATE)) AS MONTH_NUMBER ,(SELECT CONVERT(TIME, ORDER_DATE)) as clock,ORD.*,CUSTOMER_NAME,COMPANY_NAME,[SUPPLY_NAME],(SELECT DATEDIFF(HOUR, (SELECT [ORDER_DATE] FROM [dbo].[ORDER]), (SELECT SYSDATETIME())) ) AS hrs ,(SELECT CASE WHEN ORDER_BY = 'admin' THEN (select SUPER_ADMIN_NAME from [dbo].[SUPER_ADMIN] WHERE [SUPER_ADMIN_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'manager' OR ORDER_BY = 'officer' THEN (select [EMPLOYEE_NAME] from [dbo].[EMPLOYEE_MASTER] WHERE [EMPLOYEE_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'customer' THEN (select [CUSTOMER_NAME] from [dbo].[CUSTOMER_MASTER] WHERE [CUSTOMER_PKID]=ORDER_BY_FKID) END FROM [dbo].[ORDER]) as TypeName from [dbo].[ORDER] AS ORD JOIN [dbo].[ORDER_ITEM] AS ITM ON [ORDER_ITEM_ORDER_FKID]=[ORDER_PKID] JOIN [dbo].[CUSTOMER_MASTER] ON [CUSTOMER_PKID]=[ORDER_CUSTOMER_FKID] JOIN [dbo].[COMPANY] ON [COMPANY_PKID]=[ORDER_COMPANY_FKID] JOIN [dbo].[SUPPLY_TYPE] ON [SUPPLY_TYPE_PKID]=[ORDER_SUPPLY_TYPE] WHERE ORDER_ISACTIVE=1 AND ORDER_STATUS=1 and (SELECT MONTH(ORDER_DATE))=@MONTH_NUMBER"));
+
+        case 6:
+          result = _context18.sent;
+          _context18.next = 9;
+          return regeneratorRuntime.awrap(pool.request().query("select (select count(*) from [dbo].[ORDER_ITEM] where [ORDER_ITEM_ORDER_FKID] = ORD.ORDER_PKID) as ItemCount,(SELECT MONTH(ORDER_DATE)) AS MONTH_NUMBER ,ORD.*,CUSTOMER_NAME,COMPANY_NAME,[SUPPLY_NAME],(SELECT DATEDIFF(HOUR, (SELECT [ORDER_DATE] FROM [dbo].[ORDER]), (SELECT SYSDATETIME())) ) AS hrs , (SELECT CASE WHEN ORDER_BY = 'admin' THEN (select SUPER_ADMIN_NAME from [dbo].[SUPER_ADMIN] WHERE [SUPER_ADMIN_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'manager' OR ORDER_BY = 'officer' THEN (select [EMPLOYEE_NAME] from [dbo].[EMPLOYEE_MASTER] WHERE [EMPLOYEE_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'customer' THEN (select [CUSTOMER_NAME] from [dbo].[CUSTOMER_MASTER] WHERE [CUSTOMER_PKID]=ORDER_BY_FKID) END FROM [dbo].[ORDER]) as TypeName from [dbo].[ORDER] AS ORD JOIN [dbo].[ORDER_ITEM] AS ITM ON [ORDER_ITEM_ORDER_FKID]=[ORDER_PKID] JOIN [dbo].[CUSTOMER_MASTER] ON [CUSTOMER_PKID]=[ORDER_CUSTOMER_FKID] JOIN [dbo].[COMPANY] ON [COMPANY_PKID]=[ORDER_COMPANY_FKID] JOIN [dbo].[SUPPLY_TYPE] ON [SUPPLY_TYPE_PKID]=[ORDER_SUPPLY_TYPE] WHERE ORDER_ISACTIVE=1 AND ORDER_STATUS=1"));
+
+        case 9:
+          result2 = _context18.sent;
+          pool.close();
+
+          if (!(MONTH_NUMBER == 0)) {
+            _context18.next = 15;
+            break;
+          }
+
+          return _context18.abrupt("return", result2.recordsets[0]);
+
+        case 15:
+          return _context18.abrupt("return", result.recordsets[0]);
+
+        case 16:
+          _context18.next = 21;
+          break;
+
+        case 18:
+          _context18.prev = 18;
+          _context18.t0 = _context18["catch"](0);
+          console.log("getApprovedOrdersByMonth-->", _context18.t0);
+
+        case 21:
+        case "end":
+          return _context18.stop();
+      }
+    }
+  }, null, null, [[0, 18]]);
 }
 
 module.exports = {
@@ -519,5 +760,11 @@ module.exports = {
   getSupplyType: getSupplyType,
   deleteSupplyType: deleteSupplyType,
   updateSupplyType: updateSupplyType,
-  GetPendingOrdersBySupplyType: GetPendingOrdersBySupplyType
+  GetPendingOrdersBySupplyType: GetPendingOrdersBySupplyType,
+  GetPendingOrdersByMonth: GetPendingOrdersByMonth,
+  GetPendingOrdersByDate: GetPendingOrdersByDate,
+  getAllApprovedOrders: getAllApprovedOrders,
+  getApprovedOrdersByDate: getApprovedOrdersByDate,
+  getApprovedOrdersBySupplyType: getApprovedOrdersBySupplyType,
+  getApprovedOrdersByMonth: getApprovedOrdersByMonth
 };
