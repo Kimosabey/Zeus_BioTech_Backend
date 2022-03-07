@@ -2,7 +2,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-07 18:02:44
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-05 16:49:07
+ * @Last Modified time: 2022-03-07 17:14:18
  */
 
 var express = require("express");
@@ -35,6 +35,7 @@ var HqDb = require("./apiOperations/HeadQuarter");
 var CompDb = require("./apiOperations/company");
 var ProdDb = require("./apiOperations/products");
 var OrdDb = require("./apiOperations/OrderManagement");
+var OrdlogDb = require("./apiOperations/OrdMgrLogin");
 
 // ----------------Building a Secure Node js REST API---------------------//
 app.use(express.static(__dirname + "/static"));
@@ -50,6 +51,7 @@ app.use(morgan("combined"));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
+
 app.options("*", cors());
 app.all("*", function (req, res, next) {
   res.set("X-Frame-Options", "ALLOWALL");
@@ -78,10 +80,7 @@ router.all("*", function (req, res, next) {
   next();
 });
 
-
-
 app.use("/api", router);
-
 
 // file Upload -----------------------
 global.__basedir = __dirname;
@@ -99,7 +98,7 @@ initRoutes(app);
 
 app.get("/", (req, res) => {
   var responseText =
-    '<h1 style="color:green;">Hello Kimo Restful Api Using Nodejs is Working!!!</h1>';
+    '<h1 style="color:#34eb5b;">Hello Kimo Restful Api Using Nodejs is Working!!!</h1>';
   res.send(responseText);
 });
 
@@ -122,36 +121,19 @@ app.get("/example/a", (req, res) => {
   res.json("Hello from A!");
 });
 
-router.use((req, res, next) => {
-  // console.log("Time:", new Date());
-  next();
-});
-
-// router.route("/orders").get(async (request, response) => {
-//   await Db.getOrders().then((data) => {
-//     response.json(data);
-//   });
-// });
-
-// router.route("/orders/:id").get(async (request, response) => {
-//   await Db.getOrder(request.params.id).then((data) => {
-//     response.json(data[0]);
-//   });
-// });
-
-// router.route("/orders").post(async (request, response) => {
-//   let order = { ...request.body };
-//   await Db.addOrder(order).then((data) => {
-//     response.status(201).json(data);
-//   });
-// });
-
 // -----------Login Api's--------------- //
 
 router.get("/AdminLogin/:email/:password", async (req, res) => {
   res.json(await AdmDb.getAdminLogin(req.params.email, req.params.password));
 });
 
+// -------[ In Order there Are aretypes of Admins ] AdminTypeLogin Api's-------------------------------------------//
+
+router.get("/OrderManagementAdminLogin/:em/:pass/:id", async (req, res) => {
+  res.json(
+    await OrdlogDb.AdminTypeLogin(req.params.em, req.params.pass, req.params.id)
+  );
+});
 // -----------Country Api's--------------- //
 
 router.get("/countries", async (req, res, next) => {
@@ -1033,6 +1015,146 @@ router.get("/GetApprovedOrdersByDate/:fdate/:tdate", async (req, res) => {
     await OrdDb.getApprovedOrdersByDate(req.params.fdate, req.params.tdate)
   );
 });
+
+router.put("/ApprovedOrderConfirm", async (req, res, next) => {
+  let obj = { ...req.body };
+
+  try {
+    res.json(await OrdDb.ApprovedOrderConfirm(obj));
+  } catch (err) {
+    console.error(`Error while Adding`, err.message);
+    next(err);
+  }
+});
+
+router.get("/GetAllScheduledOrder", async (req, res) => {
+  res.json(await OrdDb.GetAllScheduledOrder());
+});
+
+router.get("/getScheduledOrdersBySupplyType/:id", async (req, res) => {
+  res.json(await OrdDb.getScheduledOrdersBySupplyType(req.params.id));
+});
+
+router.get("/getScheduledOrdersByMonth/:MOnthNumber", async (req, res) => {
+  res.json(await OrdDb.getScheduledOrdersByMonth(req.params.MOnthNumber));
+});
+
+router.get("/getScheduledOrdersByDate/:fdate/:tdate", async (req, res) => {
+  res.json(
+    await OrdDb.getScheduledOrdersByDate(req.params.fdate, req.params.tdate)
+  );
+});
+
+router.get("/OrderProcessRemark/:id", async (req, res) => {
+  res.json(await OrdDb.getOrderProcessRemark(req.params.id));
+});
+
+router.get("/GetAllConfirmInvoiceOrder", async (req, res) => {
+  res.json(await OrdDb.GetAllConfirmInvoiceOrder());
+});
+
+router.get("/getConfirmInvoiceOrdersBySupplyType/:id", async (req, res) => {
+  res.json(await OrdDb.getConfirmInvoiceOrdersBySupplyType(req.params.id));
+});
+
+router.get("/getConfirmInvoiceOrdersByMonth/:MOnthNumber", async (req, res) => {
+  res.json(await OrdDb.getConfirmInvoiceOrdersByMonth(req.params.MOnthNumber));
+});
+
+router.get("/getConfirmInvoiceOrdesByDate/:fdate/:tdate", async (req, res) => {
+  res.json(
+    await OrdDb.getConfirmInvoiceOrdesByDate(req.params.fdate, req.params.tdate)
+  );
+});
+
+router.put("/ConfirmForInvoice/:id/:tDate", async (req, res) => {
+  res.json(await OrdDb.ConfirmForInvoice(req.params.id, req.params.tDate));
+});
+
+router.put("/ConfirmInvoiceGenerate/:id", async (req, res) => {
+  res.json(await OrdDb.ConfirmInvoiceGenerate(req.params.id));
+});
+
+router.get("/GetAllConfirmInvoiceGeneratetOrders", async (req, res) => {
+  res.json(await OrdDb.GetAllConfirmInvoiceGeneratetOrders());
+});
+
+router.get("/getInvoiceGeneratetOrdersBySupplyType/:id", async (req, res) => {
+  res.json(await OrdDb.getInvoiceGeneratetOrdersBySupplyType(req.params.id));
+});
+
+router.get(
+  "/getInvoiceGeneratetOrdersByMonth/:MOnthNumber",
+  async (req, res) => {
+    res.json(
+      await OrdDb.getInvoiceGeneratetOrdersByMonth(req.params.MOnthNumber)
+    );
+  }
+);
+
+router.get(
+  "/getInvoiceGeneratetOrdersByDate/:fdate/:tdate",
+  async (req, res) => {
+    res.json(
+      await OrdDb.getInvoiceGeneratetOrdersByDate(
+        req.params.fdate,
+        req.params.tdate
+      )
+    );
+  }
+);
+
+router.put("/DispatchOrder/:id", async (req, res) => {
+  res.json(await OrdDb.DispatchOrder(req.params.id));
+});
+
+router.get("/GetAllDispatchedOrders", async (req, res) => {
+  res.json(await OrdDb.GetAllDispatchedOrders());
+});
+
+router.get("/GetAllDispatchedOrdersByDate/:fdate/:tdate", async (req, res) => {
+  res.json(
+    await OrdDb.GetAllDispatchedOrdersByDate(req.params.fdate, req.params.tdate)
+  );
+});
+
+router.get("/GetAllDispatchedOrdersBySupplyType/:id", async (req, res) => {
+  res.json(await OrdDb.GetAllDispatchedOrdersBySupplyType(req.params.id));
+});
+
+router.get("/GetAllDispatchedOrdersByMonth/:MOnthNumber", async (req, res) => {
+  res.json(await OrdDb.GetAllDispatchedOrdersByMonth(req.params.MOnthNumber));
+});
+
+router.put("/FinalDelivery/:id", async (req, res) => {
+  res.json(await OrdDb.FinalDelivery(req.params.id));
+});
+
+router.get("/GetAllDeliveryConfirmedOrders", async (req, res) => {
+  res.json(await OrdDb.GetAllDeliveryConfirmedOrders());
+});
+
+router.get(
+  "/GetAllDeliveryConfirmedOrdersByDate/:fdate/:tdate",
+  async (req, res) => {
+    res.json(
+      await OrdDb.GetAllDeliveryConfirmedOrdersByDate(
+        req.params.fdate,
+        req.params.tdate
+      )
+    );
+  }
+);
+
+router.get("/GetAllDeliveryConfirmedOrdersBySupplyType/:id", async (req, res) => {
+  res.json(await OrdDb.GetAllDeliveryConfirmedOrdersBySupplyType(req.params.id));
+});
+
+
+router.get("/GetAllDeliveryConfirmedOrdersByMonth/:MOnthNumber", async (req, res) => {
+  res.json(await OrdDb.GetAllDeliveryConfirmedOrdersByMonth(req.params.MOnthNumber));
+});
+
 
 // -------END----------------------------------------------------//
 var port = process.env.PORT || 7760;

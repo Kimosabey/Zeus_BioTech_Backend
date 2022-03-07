@@ -4,7 +4,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-08 12:20:30
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-04 14:32:23
+ * @Last Modified time: 2022-03-07 10:58:51
  */
 var config = require("../dbconfig");
 
@@ -433,19 +433,20 @@ function getEmp() {
         case 6:
           result = _context10.sent;
           pool.close();
+          console.log("result.recordsets[0]: ", result.recordsets[0].length);
           return _context10.abrupt("return", result.recordsets[0]);
 
-        case 11:
-          _context10.prev = 11;
+        case 12:
+          _context10.prev = 12;
           _context10.t0 = _context10["catch"](0);
           console.log("getEmp-->", _context10.t0);
 
-        case 14:
+        case 15:
         case "end":
           return _context10.stop();
       }
     }
-  }, null, null, [[0, 11]]);
+  }, null, null, [[0, 12]]);
 }
 
 function addEmp(obj) {

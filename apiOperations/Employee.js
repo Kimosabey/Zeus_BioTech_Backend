@@ -2,7 +2,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-08 12:20:30
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-04 14:32:23
+ * @Last Modified time: 2022-03-07 10:58:51
  */
 
 var config = require("../dbconfig");
@@ -232,7 +232,7 @@ async function getEmp() {
     let result = await pool.request().execute("ViewAllEmployees");
 
     pool.close();
-
+    console.log("result.recordsets[0]: ", result.recordsets[0].length);
     return result.recordsets[0];
   } catch (error) {
     console.log("getEmp-->", error);
