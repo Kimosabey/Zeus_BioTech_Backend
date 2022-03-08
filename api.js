@@ -2,7 +2,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-07 18:02:44
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-07 17:14:18
+ * @Last Modified time: 2022-03-08 11:31:36
  */
 
 var express = require("express");
@@ -49,7 +49,9 @@ app.use(helmet());
 // adding morgan to log HTTP requests
 app.use(morgan("combined"));
 
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 app.use(cors());
 
 app.options("*", cors());
@@ -65,7 +67,9 @@ app.all("*", function (req, res, next) {
   // max-age=31557600
   next();
 });
-router.use(bodyParser.urlencoded({ extended: true }));
+router.use(bodyParser.urlencoded({
+  extended: true
+}));
 router.use(cors());
 router.options("*", cors());
 router.all("*", function (req, res, next) {
@@ -149,7 +153,9 @@ router.route("/countries/:id").get(async (req, res) => {
 });
 
 router.route("/countries").post(async (req, res) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
 
   await CountryDb.addCountry(obj).then((data) => {
     res.status(201).json(data);
@@ -163,7 +169,9 @@ router.route("/countries/:id").delete(async (req, res) => {
 });
 
 router.put("/countries/:id", async function (req, res, next) {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
   try {
     res.json(await CountryDb.updateCountry(req.params.id, obj));
   } catch (err) {
@@ -186,14 +194,18 @@ router.route("/states/:id").get(async (req, res) => {
 });
 
 router.route("/states").post(async (req, res) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
   await StateDb.addState(obj).then((data) => {
     res.status(201).json(data);
   });
 });
 
 router.post("/statesCheckBox", async (req, res) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
 
   try {
     res.json(await StateDb.getForCheckBoxStateByCountryId(obj));
@@ -204,7 +216,9 @@ router.post("/statesCheckBox", async (req, res) => {
 });
 
 router.put("/states/:id", async function (req, res, next) {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
   try {
     res.json(await StateDb.updateState(req.params.id, obj));
   } catch (err) {
@@ -227,20 +241,26 @@ router.delete("/states/:id", async (req, res) => {
 // -------City Api's----------------------------------------------------//
 
 router.route("/cities").get(async (req, res) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
   await CityDb.getCities(obj).then((data) => {
     res.status(201).json(data);
   });
 });
 
 router.route("/citiesByStateId/:id").get(async (req, res) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
 
   res.status(201).json(await CityDb.getCitiesByStateId(req.params.id));
 });
 
 router.post("/cities", async (req, res) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
 
   try {
     res.json(await CityDb.addCity(obj));
@@ -251,7 +271,9 @@ router.post("/cities", async (req, res) => {
 });
 
 router.post("/citiesCheckBox", async (req, res) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
 
   try {
     res.json(await CityDb.getForCheckBoxCityByStateId(obj));
@@ -262,7 +284,9 @@ router.post("/citiesCheckBox", async (req, res) => {
 });
 
 router.put("/cities/:id", async function (req, res, next) {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
   console.log("obj :>> ", obj);
   try {
     res.json(await CityDb.updateCity(req.params.id, obj));
@@ -287,7 +311,9 @@ router.get("/areasByCityId/:id", async (req, res) => {
 });
 
 router.post("/areas", async (req, res) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
 
   try {
     res.json(await AreaDb.addArea(obj));
@@ -298,7 +324,9 @@ router.post("/areas", async (req, res) => {
 });
 
 router.post("/areasCheckBox", async (req, res) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
 
   try {
     res.json(await AreaDb.getForCheckBoxAreaByCityId(obj));
@@ -309,7 +337,9 @@ router.post("/areasCheckBox", async (req, res) => {
 });
 
 router.put("/areas/:id", async (req, res) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
 
   try {
     res.json(await AreaDb.updateArea(req.params.id, obj));
@@ -333,7 +363,9 @@ router.get("/hq", async (req, res) => {
 });
 
 router.post("/hq", async (req, res) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
 
   try {
     res.json(await HqDb.addHq(obj));
@@ -344,7 +376,9 @@ router.post("/hq", async (req, res) => {
 });
 
 router.put("/hq/:id", async (req, res) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
   try {
     res.json(await HqDb.updateHq(req.params.id, obj));
   } catch (err) {
@@ -363,7 +397,9 @@ router.get("/companies", async (req, res) => {
 });
 
 router.post("/companies", async (req, res) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
 
   try {
     res.json(await CompDb.addCompany(obj));
@@ -374,7 +410,9 @@ router.post("/companies", async (req, res) => {
 });
 
 router.put("/companies/:id", async (req, res) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
 
   try {
     res.json(await CompDb.updateCompany(req.params.id, obj));
@@ -394,7 +432,9 @@ router.get("/emptypes", async (req, res) => {
 });
 
 router.post("/emptypes", async (req, res) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
 
   try {
     res.json(await EmpsDb.addEmpType(obj));
@@ -405,7 +445,9 @@ router.post("/emptypes", async (req, res) => {
 });
 
 router.put("/emptypes/:id", async (req, res) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
 
   try {
     res.json(await EmpsDb.updateEmpType(req.params.id, obj));
@@ -429,7 +471,9 @@ router.get("/empsubtypesById/:id", async (req, res) => {
 });
 
 router.post("/empsubtypes", async (req, res) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
 
   try {
     res.json(await EmpsDb.addEmpSubType(obj));
@@ -444,7 +488,9 @@ router.delete("/empsubtypes/:id", async (req, res) => {
 });
 
 router.put("/empsubtypes/:id", async (req, res) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
   try {
     res.json(await EmpsDb.updateEmpSubType(req.params.id, obj));
   } catch (err) {
@@ -460,7 +506,9 @@ router.get("/emps", async (req, res) => {
 });
 
 router.post("/emps", async (req, res, next) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
   try {
     res.json(await EmpsDb.addEmp(obj));
   } catch (err) {
@@ -470,7 +518,9 @@ router.post("/emps", async (req, res, next) => {
 });
 
 router.post("/importemps", async (req, res, next) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
   console.log("obj: ", obj);
 
   try {
@@ -482,7 +532,9 @@ router.post("/importemps", async (req, res, next) => {
 });
 
 router.put("/emps/:id", async (req, res, next) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
   try {
     res.json(await EmpsDb.updateEmp(req.params.id, obj));
   } catch (err) {
@@ -567,7 +619,9 @@ router.get("/incentives", async (req, res) => {
 });
 
 router.post("/incentives", async (req, res, next) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
   try {
     res.json(await EmpsDb.addEmpIncentives(obj));
   } catch (err) {
@@ -577,7 +631,9 @@ router.post("/incentives", async (req, res, next) => {
 });
 
 router.put("/deleteincentives/:id", async (req, res, next) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
   try {
     res.json(await EmpsDb.DeleteEmpIncentives(req.params.id));
   } catch (err) {
@@ -587,7 +643,9 @@ router.put("/deleteincentives/:id", async (req, res, next) => {
 });
 
 router.put("/incentives/:id", async (req, res, next) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
   try {
     res.json(await EmpsDb.updateEmpIncentives(req.params.id, obj));
   } catch (err) {
@@ -636,7 +694,9 @@ router.get("/custcat", async (req, res) => {
 });
 
 router.post("/custcat", async (req, res) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
   try {
     res.json(await CustsDb.addCustomersCat(obj));
   } catch (err) {
@@ -649,7 +709,9 @@ router.delete("/custcat/:id", async (req, res) => {
 });
 
 router.put("/custcat/:id", async (req, res, next) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
   try {
     res.json(await CustsDb.updateCustomersCat(req.params.id, obj));
   } catch (err) {
@@ -663,7 +725,9 @@ router.get("/custtype", async (req, res) => {
 });
 
 router.post("/custtype", async (req, res) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
   try {
     res.json(await CustsDb.addCustomersType(obj));
   } catch (err) {
@@ -676,7 +740,9 @@ router.delete("/custtype/:id", async (req, res) => {
 });
 
 router.put("/custtype/:id", async (req, res, next) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
   try {
     res.json(await CustsDb.updateCustomersType(req.params.id, obj));
   } catch (err) {
@@ -693,7 +759,9 @@ router.get("/custsubtypebytype/:id", async (req, res) => {
 });
 
 router.post("/custsubtype", async (req, res) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
   try {
     res.json(await CustsDb.addCustomersSubType(obj));
   } catch (err) {
@@ -706,7 +774,9 @@ router.delete("/custsubtype/:id", async (req, res) => {
 });
 
 router.put("/custsubtype/:id", async (req, res, next) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
 
   try {
     res.json(await CustsDb.updateCustomersSubType(req.params.id, obj));
@@ -733,7 +803,9 @@ router.get("/customerreaoson/:id", async (req, res) => {
 });
 
 router.post("/customer", async (req, res) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
   try {
     res.json(await CustsDb.addCustomers(obj));
   } catch (err) {
@@ -746,7 +818,9 @@ router.put("/customer/:id", async (req, res) => {
 });
 
 router.put("/customer/:id", async (req, res, next) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
 
   try {
     res.json(await CustsDb.updateCustomers(req.params.id, obj));
@@ -761,7 +835,9 @@ router.get("/addresstype/:custId", async (req, res) => {
 });
 
 router.post("/addresstype", async (req, res) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
   try {
     res.json(await CustsDb.addAddressType(obj));
   } catch (err) {
@@ -774,7 +850,9 @@ router.delete("/addresstype/:id", async (req, res) => {
 });
 
 router.put("/addresstype/:id", async (req, res, next) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
 
   try {
     res.json(await CustsDb.updateAddressType(req.params.id, obj));
@@ -821,7 +899,9 @@ router.get("/prodspecies", async (req, res) => {
 });
 
 router.post("/prodspecies", async (req, res) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
   try {
     res.json(await ProdDb.addProductSpecies(obj));
   } catch (err) {
@@ -834,7 +914,9 @@ router.put("/deleteprodspecies/:id", async (req, res) => {
 });
 
 router.put("/prodspecies/:id", async (req, res, next) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
 
   try {
     res.json(await ProdDb.updateProductSpecies(req.params.id, obj));
@@ -849,7 +931,9 @@ router.get("/prod", async (req, res) => {
 });
 
 router.post("/prod", async (req, res) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
   try {
     res.json(await ProdDb.addProducts(obj));
   } catch (err) {
@@ -862,7 +946,9 @@ router.put("/deleteprod/:id", async (req, res) => {
 });
 
 router.put("/prod/:id", async (req, res, next) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
   console.log("req.params.id, obj: ", req.params.id, obj);
 
   try {
@@ -880,7 +966,9 @@ router.get("/uom", async (req, res) => {
 });
 
 router.post("/uom", async (req, res) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
 
   try {
     res.json(await UomDb.addUom(obj));
@@ -895,7 +983,9 @@ router.delete("/uom/:id", async (req, res) => {
 });
 
 router.put("/uom/:id", async (req, res, next) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
 
   try {
     res.json(await UomDb.updateUom(req.params.id, obj));
@@ -928,7 +1018,9 @@ router.get("/OrderShippingAddress/:id", async (req, res) => {
 });
 
 router.put("/AcceptOrder/:id", async (req, res, next) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
 
   try {
     res.json(await OrdDb.AcceptOrderRequest(req.params.id, obj));
@@ -939,7 +1031,9 @@ router.put("/AcceptOrder/:id", async (req, res, next) => {
 });
 
 router.put("/RejectOrder/:id", async (req, res, next) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
 
   try {
     res.json(await OrdDb.RejectOrderRequest(req.params.id, obj));
@@ -954,7 +1048,9 @@ router.get("/OrderSupplyType", async (req, res) => {
 });
 
 router.put("/OrderSupplyType/:id", async (req, res, next) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
 
   try {
     res.json(await OrdDb.updateSupplyType(req.params.id, obj));
@@ -965,7 +1061,9 @@ router.put("/OrderSupplyType/:id", async (req, res, next) => {
 });
 
 router.post("/OrderSupplyType", async (req, res) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
 
   try {
     res.json(await OrdDb.addSupplyType(obj));
@@ -1017,7 +1115,9 @@ router.get("/GetApprovedOrdersByDate/:fdate/:tdate", async (req, res) => {
 });
 
 router.put("/ApprovedOrderConfirm", async (req, res, next) => {
-  let obj = { ...req.body };
+  let obj = {
+    ...req.body
+  };
 
   try {
     res.json(await OrdDb.ApprovedOrderConfirm(obj));
@@ -1030,131 +1130,6 @@ router.put("/ApprovedOrderConfirm", async (req, res, next) => {
 router.get("/GetAllScheduledOrder", async (req, res) => {
   res.json(await OrdDb.GetAllScheduledOrder());
 });
-
-router.get("/getScheduledOrdersBySupplyType/:id", async (req, res) => {
-  res.json(await OrdDb.getScheduledOrdersBySupplyType(req.params.id));
-});
-
-router.get("/getScheduledOrdersByMonth/:MOnthNumber", async (req, res) => {
-  res.json(await OrdDb.getScheduledOrdersByMonth(req.params.MOnthNumber));
-});
-
-router.get("/getScheduledOrdersByDate/:fdate/:tdate", async (req, res) => {
-  res.json(
-    await OrdDb.getScheduledOrdersByDate(req.params.fdate, req.params.tdate)
-  );
-});
-
-router.get("/OrderProcessRemark/:id", async (req, res) => {
-  res.json(await OrdDb.getOrderProcessRemark(req.params.id));
-});
-
-router.get("/GetAllConfirmInvoiceOrder", async (req, res) => {
-  res.json(await OrdDb.GetAllConfirmInvoiceOrder());
-});
-
-router.get("/getConfirmInvoiceOrdersBySupplyType/:id", async (req, res) => {
-  res.json(await OrdDb.getConfirmInvoiceOrdersBySupplyType(req.params.id));
-});
-
-router.get("/getConfirmInvoiceOrdersByMonth/:MOnthNumber", async (req, res) => {
-  res.json(await OrdDb.getConfirmInvoiceOrdersByMonth(req.params.MOnthNumber));
-});
-
-router.get("/getConfirmInvoiceOrdesByDate/:fdate/:tdate", async (req, res) => {
-  res.json(
-    await OrdDb.getConfirmInvoiceOrdesByDate(req.params.fdate, req.params.tdate)
-  );
-});
-
-router.put("/ConfirmForInvoice/:id/:tDate", async (req, res) => {
-  res.json(await OrdDb.ConfirmForInvoice(req.params.id, req.params.tDate));
-});
-
-router.put("/ConfirmInvoiceGenerate/:id", async (req, res) => {
-  res.json(await OrdDb.ConfirmInvoiceGenerate(req.params.id));
-});
-
-router.get("/GetAllConfirmInvoiceGeneratetOrders", async (req, res) => {
-  res.json(await OrdDb.GetAllConfirmInvoiceGeneratetOrders());
-});
-
-router.get("/getInvoiceGeneratetOrdersBySupplyType/:id", async (req, res) => {
-  res.json(await OrdDb.getInvoiceGeneratetOrdersBySupplyType(req.params.id));
-});
-
-router.get(
-  "/getInvoiceGeneratetOrdersByMonth/:MOnthNumber",
-  async (req, res) => {
-    res.json(
-      await OrdDb.getInvoiceGeneratetOrdersByMonth(req.params.MOnthNumber)
-    );
-  }
-);
-
-router.get(
-  "/getInvoiceGeneratetOrdersByDate/:fdate/:tdate",
-  async (req, res) => {
-    res.json(
-      await OrdDb.getInvoiceGeneratetOrdersByDate(
-        req.params.fdate,
-        req.params.tdate
-      )
-    );
-  }
-);
-
-router.put("/DispatchOrder/:id", async (req, res) => {
-  res.json(await OrdDb.DispatchOrder(req.params.id));
-});
-
-router.get("/GetAllDispatchedOrders", async (req, res) => {
-  res.json(await OrdDb.GetAllDispatchedOrders());
-});
-
-router.get("/GetAllDispatchedOrdersByDate/:fdate/:tdate", async (req, res) => {
-  res.json(
-    await OrdDb.GetAllDispatchedOrdersByDate(req.params.fdate, req.params.tdate)
-  );
-});
-
-router.get("/GetAllDispatchedOrdersBySupplyType/:id", async (req, res) => {
-  res.json(await OrdDb.GetAllDispatchedOrdersBySupplyType(req.params.id));
-});
-
-router.get("/GetAllDispatchedOrdersByMonth/:MOnthNumber", async (req, res) => {
-  res.json(await OrdDb.GetAllDispatchedOrdersByMonth(req.params.MOnthNumber));
-});
-
-router.put("/FinalDelivery/:id", async (req, res) => {
-  res.json(await OrdDb.FinalDelivery(req.params.id));
-});
-
-router.get("/GetAllDeliveryConfirmedOrders", async (req, res) => {
-  res.json(await OrdDb.GetAllDeliveryConfirmedOrders());
-});
-
-router.get(
-  "/GetAllDeliveryConfirmedOrdersByDate/:fdate/:tdate",
-  async (req, res) => {
-    res.json(
-      await OrdDb.GetAllDeliveryConfirmedOrdersByDate(
-        req.params.fdate,
-        req.params.tdate
-      )
-    );
-  }
-);
-
-router.get("/GetAllDeliveryConfirmedOrdersBySupplyType/:id", async (req, res) => {
-  res.json(await OrdDb.GetAllDeliveryConfirmedOrdersBySupplyType(req.params.id));
-});
-
-
-router.get("/GetAllDeliveryConfirmedOrdersByMonth/:MOnthNumber", async (req, res) => {
-  res.json(await OrdDb.GetAllDeliveryConfirmedOrdersByMonth(req.params.MOnthNumber));
-});
-
 
 // -------END----------------------------------------------------//
 var port = process.env.PORT || 7760;
