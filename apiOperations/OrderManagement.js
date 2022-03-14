@@ -2,7 +2,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-03-04 14:28:13
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-14 12:16:10
+ * @Last Modified time: 2022-03-14 17:54:22
  */
 
 var config = require("../dbconfig");
@@ -140,7 +140,7 @@ async function RejectOrderRequest(reqId) {
       .request()
       .input("ORDER_PKID", reqId)
       .query(
-        `UPDATE [dbo].[ORDER] SET ORDER_ISACTIVE =0 , ORDER_STATUS=2 WHERE ORDER_PKID=@ORDER_PKID`
+        `UPDATE [dbo].[ORDER] SET ORDER_ISACTIVE =1 , ORDER_STATUS=2 WHERE ORDER_PKID=@ORDER_PKID`
       );
 
     pool.close();
@@ -166,8 +166,6 @@ async function getSupplyType() {
       .query(
         "SELECT [SUPPLY_TYPE_PKID] ,[SUPPLY_NAME] ,[SUPPLY_TYPE_ISACTIVE] FROM [SUPPLY_TYPE] WHERE SUPPLY_TYPE_ISACTIVE=1"
       );
-
-    
 
     if (pool._connected == false) {
       pool = await sql.connect(config);
@@ -447,6 +445,7 @@ async function ApprovedOrderConfirm(obj) {
     if (result.rowsAffected) {
       message = true;
     }
+
     pool.close();
 
     return message;
@@ -1154,9 +1153,7 @@ async function placeOrder(obj) {
       console.log("else attach: ", attach);
     }
     console.log("outside attach: ", attach);
-    console.log(
-      `${attach},${kimo.OrderBy},${kimo.OrderByID},${kimo.CustomerID},${kimo.CompanyID},${kimo.OrderDetails.Logistic},${kimo.OrderDetails.LogisticDestination},${kimo.OrderDetails.LogisticDestination},${kimo.BillingAddress},${kimo.DeliveryAddress},${kimo.OrderDetails.CashDiscount},${kimo.OrderAmount},${kimo.OrderDetails.Remark},0,0,${kimo.OrderDetails.DeliveryType},${kimo.OrderDetails.SupplyType}`
-    );
+
     let insertInto = await pool
       .request()
       .query(
@@ -1452,6 +1449,101 @@ async function GetAllInvoiceUploadedOrdersByDate(fdate, tdate) {
   }
 }
 
+async function GetRejectedOrders() {
+  try {
+    let pool = await sql.connect(config);
+
+    let result = await pool
+      .request()
+      .query(
+        "select DISTINCT (select count(*) FROM ORDER_ITEM  where [ORDER_ITEM_ORDER_FKID] = ORD.ORDER_PKID) as ItemCount,(SELECT MONTH(ORDER_DATE)) AS MONTH_NUMBER ,cast([ORDER_DATE] as date) as bdate,(SELECT CONVERT(TIME, ORDER_DATE)) as clock,ORD.*,CUSTOMER_NAME,COMPANY_NAME,[SUPPLY_NAME],(SELECT DATEDIFF(HOUR, (SELECT [ORDER_DATE] FROM [dbo].[ORDER] WHERE ORDER_PKID=ORD.ORDER_PKID), (SELECT SYSDATETIME())) ) AS hrs ,(SELECT CASE WHEN ORDER_BY = 'admin' THEN (select SUPER_ADMIN_NAME from [dbo].[SUPER_ADMIN] WHERE [SUPER_ADMIN_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'manager' OR ORDER_BY = 'officer' THEN (select [EMPLOYEE_NAME] from [dbo].[EMPLOYEE_MASTER] WHERE [EMPLOYEE_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'customer' THEN (select [CUSTOMER_NAME] from [dbo].[CUSTOMER_MASTER] WHERE [CUSTOMER_PKID]=ORDER_BY_FKID) END FROM [dbo].[ORDER] WHERE ORDER_PKID=ORD.ORDER_PKID) as TypeName from [dbo].[ORDER] AS ORD JOIN [dbo].[ORDER_ITEM] AS ITM ON [ORDER_ITEM_ORDER_FKID]=[ORDER_PKID] JOIN [dbo].[CUSTOMER_MASTER] ON [CUSTOMER_PKID]=[ORDER_CUSTOMER_FKID] JOIN [dbo].[COMPANY] ON [COMPANY_PKID]=[ORDER_COMPANY_FKID] JOIN [dbo].[SUPPLY_TYPE] ON [SUPPLY_TYPE_PKID]=[ORDER_SUPPLY_TYPE] WHERE ORDER_ISACTIVE=1 AND ORDER_STATUS=2"
+      );
+
+    pool.close();
+
+    return result.recordsets[0];
+  } catch (error) {
+    console.log("GetRejectedOrders -->", error);
+  }
+}
+
+async function GetRejectedOrdersByMonth(MONTH_NUMBER) {
+  try {
+    let pool = await sql.connect(config);
+
+    let result = await pool
+      .request()
+      .input("MONTH_NUMBER", MONTH_NUMBER)
+      .query(
+        "select DISTINCT (select count(*) FROM ORDER_ITEM  where [ORDER_ITEM_ORDER_FKID] = ORD.ORDER_PKID) as ItemCount,(SELECT MONTH(ORDER_DATE)) AS MONTH_NUMBER ,(SELECT CONVERT(TIME, ORDER_DATE)) as clock,ORD.*,CUSTOMER_NAME,COMPANY_NAME,[SUPPLY_NAME],(SELECT DATEDIFF(HOUR, (SELECT [ORDER_DATE] FROM [dbo].[ORDER] WHERE ORDER_PKID=ORD.ORDER_PKID), (SELECT SYSDATETIME())) ) AS hrs ,(SELECT CASE WHEN ORDER_BY = 'admin' THEN (select SUPER_ADMIN_NAME from [dbo].[SUPER_ADMIN] WHERE [SUPER_ADMIN_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'manager' OR ORDER_BY = 'officer' THEN (select [EMPLOYEE_NAME] from [dbo].[EMPLOYEE_MASTER] WHERE [EMPLOYEE_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'customer' THEN (select [CUSTOMER_NAME] from [dbo].[CUSTOMER_MASTER] WHERE [CUSTOMER_PKID]=ORDER_BY_FKID) END FROM [dbo].[ORDER] WHERE ORDER_PKID=ORD.ORDER_PKID) as TypeName from [dbo].[ORDER] AS ORD JOIN [dbo].[ORDER_ITEM] AS ITM ON [ORDER_ITEM_ORDER_FKID]=[ORDER_PKID] JOIN [dbo].[CUSTOMER_MASTER] ON [CUSTOMER_PKID]=[ORDER_CUSTOMER_FKID] JOIN [dbo].[COMPANY] ON [COMPANY_PKID]=[ORDER_COMPANY_FKID] JOIN [dbo].[SUPPLY_TYPE] ON [SUPPLY_TYPE_PKID]=[ORDER_SUPPLY_TYPE] WHERE ORDER_ISACTIVE=1 AND ORDER_STATUS=2 and (SELECT MONTH(ORDER_DATE))=@MONTH_NUMBER"
+      );
+
+    let result2 = await pool
+      .request()
+      .query(
+        "select DISTINCT (select count(*) FROM ORDER_ITEM  where [ORDER_ITEM_ORDER_FKID] = ORD.ORDER_PKID) as ItemCount,(SELECT MONTH(ORDER_DATE)) AS MONTH_NUMBER ,(SELECT CONVERT(TIME, ORDER_DATE)) as clock,ORD.*,CUSTOMER_NAME,COMPANY_NAME,[SUPPLY_NAME],(SELECT DATEDIFF(HOUR, (SELECT [ORDER_DATE] FROM [dbo].[ORDER] WHERE ORDER_PKID=ORD.ORDER_PKID), (SELECT SYSDATETIME())) ) AS hrs ,(SELECT CASE WHEN ORDER_BY = 'admin' THEN (select SUPER_ADMIN_NAME from [dbo].[SUPER_ADMIN] WHERE [SUPER_ADMIN_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'manager' OR ORDER_BY = 'officer' THEN (select [EMPLOYEE_NAME] from [dbo].[EMPLOYEE_MASTER] WHERE [EMPLOYEE_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'customer' THEN (select [CUSTOMER_NAME] from [dbo].[CUSTOMER_MASTER] WHERE [CUSTOMER_PKID]=ORDER_BY_FKID) END FROM [dbo].[ORDER] WHERE ORDER_PKID=ORD.ORDER_PKID) as TypeName from [dbo].[ORDER] AS ORD JOIN [dbo].[ORDER_ITEM] AS ITM ON [ORDER_ITEM_ORDER_FKID]=[ORDER_PKID] JOIN [dbo].[CUSTOMER_MASTER] ON [CUSTOMER_PKID]=[ORDER_CUSTOMER_FKID] JOIN [dbo].[COMPANY] ON [COMPANY_PKID]=[ORDER_COMPANY_FKID] JOIN [dbo].[SUPPLY_TYPE] ON [SUPPLY_TYPE_PKID]=[ORDER_SUPPLY_TYPE]WHERE ORDER_ISACTIVE=1 AND ORDER_STATUS=2"
+      );
+
+    pool.close();
+
+    if (MONTH_NUMBER == 0) {
+      return result2.recordsets[0];
+    } else {
+      return result.recordsets[0];
+    }
+  } catch (error) {
+    console.log("GetRejectedOrdersByMonth-->", error);
+  }
+}
+
+async function GetRejectedOrdersBySupplyType(supplyId) {
+  try {
+    let pool = await sql.connect(config);
+
+    let result = await pool
+      .request()
+      .input("SUPPLY_TYPE_PKID", supplyId)
+      .query(
+        "select DISTINCT (select count(*) FROM ORDER_ITEM  where [ORDER_ITEM_ORDER_FKID] = ORD.ORDER_PKID) as ItemCount,(SELECT MONTH(ORDER_DATE)) AS MONTH_NUMBER ,(SELECT CONVERT(TIME, ORDER_DATE)) as clock,ORD.*,CUSTOMER_NAME,COMPANY_NAME,[SUPPLY_NAME],(SELECT DATEDIFF(HOUR, (SELECT [ORDER_DATE] FROM [dbo].[ORDER] WHERE ORDER_PKID=ORD.ORDER_PKID), (SELECT SYSDATETIME())) ) AS hrs ,(SELECT CASE WHEN ORDER_BY = 'admin' THEN (select SUPER_ADMIN_NAME from [dbo].[SUPER_ADMIN] WHERE [SUPER_ADMIN_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'manager' OR ORDER_BY = 'officer' THEN (select [EMPLOYEE_NAME] from [dbo].[EMPLOYEE_MASTER] WHERE [EMPLOYEE_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'customer' THEN (select [CUSTOMER_NAME] from [dbo].[CUSTOMER_MASTER] WHERE [CUSTOMER_PKID]=ORDER_BY_FKID) END FROM [dbo].[ORDER] WHERE ORDER_PKID=ORD.ORDER_PKID) as TypeName from [dbo].[ORDER] AS ORD JOIN [dbo].[ORDER_ITEM] AS ITM ON [ORDER_ITEM_ORDER_FKID]=[ORDER_PKID] JOIN [dbo].[CUSTOMER_MASTER] ON [CUSTOMER_PKID]=[ORDER_CUSTOMER_FKID] JOIN [dbo].[COMPANY] ON [COMPANY_PKID]=[ORDER_COMPANY_FKID] JOIN [dbo].[SUPPLY_TYPE] ON [SUPPLY_TYPE_PKID]=[ORDER_SUPPLY_TYPE] WHERE ORDER_ISACTIVE=1 AND ORDER_STATUS=2 AND [ORDER_SUPPLY_TYPE]=@SUPPLY_TYPE_PKID"
+      );
+
+    let result2 = await pool
+      .request()
+      .query(
+        "select DISTINCT (select count(*) FROM ORDER_ITEM  where [ORDER_ITEM_ORDER_FKID] = ORD.ORDER_PKID) as ItemCount,(SELECT MONTH(ORDER_DATE)) AS MONTH_NUMBER ,(SELECT CONVERT(TIME, ORDER_DATE)) as clock,ORD.*,CUSTOMER_NAME,COMPANY_NAME,[SUPPLY_NAME],(SELECT DATEDIFF(HOUR, (SELECT [ORDER_DATE] FROM [dbo].[ORDER] WHERE ORDER_PKID=ORD.ORDER_PKID), (SELECT SYSDATETIME())) ) AS hrs ,(SELECT CASE WHEN ORDER_BY = 'admin' THEN (select SUPER_ADMIN_NAME from [dbo].[SUPER_ADMIN] WHERE [SUPER_ADMIN_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'manager' OR ORDER_BY = 'officer' THEN (select [EMPLOYEE_NAME] from [dbo].[EMPLOYEE_MASTER] WHERE [EMPLOYEE_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'customer' THEN (select [CUSTOMER_NAME] from [dbo].[CUSTOMER_MASTER] WHERE [CUSTOMER_PKID]=ORDER_BY_FKID) END FROM [dbo].[ORDER] WHERE ORDER_PKID=ORD.ORDER_PKID) as TypeName from [dbo].[ORDER] AS ORD JOIN [dbo].[ORDER_ITEM] AS ITM ON [ORDER_ITEM_ORDER_FKID]=[ORDER_PKID] JOIN [dbo].[CUSTOMER_MASTER] ON [CUSTOMER_PKID]=[ORDER_CUSTOMER_FKID] JOIN [dbo].[COMPANY] ON [COMPANY_PKID]=[ORDER_COMPANY_FKID] JOIN [dbo].[SUPPLY_TYPE] ON [SUPPLY_TYPE_PKID]=[ORDER_SUPPLY_TYPE] WHERE ORDER_ISACTIVE=1 AND ORDER_STATUS=2"
+      );
+
+    pool.close();
+    if (supplyId == 0) {
+      return result2.recordsets[0];
+    } else {
+      return result.recordsets[0];
+    }
+  } catch (error) {
+    console.log("GetRejectedOrdersBySupplyType-->", error);
+  }
+}
+
+async function GetRejectedOrdersByDate(fdate, tdate) {
+  try {
+    let pool = await sql.connect(config);
+
+    let result = await pool
+      .request()
+      .input("fdate", fdate)
+      .input("tdate", tdate)
+      .query(
+        `select DISTINCT (select count(*) FROM ORDER_ITEM  where [ORDER_ITEM_ORDER_FKID] = ORD.ORDER_PKID) as ItemCount,(SELECT MONTH(ORDER_DATE)) AS MONTH_NUMBER ,(SELECT CONVERT(TIME, ORDER_DATE)) as clock,ORD.*,CUSTOMER_NAME,COMPANY_NAME,[SUPPLY_NAME],(SELECT DATEDIFF(HOUR, (SELECT [ORDER_DATE] FROM [dbo].[ORDER] WHERE ORDER_PKID=ORD.ORDER_PKID), (SELECT SYSDATETIME())) ) AS hrs ,(SELECT CASE WHEN ORDER_BY = 'admin' THEN (select SUPER_ADMIN_NAME from [dbo].[SUPER_ADMIN] WHERE [SUPER_ADMIN_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'manager' OR ORDER_BY = 'officer' THEN (select [EMPLOYEE_NAME] from [dbo].[EMPLOYEE_MASTER] WHERE [EMPLOYEE_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'customer' THEN (select [CUSTOMER_NAME] from [dbo].[CUSTOMER_MASTER] WHERE [CUSTOMER_PKID]=ORDER_BY_FKID) END FROM [dbo].[ORDER] WHERE ORDER_PKID=ORD.ORDER_PKID) as TypeName from [dbo].[ORDER] AS ORD JOIN [dbo].[ORDER_ITEM] AS ITM ON [ORDER_ITEM_ORDER_FKID]=[ORDER_PKID] JOIN [dbo].[CUSTOMER_MASTER] ON [CUSTOMER_PKID]=[ORDER_CUSTOMER_FKID] JOIN [dbo].[COMPANY] ON [COMPANY_PKID]=[ORDER_COMPANY_FKID] JOIN [dbo].[SUPPLY_TYPE] ON [SUPPLY_TYPE_PKID]=[ORDER_SUPPLY_TYPE]WHERE ORDER_ISACTIVE=1 AND ORDER_STATUS=2 and cast(ORDER_DATE as date) between @fdate and @tdate`
+      );
+
+    pool.close();
+
+    return result.recordsets[0];
+  } catch (error) {
+    console.log("GetRejectedOrdersByDate-->", error);
+  }
+}
+
 module.exports = {
   getRemarksOrdersById: getRemarksOrdersById,
   getBillingAddressOrdersById: getBillingAddressOrdersById,
@@ -1459,7 +1551,7 @@ module.exports = {
   getOrders: getOrders,
   getItemsByOrderId: getItemsByOrderId,
   AcceptOrderRequest: AcceptOrderRequest,
-  RejectOrderRequest: RejectOrderRequest,
+
   addSupplyType: addSupplyType,
   getSupplyType: getSupplyType,
   deleteSupplyType: deleteSupplyType,
@@ -1475,7 +1567,6 @@ module.exports = {
   getApprovedOrdersByMonth: getApprovedOrdersByMonth,
 
   ApprovedOrderConfirm: ApprovedOrderConfirm,
-
   getApprovedOrdersByDate: getApprovedOrdersByDate,
   getApprovedOrdersBySupplyType: getApprovedOrdersBySupplyType,
   getApprovedOrdersByMonth: getApprovedOrdersByMonth,
@@ -1525,5 +1616,12 @@ module.exports = {
   GetAllInvoiceUploadedOrdersByMonth: GetAllInvoiceUploadedOrdersByMonth,
   GetAllInvoiceUploadedOrdersByDate: GetAllInvoiceUploadedOrdersByDate,
   GetAllInvoiceUploadedOrdersBySupplyType:
-    GetAllInvoiceUploadedOrdersBySupplyType,
+  GetAllInvoiceUploadedOrdersBySupplyType,
+
+  RejectOrderRequest: RejectOrderRequest, 
+  GetRejectedOrders: GetRejectedOrders,
+  GetRejectedOrdersByDate: GetRejectedOrdersByDate,
+  GetRejectedOrdersByMonth: GetRejectedOrdersByMonth,
+  GetRejectedOrdersBySupplyType: GetRejectedOrdersBySupplyType,
+ 
 };
