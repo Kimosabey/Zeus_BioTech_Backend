@@ -6,10 +6,9 @@ const baseUrl = require("url");
 
 // console.log(baseUrl);
 const upload = async (req, res) => {
- 
   try {
     await uploadFile(req, res);
-    console.log(req.file.originalname);
+    console.log("req.file----------------->", req.file);
 
     if (req.file == undefined) {
       return res.status(400).send({ message: "Please upload a file!" });

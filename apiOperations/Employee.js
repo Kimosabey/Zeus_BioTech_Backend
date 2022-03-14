@@ -2,7 +2,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-08 12:20:30
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-07 10:58:51
+ * @Last Modified time: 2022-03-12 18:33:14
  */
 
 var config = require("../dbconfig");
@@ -52,11 +52,12 @@ async function addEmpType(obj) {
       return "Already Existed!";
     }
   } catch (err) {
-    console.log(err);
+    console.log("addEmpType-->", err);
   }
 }
 
 async function updateEmpType(empId, obj) {
+  console.log("empId, obj: ", empId, obj);
   let pool = await sql.connect(config);
   let result = await pool
     .request()
@@ -531,6 +532,7 @@ async function getCoveredAreaByEmpId(EmpId) {
     // pool.close();
   }
 }
+
 async function GetEmployeeCoveredAreasForEdit(EmpId, hqId) {
   console.log("EmpId, hqId: ", EmpId, hqId);
   if (hqId === "0") {
@@ -574,6 +576,7 @@ async function getOtherCoveredAreasByEmpId(EmpId) {
     // pool.close();
   }
 }
+
 async function getDocsByEmpId(EmpId) {
   let pool = await sql.connect(config);
   try {
@@ -620,6 +623,13 @@ async function getAllManagers() {
       .query(
         "SELECT EMPLOYEE_NAME,EMPLOYEE_PKID FROM [EMPLOYEE_MASTER] WHERE EMPOLYEE_IS_MANAGER=@IsManager"
       );
+
+    pool.close();
+    console.log("pool._connected getSupplyType: ", pool._connected);
+
+    if (pool._connected == false) {
+      pool = await sql.connect(config);
+    }
     pool.close();
 
     return result.recordsets[0];
@@ -1019,6 +1029,7 @@ async function getAllEmployeeLeaves() {
     console.log("getAllEmployeeLeaves-->", error);
   }
 }
+
 module.exports = {
   getEmpTypes: getEmpTypes,
   addEmpType: addEmpType,

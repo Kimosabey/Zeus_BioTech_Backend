@@ -2,7 +2,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-04 16:20:31
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-03 19:52:15
+ * @Last Modified time: 2022-03-12 18:02:35
  */
 var config = require("../dbconfig");
 const sql = require("mssql");
@@ -12,6 +12,14 @@ async function getCountries() {
     let pool = await sql.connect(config);
 
     let result = await pool.request().query("SELECT * FROM [COUNTRY_MASTER]");
+
+    pool.close();
+
+    console.log("pool._connected getCountries: ", pool._connected);
+
+    if (pool._connected == false) {
+      pool = await sql.connect(config);
+    }
     pool.close();
 
     return result.recordsets[0];
@@ -28,7 +36,9 @@ async function getCountryById(countryId) {
       .request()
       .input("countryId", countryId)
       .query("SELECT * from COUNTRY_MASTER WHERE COUNTRY_PKID=@countryId");
+
     pool.close();
+
     return result.recordsets[0];
   } catch (error) {
     console.log("getCountryById-->", error);

@@ -4,7 +4,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-08 12:20:30
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-07 10:58:51
+ * @Last Modified time: 2022-03-12 18:33:14
  */
 var config = require("../dbconfig");
 
@@ -99,7 +99,7 @@ function addEmpType(obj) {
         case 24:
           _context2.prev = 24;
           _context2.t0 = _context2["catch"](0);
-          console.log(_context2.t0);
+          console.log("addEmpType-->", _context2.t0);
 
         case 27:
         case "end":
@@ -115,15 +115,16 @@ function updateEmpType(empId, obj) {
     while (1) {
       switch (_context3.prev = _context3.next) {
         case 0:
-          _context3.next = 2;
+          console.log("empId, obj: ", empId, obj);
+          _context3.next = 3;
           return regeneratorRuntime.awrap(sql.connect(config));
 
-        case 2:
+        case 3:
           pool = _context3.sent;
-          _context3.next = 5;
+          _context3.next = 6;
           return regeneratorRuntime.awrap(pool.request().input("input_parameter", empId).input("EmpTypeName", obj.EmpTypeName).query("UPDATE EMPLOYEE_TYPE SET EMPLOYEE_TYPE_NAME = @EmpTypeName WHERE EMPLOYEE_TYPE_PKID =@input_parameter"));
 
-        case 5:
+        case 6:
           result = _context3.sent;
           pool.close();
           message = false;
@@ -137,7 +138,7 @@ function updateEmpType(empId, obj) {
 
           return _context3.abrupt("return", message);
 
-        case 11:
+        case 12:
         case "end":
           return _context3.stop();
       }
@@ -946,19 +947,34 @@ function getAllManagers() {
         case 6:
           result = _context21.sent;
           pool.close();
+          console.log("pool._connected getSupplyType: ", pool._connected);
+
+          if (!(pool._connected == false)) {
+            _context21.next = 13;
+            break;
+          }
+
+          _context21.next = 12;
+          return regeneratorRuntime.awrap(sql.connect(config));
+
+        case 12:
+          pool = _context21.sent;
+
+        case 13:
+          pool.close();
           return _context21.abrupt("return", result.recordsets[0]);
 
-        case 11:
-          _context21.prev = 11;
+        case 17:
+          _context21.prev = 17;
           _context21.t0 = _context21["catch"](0);
           console.log("getAllManagers-->", _context21.t0); // pool.close();
 
-        case 14:
+        case 20:
         case "end":
           return _context21.stop();
       }
     }
-  }, null, null, [[0, 11]]);
+  }, null, null, [[0, 17]]);
 }
 
 function importEmps(obj) {

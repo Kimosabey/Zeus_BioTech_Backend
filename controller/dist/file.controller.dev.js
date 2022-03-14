@@ -21,7 +21,7 @@ var upload = function upload(req, res) {
           return regeneratorRuntime.awrap(uploadFile(req, res));
 
         case 3:
-          console.log(req.file.originalname);
+          console.log("req.file----------------->", req.file);
 
           if (!(req.file == undefined)) {
             _context.next = 6;

@@ -2,7 +2,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-12 18:47:46
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-03 19:52:18
+ * @Last Modified time: 2022-03-12 11:21:10
  */
 
 var config = require("../dbconfig");
@@ -313,6 +313,82 @@ async function getCustomers() {
   }
 }
 
+async function getCustById(custId) {
+  try {
+    let pool = await sql.connect(config);
+    let result = await pool
+      .request()
+      .input("CUSTOMER_PKID", custId)
+      .query(
+        "SELECT  [CUSTOMER_PKID] ,[CUSTOMER_CATEGORY_FKID] ,[CUSTOMER_TYPE_FKID] ,[CUSTOMER_SUBTYPE_FKID] ,[CUSTOMER_NAME] ,[CUSTOMER_EMAIL] ,[CUSTOMER_EMAIL2] ,[CUSTOMER_MOBILE] ,[CUSTOMER_ALT_MOBILE] ,[CUSTOMER_FIRM_NAME] ,[CUSTOMER_CAPACITY] ,[CUSTOMER_REPRESENTATIVE_FKID] ,[CUSTOMER_PRFILE] ,[CUSTOMER_DOC1] ,[CUSTOMER_DOC2] ,[CUSTOMER_DOC3] ,[CUSTOMER_DOC4] ,[CUSTOMER_DOC5] ,[CUSTOMER_DOC6] ,[CUSTOMER_CONTACT_PERSON_NAME] ,[CUSTOMER_CONTACT_PERSON_EMAIL] ,[CUSTOMER_CONTACT_PERSON_EMAIL2] ,[CUSTOMER_CONTACT_PERSON_PHO] ,[CUSTOMER_CONTACT_PERSON_PHO2] ,[CUSTOMER_ISACTIVE] ,EMPLOYEE_NAME,CUSTOMER_TYPE_NAME,CUSTOMER_SUBTYPE_NAME,CUSTOMER_PASSWORD, CUSTOMER_CONTACT_SEC_PERSON_NAME, CUSTOMER_CONTACT_SEC_PERSON_EMAIL2 , CUSTOMER_CONTACT_SEC_PERSON_PHO , CUSTOMER_CONTACT_SEC_PERSON_PHO2, CUSTOMER_CONTACT_SEC_PERSON_EMAIL,CUSTOMER_CATEGORY_NAME FROM [CUSTOMER_MASTER] JOIN [CUSTOMER_SUBTYPE] ON CUSTOMER_SUBTYPE_PKID=CUSTOMER_SUBTYPE_FKID  JOIN CUSTOMER_TYPE ON CUSTOMER_TYPE_PKID=CUSTOMER_TYPE_FKID JOIN CUSTOMER_CATEGORY ON CUSTOMER_CATEGORY_PKID=CUSTOMER_CATEGORY_FKID JOIN EMPLOYEE_MASTER ON EMPLOYEE_PKID=CUSTOMER_REPRESENTATIVE_FKID  WHERE [CUSTOMER_ISACTIVE]=1 and CUSTOMER_PKID=@CUSTOMER_PKID"
+      );
+    pool.close();
+    return result.recordsets[0];
+  } catch (error) {
+    console.log("getCustById-->", error);
+    // pool.close();
+  }
+}
+
+async function getOrderPlaceCustDetails(obj) {
+  try {
+    var pool = await sql.connect(config);
+
+    let x = obj.arr;
+    let rerArr = [];
+    for (var i = 0; i < x.length; i++) {
+      if (pool._connected == false) {
+        console.log("--- getOrderPlaceCustDetails Pool Reconnected ---");
+        pool = await sql.connect(config);
+      }
+      let result = await pool
+        .request()
+        .input("PRODUCT_PKID", x[i].ProductID)
+        .input("PRD_PACKAG_PKID", x[i].PackageID)
+        .query(
+          "SELECT PRD_PACKAGE_UNIT,[PRODUCT_PKID] ,[PRODUCT_COMPANY_FKID] ,PRODUCT_SPECIES_FKID,[PRODUCT_NAME] ,[PRODUCT_UOM_FKID] ,[PRODUCT_UNIT],[PRODUCT_CODE] ,[PRODUCT_BAR_CODE] ,[PRODUCT_WHOLESALE_PRICE] ,[PRODUCT_DEALER_PRICE] ,[PRODUCT_MRP] ,[PRODUCT_IMAGE],[PRODUCT_CATALOGUE] ,[PRODUCT_ISACTIVE] ,UNIT_OF_MEASUREMENT_NAME,UNIT_OF_MEASUREMENT_SHORT_KEY,[COMPANY_NAME],PRODUCT_SPECIES_NAME FROM PRODUCT_MASTER JOIN PRODUCT_SPECIES ON PRODUCT_SPECIES_PKID=PRODUCT_SPECIES_FKID JOIN UNIT_OF_MEASUREMENT ON UNIT_OF_MEASUREMENT_PKID=PRODUCT_UOM_FKID JOIN COMPANY ON COMPANY_PKID=PRODUCT_COMPANY_FKID JOIN  PRODUCT_PACKAGES ON PRODUCT_PKID=PRD_PACKAGE_PRODUCT_FKID AND PRD_PACKAG_PKID=@PRD_PACKAG_PKID WHERE [PRODUCT_ISACTIVE]=1 AND PRODUCT_PKID=@PRODUCT_PKID"
+        );
+
+      if (pool._connected == false) {
+        console.log("--- getOrderPlaceCustDetails Pool Reconnected ---");
+        pool = await sql.connect(config);
+      }
+      var KimoObj = {
+        COMPANY_NAME: result.recordsets[0][0].COMPANY_NAME,
+        PRODUCT_SPECIES_NAME: result.recordsets[0][0].PRODUCT_SPECIES_NAME,
+        PRODUCT_NAME: result.recordsets[0][0].PRODUCT_NAME,
+        PRODUCT_PKID: result.recordsets[0][0].PRODUCT_PKID,
+        UNIT_OF_MEASUREMENT_SHORT_KEY:
+          result.recordsets[0][0].UNIT_OF_MEASUREMENT_SHORT_KEY,
+        PackageID: result.recordsets[0][0].PRD_PACKAGE_UNIT,
+        Quantity: x[i].Quantity,
+        PackageAmt: x[i].PackageAmt,
+        Discount: x[i].Discount,
+        FreeUnitScheme: x[i].FreeUnitScheme,
+        FinalAmount: x[i].FinalAmount,
+        ProductAmount: x[i].ProductAmount,
+      };
+
+      console.log("pool._connected: 1", pool._connected);
+
+      rerArr.push(KimoObj);
+
+      if (pool._connected == false) {
+        console.log("--- getOrderPlaceCustDetails Pool Reconnected ---");
+        pool = await sql.connect(config);
+      }
+      console.log("pool._connected: 2", pool._connected);
+    }
+
+    pool.close();
+
+    return rerArr;
+  } catch (error) {
+    console.log("getOrderPlaceCustDetails-->", error);
+    // pool.close();
+  }
+}
+
 async function addCustomers(obj) {
   try {
     let pool = await sql.connect(config);
@@ -380,7 +456,7 @@ async function addCustomers(obj) {
         .query(
           "insert into CUSTOMER_MASTER ([CUSTOMER_CATEGORY_FKID] , [CUSTOMER_TYPE_FKID] , [CUSTOMER_SUBTYPE_FKID] , [CUSTOMER_NAME] , [CUSTOMER_EMAIL] , [CUSTOMER_EMAIL2] ,[CUSTOMER_MOBILE] ,[CUSTOMER_ALT_MOBILE] , [CUSTOMER_FIRM_NAME] ,[CUSTOMER_CAPACITY] , [CUSTOMER_REPRESENTATIVE_FKID] , [CUSTOMER_PRFILE] ,[CUSTOMER_DOC1] , [CUSTOMER_DOC2] ,[CUSTOMER_DOC3] ,[CUSTOMER_DOC4] , [CUSTOMER_DOC5] ,[CUSTOMER_DOC6] , [CUSTOMER_CONTACT_PERSON_NAME] ,[CUSTOMER_CONTACT_PERSON_EMAIL] ,[CUSTOMER_CONTACT_PERSON_EMAIL2] ,[CUSTOMER_CONTACT_PERSON_PHO] ,[CUSTOMER_CONTACT_PERSON_PHO2] ,[CUSTOMER_ISACTIVE],[CUSTOMER_PASSWORD],[CUSTOMER_CONTACT_SEC_PERSON_NAME], [CUSTOMER_CONTACT_SEC_PERSON_EMAIL], [CUSTOMER_CONTACT_SEC_PERSON_EMAIL2], [CUSTOMER_CONTACT_SEC_PERSON_PHO], [CUSTOMER_CONTACT_SEC_PERSON_PHO2])  values( @CUSTOMER_CATEGORY_FKID , @CUSTOMER_TYPE_FKID , @CUSTOMER_SUBTYPE_FKID , @CUSTOMER_NAME , @CUSTOMER_EMAIL , @CUSTOMER_EMAIL2 ,@CUSTOMER_MOBILE ,@CUSTOMER_ALT_MOBILE , @CUSTOMER_FIRM_NAME ,@CUSTOMER_CAPACITY , @CUSTOMER_REPRESENTATIVE_FKID , @CUSTOMER_PRFILE ,@CUSTOMER_DOC1 , @CUSTOMER_DOC2 ,@CUSTOMER_DOC3 ,@CUSTOMER_DOC4 , @CUSTOMER_DOC5 ,@CUSTOMER_DOC6 , @CUSTOMER_CONTACT_PERSON_NAME ,@CUSTOMER_CONTACT_PERSON_EMAIL ,@CUSTOMER_CONTACT_PERSON_EMAIL2 ,@CUSTOMER_CONTACT_PERSON_PHO ,@CUSTOMER_CONTACT_PERSON_PHO2 ,@CUSTOMER_ISACTIVE,@CUSTOMER_PASSWORD,@CUSTOMER_CONTACT_SEC_PERSON_NAME, @CUSTOMER_CONTACT_SEC_PERSON_EMAIL, @CUSTOMER_CONTACT_SEC_PERSON_EMAIL2, @CUSTOMER_CONTACT_SEC_PERSON_PHO, @CUSTOMER_CONTACT_SEC_PERSON_PHO2)"
         );
-      console.log("insertInto.rowsAffected : ", insertInto.rowsAffected);
+
       if (insertInto.rowsAffected == 1) {
         pool.close();
         return true;
@@ -398,7 +474,6 @@ async function addCustomers(obj) {
 }
 
 async function updateCustomers(custId, obj) {
-  console.log(" updateCustomers   custId, obj: ", custId, obj);
   try {
     let pool = await sql.connect(config);
     let result = await pool
@@ -545,7 +620,6 @@ async function getCustContactPersons(custId) {
 }
 
 async function getAddressType(custId) {
-  console.log("custId: ", custId);
   try {
     let pool = await sql.connect(config);
 
@@ -658,8 +732,6 @@ async function getCustDeleteNewRequest() {
 }
 
 async function AcceptDeleteRequest(reqId, custId) {
-  console.log("reqId, custId: ", reqId, custId);
-
   try {
     let pool = await sql.connect(config);
     let result = await pool
@@ -758,4 +830,6 @@ module.exports = {
   AcceptDeleteRequest: AcceptDeleteRequest,
   RejectDeleteRequest: RejectDeleteRequest,
   getCustReasonForDelete: getCustReasonForDelete,
+  getCustById: getCustById,
+  getOrderPlaceCustDetails: getOrderPlaceCustDetails,
 };

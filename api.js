@@ -2,7 +2,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-07 18:02:44
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-08 11:31:36
+ * @Last Modified time: 2022-03-12 17:43:07
  */
 
 var express = require("express");
@@ -49,9 +49,11 @@ app.use(helmet());
 // adding morgan to log HTTP requests
 app.use(morgan("combined"));
 
-app.use(bodyParser.urlencoded({
-  extended: true
-}));
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
 app.use(cors());
 
 app.options("*", cors());
@@ -67,9 +69,11 @@ app.all("*", function (req, res, next) {
   // max-age=31557600
   next();
 });
-router.use(bodyParser.urlencoded({
-  extended: true
-}));
+router.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
 router.use(cors());
 router.options("*", cors());
 router.all("*", function (req, res, next) {
@@ -154,7 +158,7 @@ router.route("/countries/:id").get(async (req, res) => {
 
 router.route("/countries").post(async (req, res) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
 
   await CountryDb.addCountry(obj).then((data) => {
@@ -170,7 +174,7 @@ router.route("/countries/:id").delete(async (req, res) => {
 
 router.put("/countries/:id", async function (req, res, next) {
   let obj = {
-    ...req.body
+    ...req.body,
   };
   try {
     res.json(await CountryDb.updateCountry(req.params.id, obj));
@@ -195,7 +199,7 @@ router.route("/states/:id").get(async (req, res) => {
 
 router.route("/states").post(async (req, res) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
   await StateDb.addState(obj).then((data) => {
     res.status(201).json(data);
@@ -204,7 +208,7 @@ router.route("/states").post(async (req, res) => {
 
 router.post("/statesCheckBox", async (req, res) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
 
   try {
@@ -217,7 +221,7 @@ router.post("/statesCheckBox", async (req, res) => {
 
 router.put("/states/:id", async function (req, res, next) {
   let obj = {
-    ...req.body
+    ...req.body,
   };
   try {
     res.json(await StateDb.updateState(req.params.id, obj));
@@ -242,7 +246,7 @@ router.delete("/states/:id", async (req, res) => {
 
 router.route("/cities").get(async (req, res) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
   await CityDb.getCities(obj).then((data) => {
     res.status(201).json(data);
@@ -251,7 +255,7 @@ router.route("/cities").get(async (req, res) => {
 
 router.route("/citiesByStateId/:id").get(async (req, res) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
 
   res.status(201).json(await CityDb.getCitiesByStateId(req.params.id));
@@ -259,7 +263,7 @@ router.route("/citiesByStateId/:id").get(async (req, res) => {
 
 router.post("/cities", async (req, res) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
 
   try {
@@ -272,7 +276,7 @@ router.post("/cities", async (req, res) => {
 
 router.post("/citiesCheckBox", async (req, res) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
 
   try {
@@ -285,7 +289,7 @@ router.post("/citiesCheckBox", async (req, res) => {
 
 router.put("/cities/:id", async function (req, res, next) {
   let obj = {
-    ...req.body
+    ...req.body,
   };
   console.log("obj :>> ", obj);
   try {
@@ -312,7 +316,7 @@ router.get("/areasByCityId/:id", async (req, res) => {
 
 router.post("/areas", async (req, res) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
 
   try {
@@ -325,7 +329,7 @@ router.post("/areas", async (req, res) => {
 
 router.post("/areasCheckBox", async (req, res) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
 
   try {
@@ -338,7 +342,7 @@ router.post("/areasCheckBox", async (req, res) => {
 
 router.put("/areas/:id", async (req, res) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
 
   try {
@@ -364,7 +368,7 @@ router.get("/hq", async (req, res) => {
 
 router.post("/hq", async (req, res) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
 
   try {
@@ -377,7 +381,7 @@ router.post("/hq", async (req, res) => {
 
 router.put("/hq/:id", async (req, res) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
   try {
     res.json(await HqDb.updateHq(req.params.id, obj));
@@ -398,7 +402,7 @@ router.get("/companies", async (req, res) => {
 
 router.post("/companies", async (req, res) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
 
   try {
@@ -411,7 +415,7 @@ router.post("/companies", async (req, res) => {
 
 router.put("/companies/:id", async (req, res) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
 
   try {
@@ -433,7 +437,7 @@ router.get("/emptypes", async (req, res) => {
 
 router.post("/emptypes", async (req, res) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
 
   try {
@@ -446,7 +450,7 @@ router.post("/emptypes", async (req, res) => {
 
 router.put("/emptypes/:id", async (req, res) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
 
   try {
@@ -472,7 +476,7 @@ router.get("/empsubtypesById/:id", async (req, res) => {
 
 router.post("/empsubtypes", async (req, res) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
 
   try {
@@ -489,7 +493,7 @@ router.delete("/empsubtypes/:id", async (req, res) => {
 
 router.put("/empsubtypes/:id", async (req, res) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
   try {
     res.json(await EmpsDb.updateEmpSubType(req.params.id, obj));
@@ -507,7 +511,7 @@ router.get("/emps", async (req, res) => {
 
 router.post("/emps", async (req, res, next) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
   try {
     res.json(await EmpsDb.addEmp(obj));
@@ -519,7 +523,7 @@ router.post("/emps", async (req, res, next) => {
 
 router.post("/importemps", async (req, res, next) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
   console.log("obj: ", obj);
 
@@ -533,8 +537,10 @@ router.post("/importemps", async (req, res, next) => {
 
 router.put("/emps/:id", async (req, res, next) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
+  console.log("req.params.id, obj: ", req.params.id, obj);
+
   try {
     res.json(await EmpsDb.updateEmp(req.params.id, obj));
   } catch (err) {
@@ -620,7 +626,7 @@ router.get("/incentives", async (req, res) => {
 
 router.post("/incentives", async (req, res, next) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
   try {
     res.json(await EmpsDb.addEmpIncentives(obj));
@@ -632,7 +638,7 @@ router.post("/incentives", async (req, res, next) => {
 
 router.put("/deleteincentives/:id", async (req, res, next) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
   try {
     res.json(await EmpsDb.DeleteEmpIncentives(req.params.id));
@@ -644,7 +650,7 @@ router.put("/deleteincentives/:id", async (req, res, next) => {
 
 router.put("/incentives/:id", async (req, res, next) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
   try {
     res.json(await EmpsDb.updateEmpIncentives(req.params.id, obj));
@@ -695,7 +701,7 @@ router.get("/custcat", async (req, res) => {
 
 router.post("/custcat", async (req, res) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
   try {
     res.json(await CustsDb.addCustomersCat(obj));
@@ -710,7 +716,7 @@ router.delete("/custcat/:id", async (req, res) => {
 
 router.put("/custcat/:id", async (req, res, next) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
   try {
     res.json(await CustsDb.updateCustomersCat(req.params.id, obj));
@@ -726,7 +732,7 @@ router.get("/custtype", async (req, res) => {
 
 router.post("/custtype", async (req, res) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
   try {
     res.json(await CustsDb.addCustomersType(obj));
@@ -741,7 +747,7 @@ router.delete("/custtype/:id", async (req, res) => {
 
 router.put("/custtype/:id", async (req, res, next) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
   try {
     res.json(await CustsDb.updateCustomersType(req.params.id, obj));
@@ -760,7 +766,7 @@ router.get("/custsubtypebytype/:id", async (req, res) => {
 
 router.post("/custsubtype", async (req, res) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
   try {
     res.json(await CustsDb.addCustomersSubType(obj));
@@ -775,7 +781,7 @@ router.delete("/custsubtype/:id", async (req, res) => {
 
 router.put("/custsubtype/:id", async (req, res, next) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
 
   try {
@@ -802,12 +808,27 @@ router.get("/customerreaoson/:id", async (req, res) => {
   res.json(await CustsDb.getCustReasonForDelete(req.params.id));
 });
 
+router.get("/customerById/:id", async (req, res) => {
+  res.json(await CustsDb.getCustById(req.params.id));
+});
+
 router.post("/customer", async (req, res) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
   try {
     res.json(await CustsDb.addCustomers(obj));
+  } catch (err) {
+    console.error(`Error while Adding`, err.message);
+  }
+});
+
+router.post("/getOrderPlaceCustDetails", async (req, res) => {
+  let obj = {
+    ...req.body,
+  };
+  try {
+    res.json(await CustsDb.getOrderPlaceCustDetails(obj));
   } catch (err) {
     console.error(`Error while Adding`, err.message);
   }
@@ -819,7 +840,7 @@ router.put("/customer/:id", async (req, res) => {
 
 router.put("/customer/:id", async (req, res, next) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
 
   try {
@@ -836,7 +857,7 @@ router.get("/addresstype/:custId", async (req, res) => {
 
 router.post("/addresstype", async (req, res) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
   try {
     res.json(await CustsDb.addAddressType(obj));
@@ -851,7 +872,7 @@ router.delete("/addresstype/:id", async (req, res) => {
 
 router.put("/addresstype/:id", async (req, res, next) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
 
   try {
@@ -900,7 +921,7 @@ router.get("/prodspecies", async (req, res) => {
 
 router.post("/prodspecies", async (req, res) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
   try {
     res.json(await ProdDb.addProductSpecies(obj));
@@ -915,7 +936,7 @@ router.put("/deleteprodspecies/:id", async (req, res) => {
 
 router.put("/prodspecies/:id", async (req, res, next) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
 
   try {
@@ -930,9 +951,13 @@ router.get("/prod", async (req, res) => {
   res.json(await ProdDb.getProducts());
 });
 
+router.get("/prodByCompany/:id", async (req, res) => {
+  res.json(await ProdDb.getProductsByCompany(req.params.id));
+});
+
 router.post("/prod", async (req, res) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
   try {
     res.json(await ProdDb.addProducts(obj));
@@ -947,7 +972,7 @@ router.put("/deleteprod/:id", async (req, res) => {
 
 router.put("/prod/:id", async (req, res, next) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
   console.log("req.params.id, obj: ", req.params.id, obj);
 
@@ -959,6 +984,38 @@ router.put("/prod/:id", async (req, res, next) => {
   }
 });
 
+router.delete("/ProductPackages/:id", async (req, res) => {
+  res.json(await ProdDb.deleteProductPackages(req.params.id));
+});
+
+router.post("/ProductPackages", async (req, res) => {
+  let obj = {
+    ...req.body,
+  };
+  try {
+    res.json(await ProdDb.addProductPackages(obj));
+  } catch (err) {
+    console.error(`Error while Adding`, err.message);
+  }
+});
+
+router.put("/ProductPackages/:id", async (req, res, next) => {
+  let obj = {
+    ...req.body,
+  };
+
+  try {
+    res.json(await ProdDb.updateProductPackages(req.params.id, obj));
+  } catch (err) {
+    console.error(`Error while Adding`, err.message);
+    next(err);
+  }
+});
+
+router.get("/ProductPackages/:id", async (req, res) => {
+  res.json(await ProdDb.getProductPackages(req.params.id));
+});
+
 // -------UOM Api's----------------------------------------------------//
 
 router.get("/uom", async (req, res) => {
@@ -967,7 +1024,7 @@ router.get("/uom", async (req, res) => {
 
 router.post("/uom", async (req, res) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
 
   try {
@@ -984,7 +1041,7 @@ router.delete("/uom/:id", async (req, res) => {
 
 router.put("/uom/:id", async (req, res, next) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
 
   try {
@@ -1019,7 +1076,7 @@ router.get("/OrderShippingAddress/:id", async (req, res) => {
 
 router.put("/AcceptOrder/:id", async (req, res, next) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
 
   try {
@@ -1032,7 +1089,7 @@ router.put("/AcceptOrder/:id", async (req, res, next) => {
 
 router.put("/RejectOrder/:id", async (req, res, next) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
 
   try {
@@ -1049,7 +1106,7 @@ router.get("/OrderSupplyType", async (req, res) => {
 
 router.put("/OrderSupplyType/:id", async (req, res, next) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
 
   try {
@@ -1062,7 +1119,7 @@ router.put("/OrderSupplyType/:id", async (req, res, next) => {
 
 router.post("/OrderSupplyType", async (req, res) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
 
   try {
@@ -1116,7 +1173,7 @@ router.get("/GetApprovedOrdersByDate/:fdate/:tdate", async (req, res) => {
 
 router.put("/ApprovedOrderConfirm", async (req, res, next) => {
   let obj = {
-    ...req.body
+    ...req.body,
   };
 
   try {
@@ -1130,6 +1187,213 @@ router.put("/ApprovedOrderConfirm", async (req, res, next) => {
 router.get("/GetAllScheduledOrder", async (req, res) => {
   res.json(await OrdDb.GetAllScheduledOrder());
 });
+
+router.get("/getScheduledOrdersBySupplyType/:id", async (req, res) => {
+  res.json(await OrdDb.getScheduledOrdersBySupplyType(req.params.id));
+});
+
+router.get("/getScheduledOrdersByMonth/:MOnthNumber", async (req, res) => {
+  res.json(await OrdDb.getScheduledOrdersByMonth(req.params.MOnthNumber));
+});
+
+router.get("/getScheduledOrdersByDate/:fdate/:tdate", async (req, res) => {
+  res.json(
+    await OrdDb.getScheduledOrdersByDate(req.params.fdate, req.params.tdate)
+  );
+});
+
+router.get("/OrderProcessRemark/:id", async (req, res) => {
+  res.json(await OrdDb.getOrderProcessRemark(req.params.id));
+});
+
+router.get("/GetAllConfirmInvoiceOrder", async (req, res) => {
+  res.json(await OrdDb.GetAllConfirmInvoiceOrder());
+});
+
+router.get("/getConfirmInvoiceOrdersBySupplyType/:id", async (req, res) => {
+  res.json(await OrdDb.getConfirmInvoiceOrdersBySupplyType(req.params.id));
+});
+
+router.get("/getConfirmInvoiceOrdersByMonth/:MOnthNumber", async (req, res) => {
+  res.json(await OrdDb.getConfirmInvoiceOrdersByMonth(req.params.MOnthNumber));
+});
+
+router.get("/getConfirmInvoiceOrdesByDate/:fdate/:tdate", async (req, res) => {
+  res.json(
+    await OrdDb.getConfirmInvoiceOrdesByDate(req.params.fdate, req.params.tdate)
+  );
+});
+
+router.put("/ConfirmForInvoice/:id/:tDate", async (req, res) => {
+  res.json(await OrdDb.ConfirmForInvoice(req.params.id, req.params.tDate));
+});
+
+router.put("/ConfirmInvoiceGenerate/:id", async (req, res) => {
+  res.json(await OrdDb.ConfirmInvoiceGenerate(req.params.id));
+});
+
+router.get("/GetAllConfirmInvoiceGeneratetOrders", async (req, res) => {
+  res.json(await OrdDb.GetAllConfirmInvoiceGeneratetOrders());
+});
+
+router.get("/getInvoiceGeneratetOrdersBySupplyType/:id", async (req, res) => {
+  res.json(await OrdDb.getInvoiceGeneratetOrdersBySupplyType(req.params.id));
+});
+
+router.get(
+  "/getInvoiceGeneratetOrdersByMonth/:MOnthNumber",
+  async (req, res) => {
+    res.json(
+      await OrdDb.getInvoiceGeneratetOrdersByMonth(req.params.MOnthNumber)
+    );
+  }
+);
+
+router.get(
+  "/getInvoiceGeneratetOrdersByDate/:fdate/:tdate",
+  async (req, res) => {
+    res.json(
+      await OrdDb.getInvoiceGeneratetOrdersByDate(
+        req.params.fdate,
+        req.params.tdate
+      )
+    );
+  }
+);
+
+router.put("/DispatchOrder/:id", async (req, res) => {
+  res.json(await OrdDb.DispatchOrder(req.params.id));
+});
+
+router.get("/GetAllDispatchedOrders", async (req, res) => {
+  res.json(await OrdDb.GetAllDispatchedOrders());
+});
+
+router.get("/GetAllDispatchedOrdersByDate/:fdate/:tdate", async (req, res) => {
+  res.json(
+    await OrdDb.GetAllDispatchedOrdersByDate(req.params.fdate, req.params.tdate)
+  );
+});
+
+router.get("/GetAllDispatchedOrdersBySupplyType/:id", async (req, res) => {
+  res.json(await OrdDb.GetAllDispatchedOrdersBySupplyType(req.params.id));
+});
+
+router.get("/GetAllDispatchedOrdersByMonth/:MOnthNumber", async (req, res) => {
+  res.json(await OrdDb.GetAllDispatchedOrdersByMonth(req.params.MOnthNumber));
+});
+
+router.put("/FinalDelivery/:id", async (req, res) => {
+  res.json(await OrdDb.FinalDelivery(req.params.id));
+});
+
+router.get("/GetAllDeliveryConfirmedOrders", async (req, res) => {
+  res.json(await OrdDb.GetAllDeliveryConfirmedOrders());
+});
+
+router.get(
+  "/GetAllDeliveryConfirmedOrdersByDate/:fdate/:tdate",
+  async (req, res) => {
+    res.json(
+      await OrdDb.GetAllDeliveryConfirmedOrdersByDate(
+        req.params.fdate,
+        req.params.tdate
+      )
+    );
+  }
+);
+
+router.get(
+  "/GetAllDeliveryConfirmedOrdersBySupplyType/:id",
+  async (req, res) => {
+    res.json(
+      await OrdDb.GetAllDeliveryConfirmedOrdersBySupplyType(req.params.id)
+    );
+  }
+);
+
+router.get(
+  "/GetAllDeliveryConfirmedOrdersByMonth/:MOnthNumber",
+  async (req, res) => {
+    res.json(
+      await OrdDb.GetAllDeliveryConfirmedOrdersByMonth(req.params.MOnthNumber)
+    );
+  }
+);
+
+router.post("/placeOrder", async (req, res) => {
+  let obj = {
+    ...req.body,
+  };
+
+  try {
+    res.json(await OrdDb.placeOrder(obj));
+  } catch (err) {
+    console.error(`Error while Adding`, err.message);
+    next(err);
+  }
+});
+
+router.get("/shipAddressbycustomer/:id", async (req, res) => {
+  res.json(await OrdDb.GetAllShippingAddressesOfCustomer(req.params.id));
+});
+
+router.get("/billingAddressbycustomer/:id", async (req, res) => {
+  res.json(await OrdDb.GetAllBillingAddressesOfCustomer(req.params.id));
+});
+
+router.get("/adminOrders", async (req, res) => {
+  res.json(await OrdDb.getAdminOrders());
+});
+
+router.get("/GetAdminOrdersBySupplyType/:id", async (req, res) => {
+  res.json(await OrdDb.GetAdminOrdersBySupplyType(req.params.id));
+});
+
+router.get("/GetAdminOrdersByMonth/:id", async (req, res) => {
+  res.json(await OrdDb.GetAdminOrdersByMonth(req.params.id));
+});
+
+router.get("/GetAdminOrdersByDate/:fdate/:tdate", async (req, res) => {
+  res.json(
+    await OrdDb.GetAdminOrdersByDate(req.params.fdate, req.params.tdate)
+  );
+});
+
+router.post("/ConfirmForDeliveryCheck", async (req, res) => {
+  let obj = {
+    ...req.body,
+  };
+  try {
+    res.json(await OrdDb.ConfirmForDeliveryCheck(obj));
+  } catch (err) {
+    console.error(`Error while Adding`, err.message);
+    next(err);
+  }
+});
+
+router.get("/GetAllInvoiceUploadedOrders", async (req, res) => {
+  res.json(await OrdDb.GetAllInvoiceUploadedOrders());
+});
+router.get("/GetAllInvoiceUploadedOrdersBySupplyType/:id", async (req, res) => {
+  res.json(await OrdDb.GetAllInvoiceUploadedOrdersBySupplyType(req.params.id));
+});
+
+router.get("/GetAllInvoiceUploadedOrdersByMonth/:id", async (req, res) => {
+  res.json(await OrdDb.GetAllInvoiceUploadedOrdersByMonth(req.params.id));
+});
+
+router.get(
+  "/GetAllInvoiceUploadedOrdersByDate/:fdate/:tdate",
+  async (req, res) => {
+    res.json(
+      await OrdDb.GetAllInvoiceUploadedOrdersByDate(
+        req.params.fdate,
+        req.params.tdate
+      )
+    );
+  }
+);
 
 // -------END----------------------------------------------------//
 var port = process.env.PORT || 7760;

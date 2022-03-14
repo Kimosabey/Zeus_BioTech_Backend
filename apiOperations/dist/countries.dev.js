@@ -4,7 +4,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-04 16:20:31
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-03 19:52:15
+ * @Last Modified time: 2022-03-12 18:02:35
  */
 var config = require("../dbconfig");
 
@@ -28,19 +28,34 @@ function getCountries() {
         case 6:
           result = _context.sent;
           pool.close();
+          console.log("pool._connected getCountries: ", pool._connected);
+
+          if (!(pool._connected == false)) {
+            _context.next = 13;
+            break;
+          }
+
+          _context.next = 12;
+          return regeneratorRuntime.awrap(sql.connect(config));
+
+        case 12:
+          pool = _context.sent;
+
+        case 13:
+          pool.close();
           return _context.abrupt("return", result.recordsets[0]);
 
-        case 11:
-          _context.prev = 11;
+        case 17:
+          _context.prev = 17;
           _context.t0 = _context["catch"](0);
           console.log("getCountries-->", _context.t0); // pool.close();
 
-        case 14:
+        case 20:
         case "end":
           return _context.stop();
       }
     }
-  }, null, null, [[0, 11]]);
+  }, null, null, [[0, 17]]);
 }
 
 function getCountryById(countryId) {
