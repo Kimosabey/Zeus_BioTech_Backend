@@ -2,7 +2,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-04 16:20:31
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-12 18:02:35
+ * @Last Modified time: 2022-03-14 11:46:00
  */
 var config = require("../dbconfig");
 const sql = require("mssql");
@@ -13,13 +13,11 @@ async function getCountries() {
 
     let result = await pool.request().query("SELECT * FROM [COUNTRY_MASTER]");
 
-    pool.close();
-
-    console.log("pool._connected getCountries: ", pool._connected);
-
     if (pool._connected == false) {
       pool = await sql.connect(config);
+      console.log("pool._connected recon getCountries: ", pool._connected);
     }
+    
     pool.close();
 
     return result.recordsets[0];
