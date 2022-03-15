@@ -2,7 +2,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-19 14:59:10
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-03 19:45:29
+ * @Last Modified time: 2022-03-15 11:20:21
  */
 
 var config = require("../dbconfig");
@@ -22,7 +22,7 @@ async function getHq() {
     return result.recordsets[0];
   } catch (error) {
     console.log("getHq-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -110,7 +110,7 @@ async function deleteHq(HqId) {
     }
   } catch (error) {
     console.log("deleteHq-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 

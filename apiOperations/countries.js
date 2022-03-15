@@ -2,7 +2,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-04 16:20:31
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-14 11:46:00
+ * @Last Modified time: 2022-03-15 11:29:52
  */
 var config = require("../dbconfig");
 const sql = require("mssql");
@@ -13,17 +13,18 @@ async function getCountries() {
 
     let result = await pool.request().query("SELECT * FROM [COUNTRY_MASTER]");
 
+    console.log("pool._connected recon getCountries: 1", pool._connected);
     if (pool._connected == false) {
       pool = await sql.connect(config);
-      console.log("pool._connected recon getCountries: ", pool._connected);
     }
-    
+    console.log("pool._connected recon getCountries: 2 ", pool._connected);
     pool.close();
+    console.log("pool._connected recon getCountries: 3", pool._connected);
 
     return result.recordsets[0];
   } catch (error) {
     console.log("getCountries-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -40,7 +41,7 @@ async function getCountryById(countryId) {
     return result.recordsets[0];
   } catch (error) {
     console.log("getCountryById-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -94,7 +95,7 @@ async function deleteCountry(countryId) {
     }
   } catch (error) {
     console.log("deleteCountry-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 

@@ -2,7 +2,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-07 17:55:30
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-03 19:52:10
+ * @Last Modified time: 2022-03-15 11:20:02
  */
 var config = require("../dbconfig");
 const sql = require("mssql");
@@ -21,7 +21,7 @@ async function getAreas() {
     return result.recordsets[0];
   } catch (error) {
     console.log("getAreas-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -40,7 +40,7 @@ async function getAreasByCityId(cityId) {
     return result.recordsets[0];
   } catch (error) {
     console.log("getAreasByCityId-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -59,7 +59,7 @@ async function getAreasByHq(hqId) {
     return result.recordsets[0];
   } catch (error) {
     console.log("getAreasByHq-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -118,7 +118,7 @@ async function getForCheckBoxAreaByCityId(ObjOfArr) {
     return result.recordsets[0];
   } catch (error) {
     console.log("getForCheckBoxAreaByCityId-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -166,7 +166,7 @@ async function deleteArea(AreaId) {
     }
   } catch (error) {
     console.log("deleteArea-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 

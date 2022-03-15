@@ -2,7 +2,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-19 12:05:08
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-03 19:51:52
+ * @Last Modified time: 2022-03-15 11:29:59
  */
 
 var config = require("../dbconfig");
@@ -19,6 +19,12 @@ async function getAdminLogin(AdminEmail, AdminPass) {
       .query(
         "SELECT * FROM [SUPER_ADMIN] WHERE SUPER_ADMIN_EMAIL=@AdminEmail AND SUPER_ADMIN_PASSWORD=@AdminPass"
       );
+
+    if (pool._connected == false) {
+      pool = await sql.connect(config);
+      console.log("pool._connected recon getAdminLogin: ", pool._connected);
+    }
+
     pool.close();
 
     if (result.recordsets[0].length > 0) {
@@ -29,7 +35,7 @@ async function getAdminLogin(AdminEmail, AdminPass) {
     // return result.recordsets[0];
   } catch (error) {
     console.log("getAdminLogin-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 

@@ -2,7 +2,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-08 12:20:30
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-12 18:33:14
+ * @Last Modified time: 2022-03-15 11:43:20
  */
 
 var config = require("../dbconfig");
@@ -19,7 +19,7 @@ async function getEmpTypes() {
     return result.recordsets[0];
   } catch (error) {
     console.log("getEmpTypes-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -99,7 +99,7 @@ async function deleteEmpType(empId) {
     }
   } catch (error) {
     console.log("deleteEmpType-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -117,7 +117,7 @@ async function getEmpSubTypes() {
     return result.recordsets[0];
   } catch (error) {
     console.log("getEmpSubTypes-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -136,7 +136,7 @@ async function getEmpSubTypesById(EmpTypeId) {
     return result.recordsets[0];
   } catch (error) {
     console.log("getEmpSubTypesById-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -195,7 +195,7 @@ async function deleteEmpSubType(empSubId) {
     }
   } catch (error) {
     console.log("deleteEmpSubType-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -491,7 +491,7 @@ async function getEmpById(EmpId) {
     return result.recordsets[0];
   } catch (error) {
     console.log("getEmpById-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -510,7 +510,7 @@ async function getAddressByEmpId(EmpId) {
     return result.recordsets[0];
   } catch (error) {
     console.log("getAddressByEmpId-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -529,7 +529,7 @@ async function getCoveredAreaByEmpId(EmpId) {
     return result.recordsets[0];
   } catch (error) {
     console.log("getCoveredAreaByEmpId-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -553,7 +553,7 @@ async function GetEmployeeCoveredAreasForEdit(EmpId, hqId) {
       return result.recordsets[0];
     } catch (error) {
       console.log("GetEmployeeCoveredAreasForEdit-->", error);
-      // pool.close();
+      pool.close();
     }
   }
 }
@@ -573,7 +573,7 @@ async function getOtherCoveredAreasByEmpId(EmpId) {
     return result.recordsets[0];
   } catch (error) {
     console.log("getOtherCoveredAreasByEmpId-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -609,7 +609,7 @@ async function getEmpByIsManager(IsManager) {
     return result.recordsets[0];
   } catch (error) {
     console.log("GetEmployeeCoveredAreasForEdit-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -623,19 +623,21 @@ async function getAllManagers() {
       .query(
         "SELECT EMPLOYEE_NAME,EMPLOYEE_PKID FROM [EMPLOYEE_MASTER] WHERE EMPOLYEE_IS_MANAGER=@IsManager"
       );
-
-    pool.close();
-    console.log("pool._connected getSupplyType: ", pool._connected);
+      console.log("pool._connected recon getAllManagers: 1", pool._connected);
 
     if (pool._connected == false) {
       pool = await sql.connect(config);
+      
     }
+    console.log("pool._connected recon getAllManagers: 2", pool._connected);
+    
     pool.close();
 
+    console.log("pool._connected recon getAllManagers: 3", pool._connected);
     return result.recordsets[0];
   } catch (error) {
     console.log("getAllManagers-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -729,7 +731,7 @@ async function getEmpCountriesInCoveredAreasForEdit(empId) {
     return result.recordsets[0];
   } catch (error) {
     console.log("getEmpCountriesInCoveredAreasForEdit-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -745,7 +747,7 @@ async function getEmpStatesInCoveredAreasForEdit(empId) {
     return result.recordsets[0];
   } catch (error) {
     console.log("getEmpStatesInCoveredAreasForEdit-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -761,7 +763,7 @@ async function getEmpCitiesInCoveredAreasForEdit(empId) {
     return result.recordsets[0];
   } catch (error) {
     console.log("getEmpCitiesInCoveredAreasForEdit-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -777,7 +779,7 @@ async function getEmpAreasInCoveredAreasForEdit(empId) {
     return result.recordsets[0];
   } catch (error) {
     console.log("getEmpAreasInCoveredAreasForEdit-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -818,7 +820,7 @@ async function getEmpIncentives() {
     return result.recordsets[0];
   } catch (error) {
     console.log("EmpIncentives-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 

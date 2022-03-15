@@ -2,7 +2,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-04 16:20:37
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-03 19:49:58
+ * @Last Modified time: 2022-03-15 11:20:31
  */
 var config = require("../dbconfig");
 const sql = require("mssql");
@@ -21,7 +21,7 @@ async function getStates() {
     return result.recordsets[0];
   } catch (error) {
     console.log("getStates-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -38,7 +38,7 @@ async function getStatesById(stateId) {
     return result.recordsets[0];
   } catch (error) {
     console.log("getStatesById-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -55,7 +55,7 @@ async function getStateByCountryId(countryId) {
     return result.recordsets[0];
   } catch (error) {
     console.log("getStateByCountryId-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -74,7 +74,7 @@ async function getForCheckBoxStateByCountryId(ObjOfArr) {
     return result.recordsets[0];
   } catch (error) {
     console.log("getForCheckBoxStateByCountryId-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -154,7 +154,7 @@ async function deleteState(stateId) {
     }
   } catch (error) {
     console.log("deleteState-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 

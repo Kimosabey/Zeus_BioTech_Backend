@@ -2,7 +2,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-03-04 14:28:13
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-14 17:54:22
+ * @Last Modified time: 2022-03-15 18:35:09
  */
 
 var config = require("../dbconfig");
@@ -24,7 +24,7 @@ async function getRemarksOrdersById(ordId) {
     return result.recordsets[0];
   } catch (error) {
     console.log("getRemarksOrdersById-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -44,7 +44,7 @@ async function getBillingAddressOrdersById(ordId) {
     return result.recordsets[0];
   } catch (error) {
     console.log("getBillingAddressOrdersById-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -64,7 +64,7 @@ async function getShippingAddressOrdersById(ordId) {
     return result.recordsets[0];
   } catch (error) {
     console.log("getShippingAddressOrdersById-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -83,7 +83,7 @@ async function getOrders() {
     return result.recordsets[0];
   } catch (error) {
     console.log("getOrders-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -103,7 +103,7 @@ async function getItemsByOrderId(ordId) {
     return result.recordsets[0];
   } catch (error) {
     console.log("getItemByOrderId-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -167,15 +167,22 @@ async function getSupplyType() {
         "SELECT [SUPPLY_TYPE_PKID] ,[SUPPLY_NAME] ,[SUPPLY_TYPE_ISACTIVE] FROM [SUPPLY_TYPE] WHERE SUPPLY_TYPE_ISACTIVE=1"
       );
 
+    console.log("pool._connected  recon getSupplyType: 1", pool._connected);
+
     if (pool._connected == false) {
       pool = await sql.connect(config);
-      console.log("pool._connected  recon getSupplyType: ", pool._connected);
     }
+
+    console.log("pool._connected  recon getSupplyType: 2", pool._connected);
+
     pool.close();
+
+    console.log("pool._connected  recon getSupplyType: 3", pool._connected);
 
     return result.recordsets[0];
   } catch (error) {
     console.log("getSupplyType-->", error);
+    //pool.close();
   }
 }
 
@@ -565,7 +572,7 @@ async function getOrderProcessRemark(ordId) {
     return result.recordsets[0];
   } catch (error) {
     console.log("getOrderProcessRemark-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -1059,7 +1066,26 @@ async function GetAllShippingAddressesOfCustomer(custid) {
         "select CUSTOMER_ADDRESS_PKID,[CUSTOMER_ADDRESS_ADDRESS1],[CUSTOMER_ADDRESS_ADDRESS2],[CUSTOMER_ADDRESS_ADDRESS3],[CUSTOMER_ADDRESS_ZIP_CODE] from  [dbo].[CUSTOMER_ADDRESS]  where [CUSTOMER_ADDRESS_TYPE]='Shipping' and CUSTOMER_ADDRESS_CUST_FKID=@CUSTOMER_ADDRESS_CUST_FKID"
       );
 
+    console.log(
+      "pool._connected recon GetAllShippingAddressesOfCustomer: 1",
+      pool._connected
+    );
+
+    if (pool._connected == false) {
+      pool = await sql.connect(config);
+    }
+
+    console.log(
+      "pool._connected recon GetAllShippingAddressesOfCustomer: 2",
+      pool._connected
+    );
+
     pool.close();
+
+    console.log(
+      "pool._connected recon GetAllShippingAddressesOfCustomer: 3",
+      pool._connected
+    );
 
     return result.recordsets[0];
   } catch (error) {
@@ -1069,7 +1095,15 @@ async function GetAllShippingAddressesOfCustomer(custid) {
 
 async function GetAllBillingAddressesOfCustomer(custid) {
   try {
-    let pool = await sql.connect(config);
+    var pool = await sql.connect(config);
+
+    if (pool._connected == false) {
+      pool = await sql.connect(config);
+      console.log(
+        "pool._connected recon GetAllBillingAddressesOfCustomer: 0 ",
+        pool._connected
+      );
+    }
 
     let result = await pool
       .request()
@@ -1078,16 +1112,36 @@ async function GetAllBillingAddressesOfCustomer(custid) {
         "select CUSTOMER_ADDRESS_PKID,[CUSTOMER_ADDRESS_ADDRESS1],[CUSTOMER_ADDRESS_ADDRESS2],[CUSTOMER_ADDRESS_ADDRESS3],[CUSTOMER_ADDRESS_ZIP_CODE] from [dbo].[CUSTOMER_ADDRESS] where [CUSTOMER_ADDRESS_TYPE]='Billing' and CUSTOMER_ADDRESS_CUST_FKID=@CUSTOMER_ADDRESS_CUST_FKID and CUSTOMER_ADDRESS_ISACTIVE =1"
       );
 
+    console.log(
+      "pool._connected recon GetAllBillingAddressesOfCustomer: 1",
+      pool._connected
+    );
+
+    if (pool._connected == false) {
+      pool = await sql.connect(config);
+    }
+    console.log(
+      "pool._connected recon GetAllBillingAddressesOfCustomer: 2",
+      pool._connected
+    );
+
     pool.close();
+
+    console.log(
+      "pool._connected recon GetAllBillingAddressesOfCustomer: 3",
+      pool._connected
+    );
 
     return result.recordsets[0];
   } catch (error) {
     console.log("GetAllBillingAddressesOfCustomer-->", error);
+  } finally {
+    pool.close();
   }
 }
 
 async function placeOrder(obj) {
-  console.log("obj:--------- >", obj);
+  console.log("placeOrder  --------- >", obj);
   try {
     var kimo = obj;
 
@@ -1102,16 +1156,23 @@ async function placeOrder(obj) {
       "companyType.recordsets[0]------->",
       companyType.recordsets[0][0].COMPANY_SHORT_KEY
     );
-    var KEY_attach = companyType.recordsets[0][0].COMPANY_SHORT_KEY;
+
+    var KEY_attach = String(companyType.recordsets[0][0].COMPANY_SHORT_KEY);
+
     console.log("KEY_attach: ", KEY_attach);
 
-    console.log("placeOrder pool._connected --->", pool._connected);
+    console.log(
+      `select ORDER_NUMBER from [ORDER] WHERE ORDER_NUMBER LIKE '${KEY_attach}-%' AND ORDER_PKID=(SELECT MAX(ORDER_PKID) FROM [ORDER])`
+    );
 
     let result = await pool
       .request()
       .query(
-        "select ORDER_NUMBER from [ORDER] WHERE ORDER_PKID=(SELECT MAX(ORDER_PKID) FROM [dbo].[ORDER])"
+        `select ORDER_NUMBER from [ORDER] WHERE ORDER_PKID=(SELECT MAX(ORDER_PKID) FROM [ORDER] WHERE ORDER_NUMBER LIKE '${KEY_attach}-%')`
       );
+
+    console.log("result.recordsets[0][0]: ", result.recordsets[0][0]);
+
     var attach = "";
 
     const d = new Date();
@@ -1122,37 +1183,68 @@ async function placeOrder(obj) {
     console.log("passout: ", passout);
     attach = `${KEY_attach}-0001/${passout}`;
 
-    console.log("ORDER_NUMBER-->", result.recordsets[0][0]);
     var carryOrderNumber = result.recordsets[0][0];
-    if (carryOrderNumber == undefined) {
+    console.log("carryOrderNumber: ", carryOrderNumber);
+
+    if (
+      carryOrderNumber == undefined ||
+      carryOrderNumber == null ||
+      carryOrderNumber == ""
+    ) {
       console.log("undefined");
-      console.log("if attach: ", attach);
+      attach = `${KEY_attach}-0001/${passout}`;
+      console.log("if KEY_attach: ", attach);
     } else {
       console.log("Not undefined");
-      var str = result.recordsets[0][0].ORDER_NUMBER;
-      var splitted = str.split(KEY_attach);
-      console.log("splitted: ", splitted[1].split("/")[0]);
-      split2 = splitted[1].split("/")[0];
-      console.log("split2: ", split2.split("-")[1]);
-      split3 = parseInt(split2.split("-")[1]);
-      console.log("split3: ", split3);
-      console.log(parseInt(splitted[1]));
-      var num = split3 + 1;
+      console.log("else KEY_attach: ", KEY_attach);
+      var str = KEY_attach.toString();
+      console.log("str: ", str);
+      var split_By_forwardSlash =
+        carryOrderNumber.ORDER_NUMBER.toString().split("/");
+      console.log("split_By_forwardSlash: ", split_By_forwardSlash);
+
+      var leftPart = split_By_forwardSlash[0].toString();
+      console.log("leftPart: ", leftPart);
+
+      var split_By_hyphen = leftPart.toString().split("-");
+      console.log("split_By_hyphen: ", split_By_hyphen);
+
+      var split_By_hyphen_0 = split_By_hyphen[0].toString();
+      console.log("split_By_hyphen_0: ", split_By_hyphen_0);
+
+      var split_By_hyphen_1 = split_By_hyphen[1].toString();
+      console.log("split_By_hyphen_1: ", split_By_hyphen_1);
+      console.log("split_By_hyphen_1.length: ", split_By_hyphen_1.length);
+
+      var rightPart = split_By_forwardSlash[1].toString();
+      console.log("rightPart: ", rightPart);
+
+      var num = parseInt(split_By_hyphen_1) + 1;
+
       console.log("num: ", num);
-      if (num.toString.length == 1) {
-        attach = "000" + num;
-      } else if (num.toString.length == 2) {
-        attach = "00" + num;
-      } else if (num.toString.length == 3) {
-        attach = "0" + parseInt(splitted[1]);
-      } else if (num.toString.length == 4) {
+      console.log("num.toString().length: ", num.toString().length);
+
+      if (num.toString().length == 1) {
+        console.log("num.toString().length == 1: ");
+        attach = `000${num}`;
+      } else if (num.toString().length == 2) {
+        console.log("num.toString().length == 2: ");
+        attach = `00${num}`;
+      } else if (num.toString().length == 3) {
+        console.log("num.toString().length == 3: ");
+        attach = `0${num}`;
+      } else if (num.toString().length == 4) {
+        console.log("num.toString().length == 4: ");
         attach = num;
-      } else {
+      } else if (num.toString().length > 4 || num.toString().length < 0) {
+        console.log("No idea!");
       }
+      console.log("attach 0000: ", attach);
       attach = `${KEY_attach}-${attach}/${passout}`;
-      console.log("else attach: ", attach);
+      console.log("after condition check attach: ", attach);
     }
-    console.log("outside attach: ", attach);
+
+    console.log("Outside If else attach ---------->", attach);
 
     let insertInto = await pool
       .request()
@@ -1160,8 +1252,11 @@ async function placeOrder(obj) {
         `insert into [ORDER] ([ORDER_NUMBER] ,[ORDER_BY] ,[ORDER_BY_FKID] ,[ORDER_CUSTOMER_FKID] ,[ORDER_COMPANY_FKID] ,[ORDER_LOGISTIC] ,[ORDER_LOGISTIC_DESTINATION] ,[ORDER_LOGISTIC_PAY_MODE] ,[ORDER_BILLING_ADDRESS] ,[ORDER_SHIPPING_ADDRESS] ,[ORDER_CASH_DISCOUNT] ,[ORDER_ORDER_AMOUNT] ,[ORDER_REMARK] ,[ORDER_STATUS] ,[ORDER_ISACTIVE] ,[ORDER_DELIVERY_TYPE],[ORDER_SUPPLY_TYPE] ,[ORDER_DATE])  values('${attach}','${kimo.OrderBy}','${kimo.OrderByID}','${kimo.CustomerID}','${kimo.CompanyID}','${kimo.OrderDetails.Logistic}','${kimo.OrderDetails.LogisticDestination}','${kimo.OrderDetails.LogisticPaymode}','${kimo.BillingAddress}','${kimo.DeliveryAddress}','${kimo.OrderDetails.CashDiscount}','${kimo.OrderAmount}','${kimo.OrderDetails.Remark}','0','0','${kimo.OrderDetails.DeliveryType}','1',GETDATE())`
       );
 
+    console.log("pool._connected recon placeOrder: 1", pool._connected);
+
     if (insertInto.rowsAffected == 1) {
       let flag = 2;
+      console.log("pool._connected recon placeOrder: 2", pool._connected);
       if (pool._connected == false) {
         pool = await sql.connect(config);
       }
@@ -1180,11 +1275,12 @@ async function placeOrder(obj) {
 
       if (getOrderpkid.recordsets[0][0].ORDER_PKID) {
         console.log("Main if: ");
+        console.log("pool._connected recon placeOrder: 3", pool._connected);
         kimo.Products.map(async (i) => {
           if (pool._connected == false) {
             pool = await sql.connect(config);
           }
-          console.log("------------------------------");
+          console.log("********************");
 
           var OrderItemsIntonew = await pool
             .request()
@@ -1193,13 +1289,23 @@ async function placeOrder(obj) {
             );
           console.log(OrderItemsIntonew.rowsAffected[0]);
           if (OrderItemsIntonew.rowsAffected[0] == 1) {
+            console.log("pool._connected recon placeOrder: 4", pool._connected);
             console.log("if");
             pool.close();
+            console.log(
+              "pool._connected recon placeOrder after close: 5",
+              pool._connected
+            );
             flag = 1;
             return true;
           } else {
             console.log("else: ");
+            console.log("pool._connected recon placeOrder: 6", pool._connected);
             pool.close();
+            console.log(
+              "pool._connected recon placeOrder after close: 7",
+              pool._connected
+            );
             flag = 0;
             return false;
           }
@@ -1245,7 +1351,7 @@ async function getAdminOrders() {
     return result.recordsets[0];
   } catch (error) {
     console.log("getAdminOrders-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -1544,6 +1650,27 @@ async function GetRejectedOrdersByDate(fdate, tdate) {
   }
 }
 
+async function GetRejectedOrdersByDate(fdate, tdate) {
+  try {
+    let pool = await sql.connect(config);
+
+    let result = await pool
+      .request()
+      .input("fdate", fdate)
+      .input("tdate", tdate)
+      .query(
+        `select DISTINCT (select count(*) FROM ORDER_ITEM  where [ORDER_ITEM_ORDER_FKID] = ORD.ORDER_PKID) as ItemCount,(SELECT MONTH(ORDER_DATE)) AS MONTH_NUMBER ,(SELECT CONVERT(TIME, ORDER_DATE)) as clock,ORD.*,CUSTOMER_NAME,COMPANY_NAME,[SUPPLY_NAME],(SELECT DATEDIFF(HOUR, (SELECT [ORDER_DATE] FROM [dbo].[ORDER] WHERE ORDER_PKID=ORD.ORDER_PKID), (SELECT SYSDATETIME())) ) AS hrs ,(SELECT CASE WHEN ORDER_BY = 'admin' THEN (select SUPER_ADMIN_NAME from [dbo].[SUPER_ADMIN] WHERE [SUPER_ADMIN_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'manager' OR ORDER_BY = 'officer' THEN (select [EMPLOYEE_NAME] from [dbo].[EMPLOYEE_MASTER] WHERE [EMPLOYEE_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'customer' THEN (select [CUSTOMER_NAME] from [dbo].[CUSTOMER_MASTER] WHERE [CUSTOMER_PKID]=ORDER_BY_FKID) END FROM [dbo].[ORDER] WHERE ORDER_PKID=ORD.ORDER_PKID) as TypeName from [dbo].[ORDER] AS ORD JOIN [dbo].[ORDER_ITEM] AS ITM ON [ORDER_ITEM_ORDER_FKID]=[ORDER_PKID] JOIN [dbo].[CUSTOMER_MASTER] ON [CUSTOMER_PKID]=[ORDER_CUSTOMER_FKID] JOIN [dbo].[COMPANY] ON [COMPANY_PKID]=[ORDER_COMPANY_FKID] JOIN [dbo].[SUPPLY_TYPE] ON [SUPPLY_TYPE_PKID]=[ORDER_SUPPLY_TYPE]WHERE ORDER_ISACTIVE=1 AND ORDER_STATUS=2 and cast(ORDER_DATE as date) between @fdate and @tdate`
+      );
+
+    pool.close();
+
+    return result.recordsets[0];
+  } catch (error) {
+    console.log("GetRejectedOrdersByDate-->", error);
+  }
+}
+
+
 module.exports = {
   getRemarksOrdersById: getRemarksOrdersById,
   getBillingAddressOrdersById: getBillingAddressOrdersById,
@@ -1616,12 +1743,11 @@ module.exports = {
   GetAllInvoiceUploadedOrdersByMonth: GetAllInvoiceUploadedOrdersByMonth,
   GetAllInvoiceUploadedOrdersByDate: GetAllInvoiceUploadedOrdersByDate,
   GetAllInvoiceUploadedOrdersBySupplyType:
-  GetAllInvoiceUploadedOrdersBySupplyType,
+    GetAllInvoiceUploadedOrdersBySupplyType,
 
-  RejectOrderRequest: RejectOrderRequest, 
+  RejectOrderRequest: RejectOrderRequest,
   GetRejectedOrders: GetRejectedOrders,
   GetRejectedOrdersByDate: GetRejectedOrdersByDate,
   GetRejectedOrdersByMonth: GetRejectedOrdersByMonth,
   GetRejectedOrdersBySupplyType: GetRejectedOrdersBySupplyType,
- 
 };

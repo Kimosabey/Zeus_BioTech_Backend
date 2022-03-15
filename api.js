@@ -2,7 +2,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-07 18:02:44
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-12 17:43:07
+ * @Last Modified time: 2022-03-15 19:56:43
  */
 
 var express = require("express");
@@ -36,6 +36,7 @@ var CompDb = require("./apiOperations/company");
 var ProdDb = require("./apiOperations/products");
 var OrdDb = require("./apiOperations/OrderManagement");
 var OrdlogDb = require("./apiOperations/OrdMgrLogin");
+var ExpnsDb = require("./apiOperations/Expenses");
 
 // ----------------Building a Secure Node js REST API---------------------//
 app.use(express.static(__dirname + "/static"));
@@ -430,6 +431,9 @@ router.delete("/companies/:id", async (req, res) => {
   res.json(await CompDb.deleteCompany(req.params.id));
 });
 
+router.get("/getCompanyNamebyId/:id", async (req, res) => {
+  res.json(await CompDb.getCompanyNamebyId(req.params.id));
+});
 // -------EMPLOYEE-TYPE Api's----------------------------------------------------//
 router.get("/emptypes", async (req, res) => {
   res.json(await EmpsDb.getEmpTypes());
@@ -1394,6 +1398,35 @@ router.get(
     );
   }
 );
+
+router.get("/GetRejectedOrders", async (req, res) => {
+  res.json(await OrdDb.GetRejectedOrders());
+});
+router.get("/GetRejectedOrdersBySupplyType/:id", async (req, res) => {
+  res.json(await OrdDb.GetRejectedOrdersBySupplyType(req.params.id));
+});
+
+router.get("/GetRejectedOrdersByMonth/:id", async (req, res) => {
+  res.json(await OrdDb.GetRejectedOrdersByMonth(req.params.id));
+});
+
+router.get("/GetRejectedOrdersByDate/:fdate/:tdate", async (req, res) => {
+  res.json(
+    await OrdDb.GetRejectedOrdersByDate(req.params.fdate, req.params.tdate)
+  );
+});
+
+router.get("/pendingEmpExpenses", async (req, res) => {
+  res.json(await ExpnsDb.getPendingEmpExpenses());
+});
+
+router.put("/AcceptEmpExpenses/:id", async (req, res) => {
+  res.json(await ExpnsDb.AcceptEmpExpenses(req.params.id));
+});
+
+router.put("/RejectEmpExpenses/:id", async (req, res) => {
+  res.json(await ExpnsDb.RejectEmpExpenses(req.params.id));
+});
 
 // -------END----------------------------------------------------//
 var port = process.env.PORT || 7760;

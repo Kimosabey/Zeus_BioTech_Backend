@@ -2,7 +2,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-12 18:47:46
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-12 11:21:10
+ * @Last Modified time: 2022-03-15 11:19:46
  */
 
 var config = require("../dbconfig");
@@ -22,7 +22,7 @@ async function getCustomersCat() {
     return result.recordsets[0];
   } catch (error) {
     console.log("getCustomersCat-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -78,7 +78,7 @@ async function deleteCustomersCat(custId) {
     }
   } catch (error) {
     console.log("deleteCustomersCat-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -326,33 +326,35 @@ async function getCustById(custId) {
     return result.recordsets[0];
   } catch (error) {
     console.log("getCustById-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
 async function getOrderPlaceCustDetails(obj) {
+  console.log("obj: ", obj);
   try {
     var pool = await sql.connect(config);
 
     let x = obj.arr;
     let rerArr = [];
     for (var i = 0; i < x.length; i++) {
-      if (pool._connected == false) {
-        console.log("--- getOrderPlaceCustDetails Pool Reconnected ---");
-        pool = await sql.connect(config);
-      }
       let result = await pool
         .request()
         .input("PRODUCT_PKID", x[i].ProductID)
         .input("PRD_PACKAG_PKID", x[i].PackageID)
         .query(
-          "SELECT PRD_PACKAGE_UNIT,[PRODUCT_PKID] ,[PRODUCT_COMPANY_FKID] ,PRODUCT_SPECIES_FKID,[PRODUCT_NAME] ,[PRODUCT_UOM_FKID] ,[PRODUCT_UNIT],[PRODUCT_CODE] ,[PRODUCT_BAR_CODE] ,[PRODUCT_WHOLESALE_PRICE] ,[PRODUCT_DEALER_PRICE] ,[PRODUCT_MRP] ,[PRODUCT_IMAGE],[PRODUCT_CATALOGUE] ,[PRODUCT_ISACTIVE] ,UNIT_OF_MEASUREMENT_NAME,UNIT_OF_MEASUREMENT_SHORT_KEY,[COMPANY_NAME],PRODUCT_SPECIES_NAME FROM PRODUCT_MASTER JOIN PRODUCT_SPECIES ON PRODUCT_SPECIES_PKID=PRODUCT_SPECIES_FKID JOIN UNIT_OF_MEASUREMENT ON UNIT_OF_MEASUREMENT_PKID=PRODUCT_UOM_FKID JOIN COMPANY ON COMPANY_PKID=PRODUCT_COMPANY_FKID JOIN  PRODUCT_PACKAGES ON PRODUCT_PKID=PRD_PACKAGE_PRODUCT_FKID AND PRD_PACKAG_PKID=@PRD_PACKAG_PKID WHERE [PRODUCT_ISACTIVE]=1 AND PRODUCT_PKID=@PRODUCT_PKID"
+          "SELECT PRD_PACKAGE_UNIT,[PRODUCT_PKID] ,[PRODUCT_COMPANY_FKID] ,PRODUCT_SPECIES_FKID,[PRODUCT_NAME] ,[PRODUCT_UOM_FKID] ,[PRODUCT_CODE] ,[PRODUCT_BAR_CODE],[PRODUCT_IMAGE],[PRODUCT_CATALOGUE] ,[PRODUCT_ISACTIVE] ,UNIT_OF_MEASUREMENT_NAME,UNIT_OF_MEASUREMENT_SHORT_KEY,[COMPANY_NAME],PRODUCT_SPECIES_NAME FROM PRODUCT_MASTER JOIN PRODUCT_SPECIES ON PRODUCT_SPECIES_PKID=PRODUCT_SPECIES_FKID JOIN UNIT_OF_MEASUREMENT ON UNIT_OF_MEASUREMENT_PKID=PRODUCT_UOM_FKID JOIN COMPANY ON COMPANY_PKID=PRODUCT_COMPANY_FKID JOIN  PRODUCT_PACKAGES ON PRODUCT_PKID=PRD_PACKAGE_PRODUCT_FKID AND PRD_PACKAG_PKID=@PRD_PACKAG_PKID WHERE [PRODUCT_ISACTIVE]=1 AND PRODUCT_PKID=@PRODUCT_PKID"
         );
 
+      console.log(
+        "pool._connected recon getOrderPlaceCustDetails: 1",
+        pool._connected
+      );
+
       if (pool._connected == false) {
-        console.log("--- getOrderPlaceCustDetails Pool Reconnected ---");
         pool = await sql.connect(config);
       }
+
       var KimoObj = {
         COMPANY_NAME: result.recordsets[0][0].COMPANY_NAME,
         PRODUCT_SPECIES_NAME: result.recordsets[0][0].PRODUCT_SPECIES_NAME,
@@ -369,23 +371,34 @@ async function getOrderPlaceCustDetails(obj) {
         ProductAmount: x[i].ProductAmount,
       };
 
-      console.log("pool._connected: 1", pool._connected);
+      console.log(
+        "pool._connected recon getOrderPlaceCustDetails: 2",
+        pool._connected
+      );
 
       rerArr.push(KimoObj);
 
       if (pool._connected == false) {
-        console.log("--- getOrderPlaceCustDetails Pool Reconnected ---");
         pool = await sql.connect(config);
       }
-      console.log("pool._connected: 2", pool._connected);
+
+      console.log(
+        "pool._connected recon getOrderPlaceCustDetails: 3",
+        pool._connected
+      );
     }
 
     pool.close();
 
+    console.log(
+      "pool._connected recon getOrderPlaceCustDetails: 4",
+      pool._connected
+    );
+
     return rerArr;
   } catch (error) {
     console.log("getOrderPlaceCustDetails-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -581,7 +594,7 @@ async function getCustSubTypeByType(custId) {
     return result.recordsets[0];
   } catch (error) {
     console.log("getCustSubTypeByType-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -598,7 +611,7 @@ async function getCustDocsById(custId) {
     return result.recordsets[0];
   } catch (error) {
     console.log("getCustDocsById-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -615,7 +628,7 @@ async function getCustContactPersons(custId) {
     return result.recordsets[0];
   } catch (error) {
     console.log("getCustContactPersons-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 

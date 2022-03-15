@@ -2,7 +2,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-19 16:45:50
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-08 13:53:15
+ * @Last Modified time: 2022-03-15 11:30:05
  */
 
 var config = require("../dbconfig");
@@ -20,7 +20,34 @@ async function getCompanies() {
     return result.recordsets[0];
   } catch (error) {
     console.log("getCompanies-->", error);
-    // pool.close();
+    //pool.close();
+  }
+}
+
+async function getCompanyNamebyId(id) {
+  try {
+    let pool = await sql.connect(config);
+    if (pool._connected == false) {
+      pool = await sql.connect(config);
+      console.log("pool._connected  recon getCompanyNamebyId: ", pool._connected);
+    }
+    let result = await pool
+      .request()
+      .input("COMPANY_PKID", id)
+      .query(
+        "SELECT * FROM [COMPANY] JOIN HQ ON HQ_PKID = COMPANY_HQ_FKID WHERE COMPANY_PKID=@COMPANY_PKID"
+      );
+    if (pool._connected == false) {
+      pool = await sql.connect(config);
+      console.log("pool._connected  recon getCompanyNamebyId: ", pool._connected);
+    }
+
+    pool.close();
+    // console.log(result.recordsets);
+    return result.recordsets[0];
+  } catch (error) {
+    console.log("getCompanyNamebyId-->", error);
+    //pool.close();
   }
 }
 
@@ -31,7 +58,6 @@ async function addCompany(obj) {
       .request()
       .input("COMPANY_HQ_FKID", obj.COMPANY_HQ_FKID)
       .input("COMPANY_NAME", obj.COMPANY_NAME)
-
       .query(
         "SELECT * FROM [COMPANY] JOIN HQ ON HQ_PKID = COMPANY_HQ_FKID WHERE COMPANY_HQ_FKID=@COMPANY_HQ_FKID AND COMPANY_NAME=@COMPANY_NAME"
       );
@@ -43,8 +69,9 @@ async function addCompany(obj) {
         .input("COMPANY_EMAIL", obj.COMPANY_EMAIL)
         .input("COMPANY_PHONE", obj.COMPANY_PHONE)
         .input("COMPANY_ADDRESS", obj.COMPANY_ADDRESS)
+        .input("COMPANY_SHORT_KEY", obj.COMPANY_SHORT_KEY)
         .query(
-          "insert into COMPANY ([COMPANY_NAME] ,[COMPANY_HQ_FKID] ,[COMPANY_EMAIL] ,[COMPANY_PHONE] ,[COMPANY_ADDRESS] ,[COMPANY_ISACTIVE])  values(@COMPANY_NAME,@COMPANY_HQ_FKID,@COMPANY_EMAIL,@COMPANY_PHONE,@COMPANY_ADDRESS,1)"
+          "insert into COMPANY ([COMPANY_NAME] ,[COMPANY_HQ_FKID] ,[COMPANY_EMAIL] ,[COMPANY_PHONE] ,[COMPANY_ADDRESS] ,[COMPANY_ISACTIVE],COMPANY_SHORT_KEY)  values(@COMPANY_NAME,@COMPANY_HQ_FKID,@COMPANY_EMAIL,@COMPANY_PHONE,@COMPANY_ADDRESS,1,@COMPANY_SHORT_KEY)"
         );
       // .execute('InsertOrders');
       if (insertInto.rowsAffected == 1) {
@@ -74,9 +101,9 @@ async function updateCompany(Compid, obj) {
       .input("COMPANY_EMAIL", obj.COMPANY_EMAIL)
       .input("COMPANY_PHONE", obj.COMPANY_PHONE)
       .input("COMPANY_ADDRESS", obj.COMPANY_ADDRESS)
-
+      .input("COMPANY_SHORT_KEY", obj.COMPANY_SHORT_KEY)
       .query(
-        `UPDATE COMPANY SET [COMPANY_NAME]=@COMPANY_NAME ,[COMPANY_HQ_FKID]=@COMPANY_HQ_FKID ,[COMPANY_EMAIL]=@COMPANY_EMAIL ,[COMPANY_PHONE]=@COMPANY_PHONE ,[COMPANY_ADDRESS]=@COMPANY_ADDRESS WHERE COMPANY_PKID =@COMPANY_PKID`
+        `UPDATE COMPANY SET [COMPANY_NAME]=@COMPANY_NAME ,[COMPANY_HQ_FKID]=@COMPANY_HQ_FKID ,[COMPANY_EMAIL]=@COMPANY_EMAIL ,[COMPANY_PHONE]=@COMPANY_PHONE ,[COMPANY_ADDRESS]=@COMPANY_ADDRESS,COMPANY_SHORT_KEY=@COMPANY_SHORT_KEY WHERE COMPANY_PKID =@COMPANY_PKID`
       );
 
     pool.close();
@@ -112,7 +139,7 @@ async function deleteCompany(Compid) {
     }
   } catch (error) {
     console.log("deleteCompany-->", error);
-    // pool.close();
+    //pool.close();
   }
 }
 
@@ -121,4 +148,5 @@ module.exports = {
   addCompany: addCompany,
   updateCompany: updateCompany,
   deleteCompany: deleteCompany,
+  getCompanyNamebyId: getCompanyNamebyId,
 };

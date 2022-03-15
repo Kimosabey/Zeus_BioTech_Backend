@@ -4,7 +4,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-08 12:20:30
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-12 18:33:14
+ * @Last Modified time: 2022-03-14 12:48:06
  */
 var config = require("../dbconfig");
 
@@ -946,35 +946,34 @@ function getAllManagers() {
 
         case 6:
           result = _context21.sent;
-          pool.close();
-          console.log("pool._connected getSupplyType: ", pool._connected);
 
           if (!(pool._connected == false)) {
-            _context21.next = 13;
+            _context21.next = 12;
             break;
           }
 
-          _context21.next = 12;
+          _context21.next = 10;
           return regeneratorRuntime.awrap(sql.connect(config));
 
-        case 12:
+        case 10:
           pool = _context21.sent;
+          console.log("pool._connected recon getAllManagers: ", pool._connected);
 
-        case 13:
+        case 12:
           pool.close();
           return _context21.abrupt("return", result.recordsets[0]);
 
-        case 17:
-          _context21.prev = 17;
+        case 16:
+          _context21.prev = 16;
           _context21.t0 = _context21["catch"](0);
           console.log("getAllManagers-->", _context21.t0); // pool.close();
 
-        case 20:
+        case 19:
         case "end":
           return _context21.stop();
       }
     }
-  }, null, null, [[0, 17]]);
+  }, null, null, [[0, 16]]);
 }
 
 function importEmps(obj) {
