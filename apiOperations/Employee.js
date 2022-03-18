@@ -2,9 +2,9 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-08 12:20:30
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-15 11:43:20
+ * @Last Modified time: 2022-03-18 19:10:55
  */
-
+"use strict";
 var config = require("../dbconfig");
 const sql = require("mssql");
 
@@ -623,14 +623,13 @@ async function getAllManagers() {
       .query(
         "SELECT EMPLOYEE_NAME,EMPLOYEE_PKID FROM [EMPLOYEE_MASTER] WHERE EMPOLYEE_IS_MANAGER=@IsManager"
       );
-      console.log("pool._connected recon getAllManagers: 1", pool._connected);
+    console.log("pool._connected recon getAllManagers: 1", pool._connected);
 
     if (pool._connected == false) {
       pool = await sql.connect(config);
-      
     }
     console.log("pool._connected recon getAllManagers: 2", pool._connected);
-    
+
     pool.close();
 
     console.log("pool._connected recon getAllManagers: 3", pool._connected);
@@ -1032,6 +1031,131 @@ async function getAllEmployeeLeaves() {
   }
 }
 
+async function getAllEmployeePlanners() {
+  try {
+    let pool = await sql.connect(config);
+
+    let result = await pool
+      .request()
+      .query(
+        "SELECT distinct plans.*,emp.EMPLOYEE_NAME,emp.EMPLOYEE_CONTACT,comp.COMPANY_NAME FROM EMPLOYEE_TOUR_PLANNER as plans JOIN EMPLOYEE_MASTER emp ON emp.EMPLOYEE_PKID=plans.EMPLOYEE_TOUR_PLANNER_EMP_FKID JOIN COMPANY comp ON comp.COMPANY_PKID=emp.EMPLOYEE_COMPANY_FKID"
+      );
+    pool.close();
+    console.log("result.recordsets[0]", result.recordsets[0]);
+    return result.recordsets[0];
+  } catch (error) {
+    console.log("getAllEmployeePlanners-->", error);
+  }
+}
+
+async function AdminSendSuggestion(obj) {
+  try {
+    let pool = await sql.connect(config);
+    let result = await pool
+      .request()
+      .input(
+        "EMPLOYEE_TOUR_PLANNER_SUGGESTION",
+        obj.EMPLOYEE_TOUR_PLANNER_SUGGESTION
+      )
+      .input(
+        "EMPLOYEE_TOUR_PLANNER_PLACES_PKID",
+        obj.EMPLOYEE_TOUR_PLANNER_PLACES_PKID
+      )
+      .query(
+        `UPDATE EMPLOYEE_TOUR_PLANNER_PLACES SET EMPLOYEE_TOUR_PLANNER_SUGGESTION =@EMPLOYEE_TOUR_PLANNER_SUGGESTION,EMPLOYEE_TOUR_PLANNER_ISACTIVE=1 WHERE EMPLOYEE_TOUR_PLANNER_PLACES_PKID=@EMPLOYEE_TOUR_PLANNER_PLACES_PKID`
+      );
+
+    pool.close();
+    let message = false;
+
+    if (result.rowsAffected) {
+      message = true;
+    }
+    pool.close();
+
+    return message;
+  } catch (error) {
+    console.log("AdminSendSuggestion-->", error);
+  }
+}
+
+async function GetTourPlaces(tourId) {
+  try {
+    let pool = await sql.connect(config);
+
+    let result = await pool
+      .request()
+      .input("EMPLOYEE_TOUR_PLANNER_FKID", tourId)
+      .query(
+        "SELECT * FROM [EMPLOYEE_TOUR_PLANNER_PLACES] WHERE EMPLOYEE_TOUR_PLANNER_FKID=@EMPLOYEE_TOUR_PLANNER_FKID"
+      );
+    pool.close();
+
+    return result.recordsets[0];
+  } catch (error) {
+    console.log("GetTourPlaces-->", error);
+  }
+}
+
+async function GetPlacesAdminSuggestions(placesId) {
+  try {
+    let pool = await sql.connect(config);
+
+    let result = await pool
+      .request()
+      .input("EMPLOYEE_TOUR_PLANNER_PLACES_PKID", placesId)
+      .query(
+        "SELECT EMPLOYEE_TOUR_PLANNER_SUGGESTION FROM [EMPLOYEE_TOUR_PLANNER_PLACES] WHERE EMPLOYEE_TOUR_PLANNER_PLACES_PKID=@EMPLOYEE_TOUR_PLANNER_PLACES_PKID"
+      );
+    pool.close();
+
+    return result.recordsets[0];
+  } catch (error) {
+    console.log("GetPlacesAdminSuggestions-->", error);
+  }
+}
+
+async function getAllEmployeeAttendence(empId) {
+  try {
+    let pool = await sql.connect(config);
+
+    let result = await pool
+      .request()
+      .output("EmpID", sql.Int, empId)
+      .execute("GetEmployeeAttendence");
+
+    pool.close();
+
+    return result.recordsets[0];
+
+    // return x;
+  } catch (error) {
+    console.log("getAllEmployeeAttendence-->", error);
+  }
+}
+
+async function GetEmployeeAttendenceBydate(obj) {
+  console.log('obj', obj)
+  try {
+    let pool = await sql.connect(config);
+
+    let result = await pool
+      .request()
+      .output("EmpID", sql.Int, obj.EmployeeID)
+      .output("fromdate", sql.Date, obj.fromDate)
+      .output("todate", sql.Date, obj.toDate)
+      .execute("GetEmployeeAttendenceBydate");
+
+    pool.close();
+
+    return result.recordsets[0];
+
+    // return x;
+  } catch (error) {
+    console.log("GetEmployeeAttendenceBydate-->", error);
+  }
+}
+
 module.exports = {
   getEmpTypes: getEmpTypes,
   addEmpType: addEmpType,
@@ -1060,6 +1184,7 @@ module.exports = {
   getEmpCitiesInCoveredAreasForEdit: getEmpCitiesInCoveredAreasForEdit,
   getEmpAreasInCoveredAreasForEdit: getEmpAreasInCoveredAreasForEdit,
   DeleteEmpDocs: DeleteEmpDocs,
+
   getEmpIncentives: getEmpIncentives,
   addEmpIncentives: addEmpIncentives,
   DeleteEmpIncentives: DeleteEmpIncentives,
@@ -1070,4 +1195,11 @@ module.exports = {
   getReasonForLeave: getReasonForLeave,
   getAllLeavesForEmployee: getAllLeavesForEmployee,
   getAllEmployeeLeaves: getAllEmployeeLeaves,
+
+  getAllEmployeeAttendence: getAllEmployeeAttendence,
+  getAllEmployeePlanners: getAllEmployeePlanners,
+  AdminSendSuggestion: AdminSendSuggestion,
+  GetTourPlaces: GetTourPlaces,
+  GetPlacesAdminSuggestions: GetPlacesAdminSuggestions,
+  GetEmployeeAttendenceBydate: GetEmployeeAttendenceBydate,
 };

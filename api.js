@@ -2,9 +2,9 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-07 18:02:44
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-15 19:56:43
+ * @Last Modified time: 2022-03-18 19:11:29
  */
-
+"use strict";
 var express = require("express");
 
 var bodyParser = require("body-parser");
@@ -624,6 +624,8 @@ router.get("/getAllManagers", async (req, res) => {
   res.json(await EmpsDb.getAllManagers());
 });
 
+// -------EMPLOYEE INCENTIVES Api's----------------------------------------------------//
+
 router.get("/incentives", async (req, res) => {
   res.json(await EmpsDb.getEmpIncentives());
 });
@@ -664,6 +666,8 @@ router.put("/incentives/:id", async (req, res, next) => {
   }
 });
 
+// -------EMPLOYEE LEAVE MANAGEMENT Api's----------------------------------------------------//
+
 router.get("/leaves", async (req, res) => {
   res.json(await EmpsDb.getEmpLeaves());
 });
@@ -676,9 +680,9 @@ router.get("/leavesbyemp/:id", async (req, res) => {
   res.json(await EmpsDb.getAllLeavesForEmployee(req.params.id));
 });
 
-router.put("/acceptleaves/:id", async (req, res, next) => {
+router.put("/acceptleaves/:id", async (re̥̥̥̥q, res, next) => {
   try {
-    res.json(await EmpsDb.AcceptLeaves(req.params.id));
+    res.json(await Emps̥Db.AcceptLeaves(req.params.id));
   } catch (err) {
     console.error(`Error while Updating`, err.message);
     next(err);
@@ -697,6 +701,11 @@ router.put("/rejectleaves/:id", async (req, res, next) => {
 router.get("/leavesforallemps", async (req, res) => {
   res.json(await EmpsDb.getAllEmployeeLeaves());
 });
+
+router.get("/AllEmpExpenses", async (req, res) => {
+  res.json(await ExpnsDb.AllEmpExpenses(req.params.id));
+});
+
 // -------CUSTOMER Api's----------------------------------------------------//
 
 router.get("/custcat", async (req, res) => {
@@ -1416,6 +1425,8 @@ router.get("/GetRejectedOrdersByDate/:fdate/:tdate", async (req, res) => {
   );
 });
 
+// -------EMPLOYEE EXPENSES Api's----------------------------------------------------//
+
 router.get("/pendingEmpExpenses", async (req, res) => {
   res.json(await ExpnsDb.getPendingEmpExpenses());
 });
@@ -1426,6 +1437,58 @@ router.put("/AcceptEmpExpenses/:id", async (req, res) => {
 
 router.put("/RejectEmpExpenses/:id", async (req, res) => {
   res.json(await ExpnsDb.RejectEmpExpenses(req.params.id));
+});
+
+router.get("/GetExpensesDocument/:id", async (req, res) => {
+  res.json(await ExpnsDb.GetExpensesDocument(req.params.id));
+});
+
+// -------EMPLOYEE REPORTING / PLANNER Api's--------------------------------------------------//
+
+router.get("/getAllEmployeePlanners", async (req, res) => {
+  res.json(await EmpsDb.getAllEmployeePlanners());
+});
+
+router.put("/AdminSendSuggestion", async (req, res, next) => {
+  let obj = {
+    ...req.body,
+  };
+
+  try {
+    res.json(await EmpsDb.AdminSendSuggestion(obj));
+  } catch (err) {
+    console.error(`Error while Updating`, err.message);
+    next(err);
+  }
+});
+
+router.get("/GetTourPlaces/:id", async (req, res) => {
+  res.json(await EmpsDb.GetTourPlaces(req.params.id));
+});
+
+router.get("/GetPlacesAdminSuggestions/:id", async (req, res) => {
+  res.json(await EmpsDb.GetPlacesAdminSuggestions(req.params.id));
+});
+
+// -------EMPLOYEE ATTENDENCE Api's--------------------------------------------------//
+
+router.get("/getAllEmployeeAttendence/:id", async (req, res) => {
+  res.json(await EmpsDb.getAllEmployeeAttendence(req.params.id));
+});
+
+
+router.put("/GetEmployeeAttendenceBydate", async (req, res, next) => {
+  let obj = {
+    ...req.body,
+  };
+  console.log('GetEmployeeAttendenceBydate', obj)
+
+  try {
+    res.json(await EmpsDb.GetEmployeeAttendenceBydate(obj));
+  } catch (err) {
+    console.error(`Error while Updating`, err.message);
+    next(err);
+  }
 });
 
 // -------END----------------------------------------------------//
