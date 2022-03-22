@@ -2,7 +2,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-08 12:20:30
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-18 19:10:55
+ * @Last Modified time: 2022-03-22 12:42:03
  */
 "use strict";
 var config = require("../dbconfig");
@@ -1135,7 +1135,7 @@ async function getAllEmployeeAttendence(empId) {
 }
 
 async function GetEmployeeAttendenceBydate(obj) {
-  console.log('obj', obj)
+  console.log("obj", obj);
   try {
     let pool = await sql.connect(config);
 
@@ -1153,6 +1153,81 @@ async function GetEmployeeAttendenceBydate(obj) {
     // return x;
   } catch (error) {
     console.log("GetEmployeeAttendenceBydate-->", error);
+  }
+}
+
+async function getOrdersDetailsFromAttendenceDate(id, date) {
+  console.log("id, date", id, date);
+  try {
+    let pool = await sql.connect(config);
+
+    let result = await pool
+      .request()
+      .input("ORDER_BY_FKID", id)
+      .input("ORDER_DATE", date)
+      .query(
+        `SELECT DISTINCT (select count(*) FROM ORDER_ITEM  where [ORDER_ITEM_ORDER_FKID] = ORD.ORDER_PKID) as ItemCount,(SELECT MONTH(ORDER_DATE)) AS MONTH_NUMBER ,cast([ORDER_DATE] as date) as bdate,(SELECT CONVERT(TIME, ORDER_DATE)) as clock,ORD.*,CUSTOMER_NAME,COMPANY_NAME,[SUPPLY_NAME],(SELECT DATEDIFF(HOUR, (SELECT [ORDER_DATE] FROM [dbo].[ORDER] WHERE ORDER_PKID=ORD.ORDER_PKID), (SELECT SYSDATETIME())) ) AS hrs ,(SELECT CASE WHEN ORDER_BY = 'admin' THEN (select SUPER_ADMIN_NAME from [dbo].[SUPER_ADMIN] WHERE [SUPER_ADMIN_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'manager' OR ORDER_BY = 'officer' THEN (select [EMPLOYEE_NAME] from [dbo].[EMPLOYEE_MASTER] WHERE [EMPLOYEE_PKID]=ORDER_BY_FKID) WHEN ORDER_BY = 'customer' THEN (select [CUSTOMER_NAME] from [dbo].[CUSTOMER_MASTER] WHERE [CUSTOMER_PKID]=ORDER_BY_FKID) END FROM [dbo].[ORDER] WHERE ORDER_PKID=ORD.ORDER_PKID) as TypeName from [dbo].[ORDER] AS ord JOIN [dbo].[ORDER_ITEM] AS item ON [ORDER_ITEM_ORDER_FKID]=[ORDER_PKID] JOIN EMPLOYEE_MASTER emp on emp.EMPLOYEE_PKID=ord.ORDER_BY_FKID JOIN [EMPLOYEE_ATTENDENCE] att on att.[EMPLOYEE_ATTENDENCE_EMPLOYEE_FKID]=emp.EMPLOYEE_PKID JOIN [dbo].[CUSTOMER_MASTER] ON [CUSTOMER_PKID]=[ORDER_CUSTOMER_FKID] JOIN [dbo].[COMPANY] ON [COMPANY_PKID]=[ORDER_COMPANY_FKID] JOIN [dbo].[SUPPLY_TYPE] ON [SUPPLY_TYPE_PKID]=[ORDER_SUPPLY_TYPE] WHERE CONVERT(DATE,ord.[ORDER_DATE])= CONVERT(DATE,@ORDER_DATE) AND ord.ORDER_BY_FKID=@ORDER_BY_FKID AND (ord.ORDER_BY='manager' or ord.  ORDER_BY='officer')`
+      );
+
+    pool.close();
+
+    return result.recordsets[0];
+  } catch (error) {
+    console.log("getOrdersDetailsFromAttendenceDate-->", error);
+  }
+}
+
+async function getCustomersDetailsFromAttendenceDate(id, date) {
+  console.log("id, date", id, date);
+  try {
+    let pool = await sql.connect(config);
+
+    let result = await pool
+      .request()
+      .input("empId", id)
+      .input("date", date)
+      .query(
+        `SELECT cust.CUSTOMER_NAME,
+        cust.CUSTOMER_EMAIL, 
+        cust.CUSTOMER_FIRM_NAME, 
+        cust.CUSTOMER_MOBILE,
+        vis.EMPLOYEE_VISITED_CUSTOMERS_DATE,
+        vis.EMPLOYEE_VISITED_CUSTOMERS_TIME,ctype.CUSTOMER_TYPE_NAME,cstype.CUSTOMER_SUBTYPE_NAME,ccat.CUSTOMER_CATEGORY_NAME
+		FROM  [EMPLOYEE_ATTENDENCE] att 
+        JOIN
+        [EMPLOYEE_VISITED_CUSTOMERS] vis ON vis.EMPLOYEE_VISITED_CUSTOMERS_EMP_FKID=att.EMPLOYEE_ATTENDENCE_EMPLOYEE_FKID 
+		and att.EMPLOYEE_ATTENDENCE_DATE=vis.EMPLOYEE_VISITED_CUSTOMERS_DATE
+        JOIN
+        CUSTOMER_MASTER cust ON [CUSTOMER_PKID]= vis.EMPLOYEE_VISITED_CUSTOMERS_CUST_FKID
+		JOIN [CUSTOMER_SUBTYPE] cstype ON cstype.CUSTOMER_SUBTYPE_PKID=cust.CUSTOMER_SUBTYPE_FKID  
+		JOIN CUSTOMER_TYPE ctype ON ctype.CUSTOMER_TYPE_PKID=cust.CUSTOMER_TYPE_FKID 
+		JOIN CUSTOMER_CATEGORY ccat ON ccat.CUSTOMER_CATEGORY_PKID=cust.CUSTOMER_CATEGORY_FKID
+		WHERE convert(DATE,att.[EMPLOYEE_ATTENDENCE_DATE])=convert(DATE,@date) 
+        AND att.EMPLOYEE_ATTENDENCE_EMPLOYEE_FKID=@empId`
+      );
+
+    pool.close();
+
+    return result.recordsets[0];
+  } catch (error) {
+    console.log("getCustomersDetailsFromAttendenceDate-->", error);
+  }
+}
+
+async function getAllEmployeePlannersWithPlaces() {
+  try {
+    let pool = await sql.connect(config);
+
+    let result = await pool
+      .request()
+      .query(
+        " SELECT distinct plans.*,emp.EMPLOYEE_NAME,emp.EMPLOYEE_CONTACT,comp.COMPANY_NAME,places.EMPLOYEE_TOUR_PLANNER_PLACES_NAME FROM EMPLOYEE_TOUR_PLANNER as plans JOIN EMPLOYEE_MASTER emp ON emp.EMPLOYEE_PKID=plans.EMPLOYEE_TOUR_PLANNER_EMP_FKID JOIN COMPANY comp ON comp.COMPANY_PKID=emp.EMPLOYEE_COMPANY_FKID join EMPLOYEE_TOUR_PLANNER_PLACES places on places.EMPLOYEE_TOUR_PLANNER_FKID=plans.EMPLOYEE_TOUR_PLANNER_PKID"
+      );
+    pool.close();
+
+    return result.recordsets[0];
+  } catch (error) {
+    console.log("getAllEmployeePlannersWithPlaces-->", error);
   }
 }
 
@@ -1202,4 +1277,8 @@ module.exports = {
   GetTourPlaces: GetTourPlaces,
   GetPlacesAdminSuggestions: GetPlacesAdminSuggestions,
   GetEmployeeAttendenceBydate: GetEmployeeAttendenceBydate,
+
+  getOrdersDetailsFromAttendenceDate: getOrdersDetailsFromAttendenceDate,
+  getCustomersDetailsFromAttendenceDate: getCustomersDetailsFromAttendenceDate,
+  getAllEmployeePlannersWithPlaces: getAllEmployeePlannersWithPlaces,
 };

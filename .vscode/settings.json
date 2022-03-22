@@ -2,5 +2,7 @@
   "fileheader.Author": "---- KIMO a.k.a KIMOSABE ----",
   "fileheader.LastModifiedBy": "---- KIMO a.k.a KIMOSABE ----",
   "reactSnippets.settings.prettierEnabled": true,
-  "workbench.view.alwaysShowHeaderActions": true
+  "workbench.view.alwaysShowHeaderActions": true,
+  "turboConsoleLog.addSemicolonInTheEnd": true,
+  "turboConsoleLog.delimiterInsideMessage": "-->"
 }

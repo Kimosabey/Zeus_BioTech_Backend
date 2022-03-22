@@ -2,7 +2,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-12 18:47:46
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-15 11:19:46
+ * @Last Modified time: 2022-03-21 17:37:25
  */
 
 var config = require("../dbconfig");
@@ -410,7 +410,7 @@ async function addCustomers(obj) {
       .input("CUSTOMER_EMAIL", obj.CUSTOMER_EMAIL)
       .input("CUSTOMER_MOBILE", obj.CUSTOMER_MOBILE)
       .query(
-        "SELECT * FROM [CUSTOMER_MASTER] WHERE CUSTOMER_EMAIL=@CUSTOMER_EMAIL AND CUSTOMER_MOBILE=@CUSTOMER_MOBILE"
+        "SELECT * FROM [CUSTOMER_MASTER] WHERE CUSTOMER_EMAIL=@CUSTOMER_EMAIL AND CUSTOMER_MOBILE=@CUSTOMER_MOBILE" 
       );
     if (result.rowsAffected[0] == 0) {
       let insertInto = await pool

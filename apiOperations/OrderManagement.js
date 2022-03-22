@@ -2,7 +2,7 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-03-04 14:28:13
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-15 18:35:09
+ * @Last Modified time: 2022-03-21 18:34:21
  */
 
 var config = require("../dbconfig");
@@ -95,7 +95,7 @@ async function getItemsByOrderId(ordId) {
       .request()
       .input("ORDER_ITEM_ORDER_FKID", ordId)
       .query(
-        "select items.*,pkg.*,uom.UNIT_OF_MEASUREMENT_SHORT_KEY,[PRODUCT_NAME], [PRODUCT_UNIT],[PRODUCT_MRP] from [dbo].[ORDER_ITEM] as items join [dbo].[ORDER] on [ORDER_PKID]=[ORDER_ITEM_ORDER_FKID] join [dbo].[PRODUCT_MASTER] ON [PRODUCT_PKID]=[ORDER_ITEM_PRODUCT_FKID] JOIN PRODUCT_PACKAGES pkg on  PRD_PACKAG_PKID=items.ORDER_ITEM_UNIT JOIN UNIT_OF_MEASUREMENT uom ON UNIT_OF_MEASUREMENT_PKID=PRODUCT_UOM_FKID where [ORDER_ITEM_ORDER_FKID]=@ORDER_ITEM_ORDER_FKID"
+        "select items.*,pkg.*,uom.UNIT_OF_MEASUREMENT_SHORT_KEY,[PRODUCT_NAME] from [dbo].[ORDER_ITEM] as items join [dbo].[ORDER] on [ORDER_PKID]=[ORDER_ITEM_ORDER_FKID] join [dbo].[PRODUCT_MASTER] ON [PRODUCT_PKID]=[ORDER_ITEM_PRODUCT_FKID] JOIN PRODUCT_PACKAGES pkg on  PRD_PACKAG_PKID=items.ORDER_ITEM_UNIT JOIN UNIT_OF_MEASUREMENT uom ON UNIT_OF_MEASUREMENT_PKID=PRODUCT_UOM_FKID where [ORDER_ITEM_ORDER_FKID]=@ORDER_ITEM_ORDER_FKID"
       );
 
     pool.close();
@@ -844,6 +844,7 @@ async function GetAllDispatchedOrders() {
   try {
     let pool = await sql.connect(config);
 
+
     let result = await pool
       .request()
       .query(
@@ -857,6 +858,7 @@ async function GetAllDispatchedOrders() {
     console.log("GetAllDispatchedOrders -->", error);
   }
 }
+
 
 async function GetAllDispatchedOrdersBySupplyType(supplyId) {
   try {

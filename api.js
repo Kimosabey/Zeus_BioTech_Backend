@@ -2,7 +2,7 @@
  * @Author: Hey Kimo here!
  * @Date: 2022-02-07 18:02:44
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-18 19:11:29
+ * @Last Modified time: 2022-03-22 12:31:33
  */
 "use strict";
 var express = require("express");
@@ -106,8 +106,11 @@ initRoutes(app);
 // ----------------Building a Secure Node js REST API---------------------//
 
 app.get("/", (req, res) => {
-  var responseText =
-    '<h1 style="color:#34eb5b;">Hello Kimo Restful Api Using Nodejs is Working!!!</h1>';
+  var responseText = `<h1 style="font-family: 'Lobster', cursive;
+    font-size: 4em;
+    text-align: center;
+    margin: 10px;
+    text-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2);">🤠 Hello , Kimosabey 🐺 Restful APIs Using Nodejs is Working ✌️ </h1>`;
   res.send(responseText);
 });
 
@@ -1476,12 +1479,11 @@ router.get("/getAllEmployeeAttendence/:id", async (req, res) => {
   res.json(await EmpsDb.getAllEmployeeAttendence(req.params.id));
 });
 
-
 router.put("/GetEmployeeAttendenceBydate", async (req, res, next) => {
   let obj = {
     ...req.body,
   };
-  console.log('GetEmployeeAttendenceBydate', obj)
+  console.log("GetEmployeeAttendenceBydate", obj);
 
   try {
     res.json(await EmpsDb.GetEmployeeAttendenceBydate(obj));
@@ -1489,6 +1491,35 @@ router.put("/GetEmployeeAttendenceBydate", async (req, res, next) => {
     console.error(`Error while Updating`, err.message);
     next(err);
   }
+});
+
+router.get(
+  "/getOrdersDetailsFromAttendenceDate/:id/:date",
+  async (req, res) => {
+    res.json(
+      await EmpsDb.getOrdersDetailsFromAttendenceDate(
+        req.params.id,
+        req.params.date
+      )
+    );
+  }
+);
+
+router.get(
+  "/getCustomersDetailsFromAttendenceDate/:id/:date",
+  async (req, res) => {
+    res.json(
+      await EmpsDb.getCustomersDetailsFromAttendenceDate(
+        req.params.id,
+        req.params.date
+      )
+    );
+  }
+);
+
+
+router.get("/getAllEmployeePlannersWithPlaces", async (req, res) => {
+  res.json(await EmpsDb.getAllEmployeePlannersWithPlaces());
 });
 
 // -------END----------------------------------------------------//

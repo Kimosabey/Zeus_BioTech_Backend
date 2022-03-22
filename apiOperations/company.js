@@ -2,9 +2,9 @@
  * @Author: ---- KIMO a.k.a KIMOSABE ----
  * @Date: 2022-02-19 16:45:50
  * @Last Modified by: ---- KIMO a.k.a KIMOSABE ----
- * @Last Modified time: 2022-03-15 11:30:05
+ * @Last Modified time: 2022-03-17 14:48:20
  */
-
+"use strict";
 var config = require("../dbconfig");
 const sql = require("mssql");
 
